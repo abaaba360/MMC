@@ -1,0 +1,31 @@
+# 备份目录
+backup_20260812/
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# LaTeX 编译中间文件
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.toc
+paper/*.synctex*
+
+# 临时文件
+*.tmp
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+
+# 克隆的 git 仓库（skills/ 下的子项目 .git 目录）
+skills/*/.git/
+
+# 系统文件
+.DS_Store
+Thumbs.db

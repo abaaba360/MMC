@@ -1,0 +1,18 @@
+{
+  "timestamp": "2026-08-12T22:02:44.544949",
+  "results": {
+    "evidence_gate": {
+      "passed": true,
+      "issues": []
+    },
+    "format_gate": {
+      "passed": true,
+      "issues": []
+    },
+    "integrity_gate": {
+      "passed": true,
+      "issues": []
+    }
+  },
+  "all_passed": true
+}

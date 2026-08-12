@@ -1,0 +1,50 @@
+{
+  "sub_question": "Q3",
+  "model": "候选池非支配排序(近似Pareto) + TOPSIS + 等权重DE交叉验证",
+  "key_results": {
+    "candidate_pool_size": 9600,
+    "pareto_front_size": 193,
+    "best_design": {
+      "r_star": 0.2138,
+      "h_star": 4.4987,
+      "n_star": 5,
+      "R": 0.73708,
+      "P": 0.0899,
+      "T": 0.77953
+    },
+    "de_cross_validation": {
+      "r": 0.2155,
+      "h": 4.5,
+      "n": 4,
+      "R": 0.74141,
+      "P": 0.08441,
+      "T": 0.77233
+    },
+    "data_best": {
+      "R": {
+        "r": 0.2,
+        "h": 3.0,
+        "n": 10,
+        "value": 0.721922
+      },
+      "P": {
+        "r": 0.2,
+        "h": 4.5,
+        "n": 2,
+        "value": 0.076688
+      },
+      "T": {
+        "r": 0.2,
+        "h": 4.5,
+        "n": 4,
+        "value": 0.77401
+      }
+    },
+    "note": "n为整数约束，候选池中n已取整；Pareto前沿由6000 LHS + 11×80×60网格增强构成"
+  },
+  "figures": [
+    "q3_01_pareto_3d.png",
+    "q3_02_pareto_proj.png",
+    "q3_03_best_vs_data.png"
+  ]
+}

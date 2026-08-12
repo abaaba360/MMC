@@ -1,0 +1,509 @@
+{
+  "generated_by": "modeler_agent",
+  "phase": "S3_model_design",
+  "date": "2026-08-12",
+  "version": "2026-08-12_full_rerun_v2",
+  "problem": "选题B 高性能芯片热管理系统的优化问题",
+  "design_overview": {
+    "system": "芯片歧管式微通道热管理系统（歧管分配层 + 微通道换热层 + 针肋强化结构）",
+    "design_vars": [
+      {"symbol": "r", "name": "针肋宽度比", "range": [0, 0.3], "type": "continuous", "data_values": [0, 0.1, 0.15, 0.2, 0.3]},
+      {"symbol": "h", "name": "歧管深高比", "range": [3.0, 4.5], "type": "continuous", "data_values": [3.0, 3.5, 4.0, 4.5]},
+      {"symbol": "n", "name": "单个歧管单元内沿流向针肋排数", "range": [0, 10], "type": "integer", "data_values": [0, 2, 4, 6, 8, 10]}
+    ],
+    "feasible_region_note": "数据揭示强耦合：r=0 当且仅当 n=0（无针肋基线，仅4样本）；r>0 时 n∈{2,4,...,10}。优化可行域必须携带此耦合约束：X = {r∈[0,0.3], h∈[3,4.5], (r=0∧n=0) ∨ (r>0∧n∈[2,10])}，禁止 (r>0,n=0) 与 (r=0,n>0) 组合。",
+    "metrics_data_ranges": {
+      "R": {"min": 0.721922, "max": 0.773783, "std": 0.011267, "note": "量程极窄≈7%，须用相对误差指标评估代理"},
+      "P": {"min": 0.076688, "max": 0.204048, "std": 0.027772, "note": "量程宽≈2.7倍，r/h主导"},
+      "T": {"min": 0.774010, "max": 0.873100, "std": 0.019444, "note": "随n呈U型，机理关键现象"}
+    },
+    "empirical_influence_laws": {
+      "R_vs_r": "U型，r≈0.2最优（先降后升，r=0.3处针肋堵塞开始劣化）",
+      "R_vs_h": "单调升（歧管加深使微通道相对变薄，换热面积降→热阻升）",
+      "R_vs_n": "单调降（排数多→扰动强、面积大→热阻降）",
+      "P_vs_r": "单调升且r=0.3处陡增（针肋绕流阻力主导）",
+      "P_vs_h": "单调降（歧管加深→分配充分、流速降→压降降）",
+      "P_vs_n": "单调升（排数多→局部阻力多）",
+      "T_vs_n": "U型，n≈4-6最优（横向混合改善均匀性 vs 沿程温升抬高下游Tmax 两效应竞争）",
+      "T_vs_r": "U型，r≈0.2最优",
+      "corr_RP": -0.684,
+      "note": "R-P强负相关=换热性能与能耗代价的根本权衡，是Q3多目标与三指标合理性论证的核心证据"
+    },
+    "calibration_sources": {
+      "附件1物性": "去离子水ρ=998.2,Cp=4182,k=0.6,μ=0.001003; 氮化铝k=200; 芯片等效k=298; 工况: ṁ=1e-3 kg/s, T_in=293K, 出口表压0, 环境293K, 自然对流10 W/(m2·K), 体热源5e9 W/m3",
+      "附件2数据": "84样本近空间填充试验设计"
+    }
+  },
+  "sub_questions": [
+    {
+      "sub_question_id": "Q1",
+      "title": "机理建模与影响规律分析",
+      "candidates": [
+        {
+          "id": "Q1_C1",
+          "name": "集总参数热-流耦合电阻网络模型",
+          "type": "standard",
+          "mathematical_formulation": "能量平衡：Q_total = q_v·V_chip = ṁ·C_p·(T_out − T_in)，流体整体温升 ΔT_f = Q_total/(ṁ·C_p)。\n集总电阻网络：T_j − T_f,avg = Q_total·R_total，其中 R_total = R_cond,chip + R_cond,sub + R_conv,eff。\nR_cond,chip = L_chip/(k_chip·A_chip)；R_cond,sub = L_sub/(k_AlN·A_chip)；R_conv,eff = 1/(h_c·(A_base + η_f·A_fin))。\n层流对流传热（Re~O(10²)，见A11）：Nu = 4.36 + 0.066·(D_h/L)·Re·Pr/[1 + 0.04·((D_h/L)·Re·Pr)^(2/3)]（Sieder-Tate入口发展段修正），h_c = Nu·k_w/D_h。\nRe = ρ·u·D_h/μ，u = ṁ/(ρ·A_c)，A_c = N_ch·w_ch·H_ch，D_h = 4A_c/P_wet。\n针肋增强：d = r·w_ch，A_fin = n·N_pin,row·π·d·H_ch，肋效率 η_f = tanh(m·L_fin)/(m·L_fin)，m = sqrt(4·h_c/(k_pin·d))，L_fin = H_ch。\n压降网络：ΔP = f·(L_ch/D_h)·(ρu²/2) + ΔP_manifold + ΔP_pin，f = 64/Re（层流），ΔP_pin = n·0.5·ρu²·(C_D·A_front/A_c)，C_D≈1.2。\n无量纲映射：R_nd = κ_R·R_total·Q_total/ΔT_ref，P_nd = κ_P·ΔP/ΔP_ref，T_nd = κ_T·(T_max−T_min)/(T_mean−T_in)；κ_R,κ_P,κ_T为标定修正系数，用附件2 84样本最小二乘标定。",
+          "assumptions": ["A1 稳态", "A2 物性恒定", "A3 均匀体热源", "A11 层流", "A12 歧管单元并联压降平衡"],
+          "strengths": ["物理结构清晰、每个参数物理意义明确", "解析/半解析、计算极快", "可直接给出 r/h/n→R/P/T 的定性方向（符号）与半定量趋势"],
+          "limitations": ["集总假设将温度压缩为单一代表值，无法输出温度空间分布", "无法刻画T随n的U型非单调现象（需要流向分辨率）", "需靠标定系数κ修正系统性偏差"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 4
+        },
+        {
+          "id": "Q1_C2",
+          "name": "流向分段热-流耦合模型（针肋排数空间解析 + 数据标定）",
+          "type": "enhanced",
+          "mathematical_formulation": "将单个歧管单元沿流向离散为K段（K=20），段k长ΔL=L/K，作定常能量平衡与传热递推。\n流体温度递推（沿流方向标量场）：T_f,k+1 = T_f,k + Q_k/(ṁ·C_p)，T_f,1 = T_in = 293K，其中段内换热功率 Q_k = (T_w,k − T_f,k)/R_conv,k。\n段内传热阻：R_conv,k = 1/[h_c,k·(A_base,k + η_f,k·A_fin,k)]，其中 A_fin,k = 段内针肋数×π·d·H_ch，η_f,k = tanh(m_k·H_ch)/(m_k·H_ch)，m_k = sqrt(4·h_c,k/(k_pin·d))。\n针肋引起的局部强化：Nu_k = Nu0(r_k)·[1 + g(n)·(1 − exp(−x_k/L_therm))]，g(n)=c1·n+c2·n²（n为段前累计排数，表征扰动累积），h_c,k = Nu_k·k_w/D_h。\n壁面/结温：T_j,k = T_w,k + q_flux,k·R_cond,seg，q_flux,k为段热流密度（由体热源均摊）。\n压降沿用流阻网络：ΔP = Σ_k ΔP_ch,k + ΔP_pin(n) + ΔP_manifold(h)，ΔP_ch,k = f_k·(ΔL/D_h)·(ρu²/2)，ΔP_pin = n·0.5·ρu²·(C_D·A_front/A_c)。\n输出：流向温度剖面 T_f(x), T_j(x)；R_nd = κ_R·(T_j,max − T_in)/(Q_total·R_ref)，T_nd = κ_T·(T_j,max − T_j,min)/(T_j,mean − T_in)，P_nd = κ_P·ΔP/ΔP_ref。\n求解：从入口向出口顺序递推（稳态低Biot数，前向推进即收敛），对(r,h,n)每个网格点O(K)完成，可对84样本批量标定κ。\n机理可解释性：n↑ → 扰动与换热面积↑ → R↓；但沿程流体温升也随排数累积 → 下游T_j↑ → T_max↑，故 T_nd(n) 呈U型（n=4-6最小），与附件2数据一致。",
+          "assumptions": ["A1 稳态", "A2 物性恒定", "A3 均匀体热源", "A11 层流", "A12 歧管单元并联", "A14 温度非均匀性定义"],
+          "strengths": ["流向一维分辨率刻画温度空间分布与温度非均匀性", "能解释 T-n 的U型、R-r的U型等非单调现象（机理与数据双验证）", "参数物理可解释、可标定、计算开销小", "为Q2混合代理提供物理先验结构", "直接支撑三指标综合评价合理性的论证"],
+          "limitations": ["仍为1D流向近似，横向温度分布靠段内混合假设简化", "修正函数g(n)形式需数据标定", "物理压降模型误差依赖关联式适用性"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 8
+        },
+        {
+          "id": "Q1_C3",
+          "name": "无量纲数族幂律回归模型（影响规律定量化）",
+          "type": "alternative",
+          "mathematical_formulation": "对无量纲指标取对数线性形式（幂律结构）：\nln y = β0 + β1·ln(r + r0) + β2·ln h + β3·ln(n + 1) + β12·ln(r+r0)·ln h + β13·ln(r+r0)·ln(n+1) + ε，y∈{R,P,T}，r0=0.02避免ln0奇异，n+1处理n=0基线。\n等价于 y = A·(r+r0)^α·h^β·(n+1)^γ（+交互项），幂指数α,β,γ即弹性系数：α_R = ∂lnR/∂lnr 表示r每增1%热阻相对变化。\n拟合：对标准化输入做OLS（或岭回归），用标准回归系数/弹性系数给出影响规律排序与显著性。\n作用定位：作为Q1机理模型的影响规律定量化补充——给出各参数对各指标的弹性排序、交叉验证机理方向，并输出影响规律曲线所需的系数。",
+          "assumptions": ["A5 光滑映射", "A14 温度非均匀性定义"],
+          "strengths": ["直接给出弹性系数与影响规律排序，表格化、易引用", "实现极简单，可与机理模型方向交叉验证"],
+          "limitations": ["纯数据拟合，不满足'结合传热与流动基本机理'的题设要求", "幂律形式对U型趋势刻画能力弱（需二次项补正）", "无法解释机理成因，创新性低"],
+          "implementation_difficulty": "easy",
+          "innovation_score": 3
+        }
+      ],
+      "selected": "Q1_C2",
+      "elimination_rationale": {
+        "Q1_C1": "保留为机理基线：集总网络给出方向性规律与R_total的解析骨架，用于与Q1_C2结果交叉验证；但因无流向分辨率，无法输出温度非均匀性T且无法解释T随n的U型现象，不选作主模型",
+        "Q1_C2": "选择为主模型：兼具机理可解释（满足'结合传热与流动基本机理'）与流向空间分辨率，可同时解释R/P/T三个指标及全部非单调现象（T-n U型、R-r U型、R-P权衡），且结构可标定、可为Q2混合代理提供物理先验",
+        "Q1_C3": "仅作影响规律定量化补充：其弹性系数输出用于表格化呈现'参数→指标'影响强度与排序，不作为机理主体（纯拟合不符合题设机理要求）"
+      },
+      "deliverable_note": "三指标综合评价合理性论证：R（换热性能/结温抑制）、P（能耗代价/泵功）、T（温度均匀性/热可靠性）分别刻画性能、代价、可靠性三个正交维度；数据中R-P相关系数−0.684表明存在根本权衡、无单一设计可同时最优，故三指标构成互补的非冗余综合评价体系，也是Q3多目标优化的必要性依据。"
+    },
+    {
+      "sub_question_id": "Q2",
+      "title": "代理模型构建与评估",
+      "candidates": [
+        {
+          "id": "Q2_C1",
+          "name": "岭正则化多项式响应面（三次含交互）",
+          "type": "standard",
+          "mathematical_formulation": "对标准化输入 x'=(r',h',n')（min-max到[-1,1]）构建3阶多项式基 φ_α(x')=∏(x'_i)^α_i，|α|≤3，模型 ŷ(x') = Σ_α β_α·φ_α(x')。\n目标：min_β Σ_i (y_i − ŷ_i)² + λ·‖β‖²，λ由5折CV网格选择（岭惩罚防84样本过拟合）。\n系数β_α标准化后可解读主效应/交互/二次项贡献。作为GPR的基线对比。",
+          "assumptions": ["A5 光滑映射", "A6 n连续化"],
+          "strengths": ["实现简单、系数可解释", "低阶多项式对小样本基线稳健", "作为回归下界与GPR对照量化代理增益"],
+          "limitations": ["R指标量程极窄(0.72-0.77)，多项式对窄带响应拟合稳定性差", "对U型/强交互非线性刻画有限", "无不确定性输出，无法服务Q5"],
+          "implementation_difficulty": "easy",
+          "innovation_score": 3
+        },
+        {
+          "id": "Q2_C2",
+          "name": "高斯过程回归（Matern 5/2 ARD核 + NLL优化 + 5折CV）",
+          "type": "standard",
+          "mathematical_formulation": "数据 D={(x_i,y_i), i=1..84}，x_i=(r_i,h_i,n_i)标准化，y_i∈{R,P,T}（三个指标分别建独立GPR，共享同一核结构）。\nGP先验：y ~ GP(m(x), k(x,x'))，m(x)=样本均值（常数均值函数）。\nMatern 5/2 ARD核：k(x,x') = σ_f²·(1 + √5·r_d + (5/3)·r_d²)·exp(−√5·r_d)，其中 r_d(x,x') = sqrt(Σ_{d∈{r,h,n}} (x_d−x'_d)²/ρ_d²)，ρ_d为各维异向长度尺度（ARD自动特征选择）。\n超参数 θ={σ_f, ρ_r, ρ_h, ρ_n, σ_n} 通过最小化负对数边际似然估计：NLL(θ) = ½yᵀK_y⁻¹y + ½ln|K_y| + (N/2)ln(2π)，K_y = K + σ_n²I。用L-BFGS-B优化，5次随机重启（固定seed）防局部最优。\n预测分布：μ*(x*) = k*ᵀK_y⁻¹y；σ*²(x*) = k(x*,x*) − k*ᵀK_y⁻¹k*（k* = k(x*,x_i)列向量）。\n评估：固定seed打乱后5折CV（每折保留16-17样本），指标R²、RMSE、MAE、相对RMSE(RRMSE=RMSE/y_range)；再以LOOCV复核（84次）。R指标量程窄，须同时报RRMSE与R²。\n残差诊断：预测残差正态性（Shapiro）、异方差检验；输出残差图供论文。\n不确定性输出：每点预测方差σ²_i(x)，作为Q5模型不确定度来源。",
+          "assumptions": ["A4 CFD数据噪声可忽略", "A5 光滑映射", "A6 n连续化", "A13 训练域内使用"],
+          "strengths": ["小样本(84)下贝叶斯非参数模型拟合稳定、抗过拟合", "内建不确定度量化σ²(x)——直接服务Q5双源不确定度传播", "ARD长度尺度自动给出各参数重要度", "核超参优化成熟、scikit-learn直接实现"],
+          "limitations": ["推断O(N³)=O(84³)极小，但核矩阵需Cholesky数值稳定处理", "外推能力弱（已由A13限定域内使用）", "需核选择与超参多重启，调试成本略高"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 6
+        },
+        {
+          "id": "Q2_C3",
+          "name": "集成树模型（随机森林 + 梯度提升）",
+          "type": "alternative",
+          "mathematical_formulation": "随机森林：bootstrap抽样N_est=300棵CART回归树，叶节点最小样本min_samples_leaf≥4抑制过拟合，预测取均值 ŷ = (1/B)Σ_b T_b(x)。\n梯度提升：GBR(n_estimators=300, max_depth=2-3, learning_rate=0.05) 逐步拟合残差。\n两者均5折CV评估R²/RMSE/MAE，输出特征重要度（r,h,n对R/P/T各自的贡献占比）。\n作用：作为树模型对照检验GPR在小样本下的优越性，并用特征重要度佐证Q1的影响规律方向。",
+          "assumptions": ["A5 光滑映射", "A6 n连续化"],
+          "strengths": ["非线性刻画强", "特征重要度输出直观", "无需核函数假设"],
+          "limitations": ["84样本下树模型易过拟合、外推更不可控", "无不确定性量化", "对光滑响应不如GPR高效（需调参防过拟合）"],
+          "implementation_difficulty": "easy",
+          "innovation_score": 3
+        },
+        {
+          "id": "Q2_C4",
+          "name": "机理-残差混合代理模型（物理先验 + GPR补偿）",
+          "type": "enhanced",
+          "mathematical_formulation": "两阶段：\n阶段一：用附件2 84样本标定Q1_C2机理模型修正系数 κ（最小化 Σ(y − f_phys(x;κ))²），得物理先验预测 f_phys(x)。\n阶段二：对残差 r(x) = y(x) − f_phys(x) 建GPR（Matern 5/2核）：r(x) ~ GP(0, k_r)。\n总代理：ŷ(x) = f_phys(x) + GP_r(x)，预测方差 σ²(x) = σ²_phys(x) + σ²_r(x)（物理部分按参数不确定传播，残差部分由GPR给）。\n评估同Q2_C2（5折CV + LOOCV），与纯GPR对比RMSE/R²。\n创新点：物理约束的机器学习——外推时物理先验主导、训练域内残差GPR补偿系统偏差。",
+          "assumptions": ["A1-A3, A11, A12（机理模型全部假设）", "A4 CFD数据噪声可忽略", "A13 训练域内使用"],
+          "strengths": ["融合物理可解释性与数据精度", "外推稳健性优于纯GPR", "创新点突出（物理约束ML）"],
+          "limitations": ["机理标定与GPR残差拟合耦合，实现复杂、调参量大", "机理模型偏差会系统性传递给残差", "需保证f_phys不引入额外方差爆炸"],
+          "implementation_difficulty": "hard",
+          "innovation_score": 9
+        }
+      ],
+      "selected": "Q2_C2",
+      "elimination_rationale": {
+        "Q2_C1": "保留为基线：多项式响应面作为代理模型性能下界，量化GPR的增益",
+        "Q2_C2": "选择为主模型：84小样本下贝叶斯非参数最稳，内建σ²(x)为Q5提供模型不确定度，ARD给出特征重要度；完全满足'防过拟合(5折CV/LOOCV) + 不确定性量化'的增强要求",
+        "Q2_C3": "保留为对照：树模型特征重要度佐证Q1影响规律方向，但小样本下不作为主模型",
+        "Q2_C4": "作为增强/备选：若时间允许作为Q2改进版与纯GPR对比（物理融合创新），因标定耦合复杂放Phase 5迭代中实现，不阻塞主链路"
+      }
+    },
+    {
+      "sub_question_id": "Q3",
+      "title": "多目标优化与综合最优设计",
+      "candidates": [
+        {
+          "id": "Q3_C1",
+          "name": "权重标量化 + 差分进化全局优化（权重扫描近似Pareto）",
+          "type": "standard",
+          "mathematical_formulation": "先min-max归一化（防量纲淹没，见A7）：在设计域稠密采样（网格+随机10000点）经代理模型求极值 R_min,R_max,P_min,P_max,T_min,T_max，定义 R̃=(R−R_min)/(R_max−R_min)∈[0,1]，P̃、T̃同理。\n标量化：min_x F(x;w) = w_R·R̃(x) + w_P·P̃(x) + w_T·T̃(x)，s.t. x∈X（可行域含耦合约束），Σw=1。\n求解：scipy.optimize.differential_evolution（种群80、代数200、固定seed、5次独立运行取最优），对每个固定w求唯一解。\n权重扫描：w在单纯形网格（Δw=0.1，~66点）上逐一求解，得近似Pareto前沿与权重-方案映射。\n作用：① 等权重(w=(1/3,1/3,1/3))给出'无偏好综合最优'候选；② 与NSGA-II前沿端点交叉验证。",
+          "assumptions": ["A6 n连续化+取整复算", "A7 归一化可比", "A13 训练域内"],
+          "strengths": ["实现简单、收敛稳定", "等权重解可直接作为'综合最优'的一种定义", "为Q4权重扫描提供基础求解器"],
+          "limitations": ["单次求解仅一个Pareto点，需扫描才能逼近前沿", "权重主观性影响解", "无法揭示三目标权衡结构"],
+          "implementation_difficulty": "easy",
+          "innovation_score": 4
+        },
+        {
+          "id": "Q3_C2",
+          "name": "NSGA-II多目标进化 + TOPSIS综合决策（归一化+整数复算校正）",
+          "type": "enhanced",
+          "mathematical_formulation": "归一化同Q3_C1（min-max到[0,1]，R̃,P̃,T̃）。\n多目标问题：min F(x) = (R̃(x), P̃(x), T̃(x))，s.t. x∈X。\nNSGA-II（pymoo/geatpy）：种群120、代数300、SBX交叉率0.9、多项式变异0.1、锦标赛选择、非支配排序+拥挤度距离、精英保留10%。代理评估O(1)廉价，总评估3.6万次可秒级完成。\n整数与耦合约束处理：n在进化中作连续变量(0≤n≤10)；对每个候选解施加可行性惩罚（r≈0时强制n→0；r>0时n下界钳制到2），最终解的n取就近可行整数值，再用代理模型复算校正得真实(R,P,T)。\nTOPSIS综合决策（从Pareto集选'综合最优'）：理想解A⁺=(0,0,0)（归一化后各指标最小），负理想解A⁻=(1,1,1)；D⁺=sqrt(Σ(R̃ᵢ−0)²)，D⁻=sqrt(Σ(1−R̃ᵢ)²)；贴近度 C_i = D⁻/(D⁺+D⁻)，取C_i最大者为综合最优设计 (r*,h*,n*)。\n权重处理：TOPSIS采用熵权法客观定权作为主结果，并以等权重对比；同时输出等权重标量化解作交叉验证（两解一致性检验）。\n输出：Pareto前沿投影图（R̃-P̃ / R̃-T̃ / P̃-T̃）、最优方案与基线对比、取整复算前后对比表。",
+          "assumptions": ["A6 n连续化+取整复算", "A7 归一化可比", "A13 训练域内"],
+          "strengths": ["一次运行得完整Pareto前沿，系统展示三目标权衡（R-P强负相关、T中等相关）", "TOPSIS+熵权给出客观'综合最优'，满足'依据合理准则给出综合最优'", "与权重法双验证，符合国赛反套路导向", "归一化+整数三步法内置防错"],
+          "limitations": ["NSGA-II为启发式，须固定seed+多运行取并集前沿，不宣称全局最优", "TOPSIS权重仍含一定主观性（用熵权+等权重+灵敏度三方案对冲）", "Pareto前沿展示需2D投影解释"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 8
+        },
+        {
+          "id": "Q3_C3",
+          "name": "ε-约束法（Pareto前沿独立验证）",
+          "type": "alternative",
+          "mathematical_formulation": "min_x P̃(x)，s.t. R̃(x) ≤ ε_R，T̃(x) ≤ ε_T，x∈X；ε_R,ε_T在[0,1]网格扫描（各11档→121个单目标子问题），每个用differential_evolution求解。\n得到Pareto前沿的另一套采样（scipy.optimize.linear_constraint支持直接约束GPR输出）。\n作用：与NSGA-II前沿对照验证（两前沿应互相覆盖/一致），增强可追溯性。",
+          "assumptions": ["A6 n连续化+取整复算", "A7 归一化可比", "A13 训练域内"],
+          "strengths": ["Pareto最优性的严格性比启发式强（每点都是约束下精确最优）", "实现简单、独立于NSGA-II"],
+          "limitations": ["需处理121个子问题、计算量略增", "前沿覆盖依赖ε网格密度", "仅作验证、不提供综合决策准则"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 5
+        }
+      ],
+      "selected": "Q3_C2",
+      "elimination_rationale": {
+        "Q3_C1": "保留为配套：等权重标量化解作为'综合最优'交叉验证与Q4权重扫描的求解器基础",
+        "Q3_C2": "选择为主模型：Pareto前沿+TOPSIS+熵权客观定权+整数三步法，完整覆盖'以R/P/T尽可能小为目标建立优化模型并按合理准则给综合最优方案'，且归一化防量纲淹没、整数复算校正均内置",
+        "Q3_C3": "保留为验证：ε-约束法对NSGA-II前沿作独立复核，强化证据链"
+      }
+    },
+    {
+      "sub_question_id": "Q4",
+      "title": "权重敏感性与鲁棒设计方案",
+      "candidates": [
+        {
+          "id": "Q4_C1",
+          "name": "权重单纯形网格扫描 + 方案漂移敏感性量化",
+          "type": "standard",
+          "mathematical_formulation": "权重单纯形 Δ³ = {w=(w_R,w_P,w_T): w_i≥0, Σw=1}，网格Δw=0.05，w_T=1−w_R−w_P → ~231个权重点。\n对每个w求解 min_x S(x,w)=w_R·R̃(x)+w_P·P̃(x)+w_T·T̃(x)（复用Q3_C1差分进化），记录最优设计 x*(w) 与最优值 S*(w)。\n敏感性度量：① 设计漂移 Δx = |x*(w) − x*(w_center)| 随w的分布；② 对任一设计x的'稳定域' = {w∈Δ³ : S(x,w) ≤ S*(w)+δ} 的相对面积（δ=5%容差），面积越大越不敏感。\n可视化：权重-设计演化三元相图/热图、最优指标随权重变化曲线。",
+          "assumptions": ["A7 归一化可比", "A8 权重单纯形", "A13 训练域内"],
+          "strengths": ["直观量化'权重变化→最优方案漂移'，直接对应'不同应用场景关注点差异'", "稳定域面积为'对偏好变化不敏感'提供可视化判据", "实现简单、复用Q3_C1求解器"],
+          "limitations": ["纯扫描无严格'鲁棒最优'定义", "231次求解+稳定域积分计算量中等", "稳定域面积判据缺乏理论上的最优性保证"],
+          "implementation_difficulty": "easy",
+          "innovation_score": 5
+        },
+        {
+          "id": "Q4_C2",
+          "name": "权重域 Max-Min 鲁棒优化（含顶点闭式约简 + 场景权重箱）",
+          "type": "enhanced",
+          "mathematical_formulation": "鲁棒问题：x* = argmin_{x∈X} max_{w∈Δ³} S(x,w)，其中 S(x,w)=w_R·R̃(x)+w_P·P̃(x)+w_T·T̃(x)。\n顶点闭式约简（关键可解性定理）：S(x,w) 关于 w 是线性函数，Δ³ 是凸多胞形，线性函数在多胞形上的最大值必在顶点取得，而 Δ³ 的顶点恰为三个纯权重 (1,0,0),(0,1,0),(0,0,1)，故\n  max_{w∈Δ³} S(x,w) = max{R̃(x), P̃(x), T̃(x)}。\n于是双层max-min退化为单层minimax：x* = argmin_{x∈X} max{R̃(x), P̃(x), T̃(x)}——即'最劣势指标最小化'（最差归一化指标最小的折衷解，Chebyshev/minimax准则）。用differential_evolution直接求解，目标函数为max(R̃,P̃,T̃)，无需嵌套优化。\n场景权重箱扩展：不同应用场景偏好落在权重箱 W_s（如高算力场景 w_R∈[0.4,0.7]；低功耗场景 w_P∈[0.4,0.7]；高可靠场景 w_T∈[0.4,0.7]，均与Σw=1交集为多边形）。max_{w∈W_s}S(x,w)仍在W_s顶点取得（线性函数），枚举W_s∩Δ³的顶点候选集V_s（每箱≤8个），跨场景鲁棒：x* = argmin_x max_{s} max_{v∈V_s} S(x,v)。\n鲁棒性指标：① 最坏情形分 W(x)=max{R̃,P̃,T̃}；② 偏好敏感带宽 B(x)=max{R̃,P̃,T̃}−min{R̃,P̃,T̃}（因S对w线性，S在Δ³上的值域恰为[min f, max f]，带宽即指标散布）；③ 平均性能 E_S(x)=(R̃+P̃+T̃)/3（均匀偏好期望）。\n判定依据：鲁棒设计取 W(x) 最小者为主判据，B(x) 小者为'对偏好变化不敏感'的旁证，E_S(x) 保证不牺牲典型性能；三者一并报告。\n输出：鲁棒方案(r*,h*,n*)（含整数取整+复算校正）、全单纯形与各场景箱下的W/B/E_S表、权重扫描热图。",
+          "assumptions": ["A7 归一化可比", "A8 权重单纯形", "A13 训练域内"],
+          "strengths": ["'对偏好变化不敏感'有严格数学定义（最坏情形加权性能最优）", "顶点闭式约简把不可解双层优化化为可解单层minimax，完全可落地", "场景权重箱直接对应'不同应用场景指标关注点差异'", "鲁棒性判据W/B/E_S三指标完备且可解释"],
+          "limitations": ["max-min较保守（可能牺牲最优性，用E_S兜底展示典型性能）", "权重箱顶点集需按场景几何预先枚举", "minimax解为折衷解，极端偏好下非最优（此为鲁棒代价）"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 9
+        },
+        {
+          "id": "Q4_C3",
+          "name": "随机权重均值-方差双准则鲁棒设计（随机规划视角）",
+          "type": "alternative",
+          "mathematical_formulation": "在Δ³上按Dirichlet(1,1,1)抽样M=2000个权重 w^(m)（均匀覆盖单纯形，固定seed）。\n对设计x定义加权性能的均值与标准差：μ_S(x) = (1/M)Σ_m S(x,w^(m))，σ_S(x) = sqrt((1/M)Σ_m (S(x,w^(m))−μ_S(x))²)。\n鲁棒设计：min_x λ·μ_S(x) + (1−λ)·σ_S(x)（λ扫描0-1）或画μ-σ Pareto前沿，取折衷。\n作用：① 与Q4_C2 max-min互为鲁棒性定义的对照（平均+低方差 vs 最坏情形）；② 验证Q4_C2鲁棒解落在μ-σ有效前沿附近，证明'稳定性强'不靠牺牲典型性能；③ 统计量μ_S,σ_S直接可引用。",
+          "assumptions": ["A7 归一化可比", "A8 权重单纯形", "A13 训练域内"],
+          "strengths": ["从随机规划/均值-方差视角定义鲁棒，视角新颖", "μ/σ统计量直观可引用", "与max-min互补、互相验证"],
+          "limitations": ["λ选择仍有主观性", "M=2000次评估×DE迭代计算量中等", "较保守性弱于max-min"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 7
+        }
+      ],
+      "selected": "Q4_C2",
+      "elimination_rationale": {
+        "Q4_C1": "保留为敏感性可视化与稳定域分析工具（直接展示'权重变化→方案漂移'），不提供严格鲁棒最优",
+        "Q4_C2": "选择为主模型：max-min将'偏好变化不敏感'严格形式化，顶点约简+minimax保证可解可落地（呼应增强要求'内层顶点/网格、外层遗传'的明确求解策略），W/B/E_S三指标完备回答题设'判定依据与优势'",
+        "Q4_C3": "保留为对照验证：均值-方差视角证明鲁棒解不牺牲典型性能，增强'稳定性强'论断的可信度"
+      }
+    },
+    {
+      "sub_question_id": "Q5",
+      "title": "加工误差与工况波动的敏感性/稳定性分析",
+      "candidates": [
+        {
+          "id": "Q5_C1",
+          "name": "局部灵敏度/弹性系数分析（有限差分）",
+          "type": "standard",
+          "mathematical_formulation": "在设计点x0=(r0,h0,n0)处对指标y∈{R,P,T}作中心差分偏导：∂y/∂x_i ≈ [y(x0+δe_i) − y(x0−δe_i)]/(2δ)，δ取各维量程1%~2%（连续变量r,h；n用Δn=1的差分）。\n无量纲弹性：E_{i,y} = (∂y/∂x_i)·(x_i,0/y0)，表示x_i每增1%时y的相对变化。\n输出：3×3弹性矩阵、每指标的敏感参数排序（主效应排序）。\n作用：快速主效应筛选，与Q5_C2的蒙特卡洛方差贡献交叉验证。",
+          "assumptions": ["A5 光滑映射", "A9 加工误差有界", "A13 训练域内"],
+          "strengths": ["计算极快、公式简单", "弹性系数给出局部主效应排序"],
+          "limitations": ["仅局部一阶、无交互效应", "未量化分布性波动与失效概率", "对n的整数差分精度有限"],
+          "implementation_difficulty": "easy",
+          "innovation_score": 4
+        },
+        {
+          "id": "Q5_C2",
+          "name": "双源不确定度蒙特卡洛传播（加工误差 + GPR模型不确定度）",
+          "type": "enhanced",
+          "mathematical_formulation": "对目标设计x*（Q3综合最优 与 Q4鲁棒设计 两案分别评估）施加扰动，做N=20000次MC采样（固定seed）。\n参数（偶然）不确定度：r ~ 截断正态 TN(r*, σ_r, [0,0.3])，σ_r=0.01（≈±3%，A9）；h ~ TN(h*, σ_h, [3,4.5])，σ_h=0.075；n按离散扰动 n ∈ {n*−1, n*, n*+1}，概率(0.25,0.5,0.25)，越界按可行域就近钳制（r≈0则n→0）。\n模型（认知）不确定度：对每个MC样本x_m，指标i的采样值 y_i,m ~ N(μ_i(x_m), σ_i²(x_m))，其中 μ_i、σ_i² 为Q2_C2 GPR预测均值与方差——即把代理模型自身不确定度与参数扰动一起传播。\n工况波动：按A10（无量纲映射对工况绝对量一阶不敏感），以独立小噪声刻画：y_i,m ← y_i,m·(1+η_i)，η_i~N(0, σ_op²)，σ_op=1~2%。\n统计输出：每指标分布 mean/std/CV/P10/P50/P90、幅值；失效概率 p_fail,i = Pr(指标i > 阈值)，阈值取数据集或名义值的+5%上界；3×3方差贡献（对Var(y_i)按各参数一阶方差分量分解）得敏感性排序。\n稳定性判定：CV<2%判'高度稳定'，2%~5%判'稳定'，给出两设计方案（Q3/Q4）的对比表与扰动响应直方图/箱线图。",
+          "assumptions": ["A4 CFD数据可靠", "A9 加工误差有界", "A10 工况一阶不敏感", "A13 训练域内"],
+          "strengths": ["概率化、量化式回答'敏感性与稳定性'（P10/P50/P90、失效概率、CV）", "双源不确定度（参数偶然+GPR认知）融合，比纯参数扰动更严谨", "直接复用Q2的σ²(x)，形成代理→不确定度→稳定性的可追溯闭环", "可视化丰富（分布直方图、方差贡献、双方案对比）"],
+          "limitations": ["依赖GPR精度与σ²(x)校准质量", "N=20000×3指标评估需GPR预测向量化实现（可秒级）", "失效阈值选取带一定主观性（用敏感性报告对冲）"],
+          "implementation_difficulty": "medium",
+          "innovation_score": 7
+        },
+        {
+          "id": "Q5_C3",
+          "name": "Sobol全局灵敏度（方差分解，Saltelli采样）",
+          "type": "alternative",
+          "mathematical_formulation": "视GPR为黑盒f(x)，对X=(r,h,n)（n连续化）做Saltelli抽样：N0=2000基样本，总评估 N = N0·(2d+2) = 16000（d=3），固定seed。\n方差分解：Var(Y) = Σ_i V_i + Σ_{i<j} V_ij + ... ，一阶指数 S_i = V_i/Var(Y) = Var(E[Y|X_i])/Var(Y)，总效应 S_Ti = 1 − Var(E[Y|X_~i])/Var(Y)。\n用Saltelli估计式：S_i ≈ [Σ_m f(A)_m·(f(B_A^(i))_m − f(A)_m)] / Var(Y) 等。\n输出：各参数对R/P/T的一阶+总效应指数（含交互贡献 S_Ti−S_i）。\n作用：全局（而非局部）敏感性排序，量化交互效应，作为Q5_C1/C2的升级与验证。",
+          "assumptions": ["A5 光滑映射", "A13 训练域内", "输入独立（r,h,n正交设计，数据近似成立）"],
+          "strengths": ["全局敏感性+交互效应，方法论严谨、创新评分高", "与局部灵敏度互补升级"],
+          "limitations": ["需大量评估（16000×3），仍可接受", "输入独立假设在小样本下近似成立", "实现较复杂（Saltelli矩阵构建易错）"],
+          "implementation_difficulty": "hard",
+          "innovation_score": 8
+        }
+      ],
+      "selected": "Q5_C2",
+      "elimination_rationale": {
+        "Q5_C1": "保留为快速主效应筛选与交叉验证（3×3弹性矩阵），不是概率化评估主体",
+        "Q5_C2": "选择为主模型：双源不确定度（加工误差+GPR认知不确定度）传播给出概率化稳定性评估（P10/P50/P90、CV、失效概率），完整回答'评估设计方案的敏感性与稳定性'，且与Q2的σ²(x)形成可追溯闭环",
+        "Q5_C3": "作为增强：Sobol全局灵敏度作为局部灵敏度的全局升级，时间允许时给出含交互效应的全局排序，增强敏感性分析严谨性"
+      }
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "A1",
+      "description": "系统处于稳态运行",
+      "rationale": "附件工况为恒定边界（恒定入口流量、恒定体热源功率），芯片长期运行热-流场达到稳态",
+      "necessity": "控制方程退化为定常形式，省去时间项，使Q1机理模型可代数/递推求解",
+      "impact_if_violated": "需引入瞬态热响应，热阻瞬时值偏离稳态值5%~10%",
+      "scope": ["Q1", "Q2"]
+    },
+    {
+      "id": "A2",
+      "description": "冷却介质物性在温区内视为常数",
+      "rationale": "入口293K、温升有限（≤40K），去离子水密度/黏度/导热变化<5%",
+      "necessity": "使Re/Nu/Pr等无量纲数定义成立、无量纲分析可行",
+      "impact_if_violated": "Re/Nu计算偏差放大，压降与热阻预测小幅偏移",
+      "scope": ["Q1", "Q2"]
+    },
+    {
+      "id": "A3",
+      "description": "芯片热源视为均匀体热源",
+      "rationale": "附件1明确'芯片热源可视为均匀体热源'",
+      "necessity": "对称简化温度场求解，Q1分段模型可将热源均摊到各流向段",
+      "impact_if_violated": "局部热点位置预测偏差，温度非均匀性低估",
+      "scope": ["Q1"]
+    },
+    {
+      "id": "A4",
+      "description": "附件2样本视为高保真CFD仿真的确定性数据",
+      "rationale": "数据平滑、无缺失无重复、呈规则网格试验设计，未见噪声",
+      "necessity": "代理模型可作确定性插值，GPR噪声项σ_n仅取极小值",
+      "impact_if_violated": "代理模型过拟合噪声，预测方差被低估",
+      "scope": ["Q2", "Q5"]
+    },
+    {
+      "id": "A5",
+      "description": "性能指标对设计参数存在光滑连续映射",
+      "rationale": "传热/流动物理场连续，R/P/T对(r,h,n)连续可微（n经A6连续化后）",
+      "necessity": "GPR/多项式代理与梯度型优化成立的前提",
+      "impact_if_violated": "代理插值失真、优化目标不光滑",
+      "scope": ["Q2", "Q3", "Q5"]
+    },
+    {
+      "id": "A6",
+      "description": "整数变量n连续化处理，最终取整并用代理模型复算校正",
+      "rationale": "n为离散整数(0,2,...,10)，但代理模型与进化优化在连续空间中更高效",
+      "necessity": "统一代理与优化框架，避免组合枚举；优化结束后须就近取整+复算验证",
+      "impact_if_violated": "直接四舍五入可能落在不可行组合(r>0,n=0)或偏离代理预测，须复算校正（已内嵌于Q3/Q4求解流程）",
+      "scope": ["Q2", "Q3", "Q4"]
+    },
+    {
+      "id": "A7",
+      "description": "三无量纲指标经min-max归一化到[0,1]后才可加权比较",
+      "rationale": "R量程(0.722-0.774)与P量程(0.077-0.204)、T量程(0.774-0.873)差异悬殊，直接相加会被R主导",
+      "necessity": "多目标加权、TOPSIS、鲁棒加权的数学前提，防量纲/量级淹没（对齐coder防错细则）",
+      "impact_if_violated": "直接加权时大数值目标淹没小目标，加权结果失真",
+      "scope": ["Q3", "Q4"]
+    },
+    {
+      "id": "A8",
+      "description": "偏好权重向量位于三维单纯形Δ³={w≥0, Σw=1}",
+      "rationale": "偏好由三指标相对重视度表征，总权重归一为1",
+      "necessity": "Q4权重域建模（网格扫描、minimax、场景权重箱）的前提",
+      "impact_if_violated": "权重域外的偏好表现无法推断，鲁棒性结论仅限Δ³内有效",
+      "scope": ["Q4"]
+    },
+    {
+      "id": "A9",
+      "description": "加工误差为有界随机扰动（截断正态，σ≈±2%~3%，±5%内；n取整误差±1排）",
+      "rationale": "微通道/歧管制造公差典型水平（宽度比与深高比误差±0.01~0.075量级）",
+      "necessity": "Q5蒙特卡洛扰动建模的输入分布假设",
+      "impact_if_violated": "扰动幅度假设失准导致失效概率与CV估计偏差",
+      "scope": ["Q5"]
+    },
+    {
+      "id": "A10",
+      "description": "无量纲指标为相对参考基准的比值量，且对工况绝对量一阶不敏感",
+      "rationale": "R/P/T数值区间窄（0.07~0.87）表明为相对基准量；无量纲化剥离了流量/温度绝对水平",
+      "necessity": "同一代理模型可同时用于优化与Q5扰动分析；工况波动以独立小噪声刻画",
+      "impact_if_violated": "若无量纲化严重依赖工况，则跨工况代理失效，Q5需重标定",
+      "scope": ["Q1", "Q2", "Q5"]
+    },
+    {
+      "id": "A11",
+      "description": "微通道内为层流/低雷诺数流动，采用层流传热与流动关联式",
+      "rationale": "ṁ=1g/s、D_h约百微米量级，估算Re~O(10²~10³)属层流/过渡",
+      "necessity": "Q1机理模型选关联式的前提——湍流Dittus-Boelter会系统性高估换热、低估热阻",
+      "impact_if_violated": "湍流关联式导致h_c偏大、R_nd预测系统性偏差",
+      "scope": ["Q1"]
+    },
+    {
+      "id": "A12",
+      "description": "歧管各单元按压降平衡并联分配流量，忽略单元间横向传热耦合",
+      "rationale": "歧管分配层将长流道划为多个短流道，各单元流阻并联、由压降-流量平衡决定分配",
+      "necessity": "将3D热流问题分解为1D流阻网络+流向分段模型，使Q1可解析/半解析求解",
+      "impact_if_violated": "流量分配不均显著时需单元间耦合求解，Q1误差增大",
+      "scope": ["Q1", "Q2"]
+    },
+    {
+      "id": "A13",
+      "description": "代理模型仅在训练数据域内使用，不做外推",
+      "rationale": "GPR/多项式外推不可靠；优化器若跑到域外会产生不可信预测",
+      "necessity": "约束优化变量范围与可行域，防外推失真",
+      "impact_if_violated": "外推预测失真，最优解与鲁棒解不可信",
+      "scope": ["Q2", "Q3", "Q4", "Q5"]
+    },
+    {
+      "id": "A14",
+      "description": "温度非均匀性定义为最大温差与平均温度的归一化比：T_nd=(T_s,max−T_s,min)/(T_s,mean−T_in)",
+      "rationale": "赛题未明确定义T，采用电子封装领域常用定义；与附件2数据量级(0.77~0.87)一致",
+      "necessity": "Q1机理模型输出T与Q2代理目标定义统一的数学前提",
+      "impact_if_violated": "定义不一致导致机理模型与数据代理的目标错配、结论不可比",
+      "scope": ["Q1", "Q2"]
+    }
+  ],
+  "symbols": [
+    {"symbol": "r", "meaning": "针肋宽度比（针肋直径/通道宽度）", "unit": "无量纲", "scope": "全篇"},
+    {"symbol": "h", "meaning": "歧管深高比（歧管层高/微通道层高）", "unit": "无量纲", "scope": "全篇"},
+    {"symbol": "n", "meaning": "单个歧管单元内沿流向针肋排数（整数）", "unit": "排", "scope": "全篇"},
+    {"symbol": "x", "meaning": "设计变量向量 (r, h, n)", "unit": "-", "scope": "全篇"},
+    {"symbol": "X", "meaning": "可行设计域（含耦合约束 r=0⟺n=0）", "unit": "-", "scope": "Q3,Q4"},
+    {"symbol": "R", "meaning": "无量纲热阻", "unit": "无量纲", "scope": "全篇"},
+    {"symbol": "P", "meaning": "无量纲压降", "unit": "无量纲", "scope": "全篇"},
+    {"symbol": "T", "meaning": "无量纲温度非均匀性", "unit": "无量纲", "scope": "全篇"},
+    {"symbol": "R̃", "meaning": "min-max归一化热阻，∈[0,1]", "unit": "无量纲", "scope": "Q3,Q4"},
+    {"symbol": "P̃", "meaning": "min-max归一化压降，∈[0,1]", "unit": "无量纲", "scope": "Q3,Q4"},
+    {"symbol": "T̃", "meaning": "min-max归一化温度非均匀性，∈[0,1]", "unit": "无量纲", "scope": "Q3,Q4"},
+    {"symbol": "w_R, w_P, w_T", "meaning": "三指标权重，w_R+w_P+w_T=1, w_i≥0", "unit": "无量纲", "scope": "Q3,Q4"},
+    {"symbol": "Δ³", "meaning": "三维权重单纯形 {w≥0, Σw=1}", "unit": "-", "scope": "Q4"},
+    {"symbol": "W_s", "meaning": "应用场景s的权重箱（偏好范围）", "unit": "-", "scope": "Q4"},
+    {"symbol": "S(x,w)", "meaning": "加权性能分 w_R·R̃+w_P·P̃+w_T·T̃", "unit": "无量纲", "scope": "Q4"},
+    {"symbol": "W(x)", "meaning": "最坏情形加权分 max_{w∈Δ³}S(x,w)=max{R̃,P̃,T̃}", "unit": "无量纲", "scope": "Q4"},
+    {"symbol": "B(x)", "meaning": "偏好敏感带宽 max{R̃,P̃,T̃}−min{R̃,P̃,T̃}", "unit": "无量纲", "scope": "Q4"},
+    {"symbol": "E_S(x)", "meaning": "均匀偏好下平均性能分 (R̃+P̃+T̃)/3", "unit": "无量纲", "scope": "Q4"},
+    {"symbol": "ṁ", "meaning": "冷却液入口质量流量 = 1e-3 kg/s", "unit": "kg/s", "scope": "Q1"},
+    {"symbol": "T_in", "meaning": "冷却液入口温度 = 293 K", "unit": "K", "scope": "Q1"},
+    {"symbol": "q_v", "meaning": "芯片体热源强度 = 5e9 W/m³", "unit": "W/m³", "scope": "Q1"},
+    {"symbol": "Q_total", "meaning": "芯片总产热功率 = q_v·V_chip", "unit": "W", "scope": "Q1"},
+    {"symbol": "V_chip", "meaning": "芯片热源体积（10mm×10mm×厚度）", "unit": "m³", "scope": "Q1"},
+    {"symbol": "ρ", "meaning": "去离子水密度 = 998.2", "unit": "kg/m³", "scope": "Q1"},
+    {"symbol": "C_p", "meaning": "去离子水比热 = 4182", "unit": "J/(kg·K)", "scope": "Q1"},
+    {"symbol": "k_w", "meaning": "去离子水导热系数 = 0.6", "unit": "W/(m·K)", "scope": "Q1"},
+    {"symbol": "μ", "meaning": "去离子水动力黏度 = 0.001003", "unit": "Pa·s", "scope": "Q1"},
+    {"symbol": "k_AlN", "meaning": "氮化铝导热系数 = 200", "unit": "W/(m·K)", "scope": "Q1"},
+    {"symbol": "k_chip", "meaning": "芯片等效材料导热系数 = 298", "unit": "W/(m·K)", "scope": "Q1"},
+    {"symbol": "D_h", "meaning": "微通道水力直径", "unit": "m", "scope": "Q1"},
+    {"symbol": "A_c", "meaning": "微通道总横截面积", "unit": "m²", "scope": "Q1"},
+    {"symbol": "u", "meaning": "通道内平均流速 = ṁ/(ρ·A_c)", "unit": "m/s", "scope": "Q1"},
+    {"symbol": "Re", "meaning": "雷诺数 = ρ·u·D_h/μ", "unit": "无量纲", "scope": "Q1"},
+    {"symbol": "Pr", "meaning": "普朗特数 = μ·C_p/k_w", "unit": "无量纲", "scope": "Q1"},
+    {"symbol": "Nu", "meaning": "努塞尔数（层流发展段关联式）", "unit": "无量纲", "scope": "Q1"},
+    {"symbol": "h_c", "meaning": "对流换热系数 = Nu·k_w/D_h", "unit": "W/(m²·K)", "scope": "Q1"},
+    {"symbol": "η_f", "meaning": "针肋肋效率 = tanh(m·H_ch)/(m·H_ch)", "unit": "无量纲", "scope": "Q1"},
+    {"symbol": "ΔP", "meaning": "物理压降（层流+针肋绕流+歧管）", "unit": "Pa", "scope": "Q1"},
+    {"symbol": "f", "meaning": "达西摩擦系数（层流 = 64/Re）", "unit": "无量纲", "scope": "Q1"},
+    {"symbol": "C_D", "meaning": "针肋圆柱绕流阻力系数 ≈ 1.2", "unit": "无量纲", "scope": "Q1"},
+    {"symbol": "R_th", "meaning": "物理热阻（K/W）", "unit": "K/W", "scope": "Q1"},
+    {"symbol": "T_f(x)", "meaning": "冷却液沿流向温度剖面", "unit": "K", "scope": "Q1"},
+    {"symbol": "T_j(x)", "meaning": "结区/壁面沿流向温度剖面", "unit": "K", "scope": "Q1"},
+    {"symbol": "T_max, T_min", "meaning": "最高/最低表面温度", "unit": "K", "scope": "Q1,Q5"},
+    {"symbol": "K", "meaning": "流向离散段数（Q1_C2取20）", "unit": "无量纲", "scope": "Q1"},
+    {"symbol": "κ_R, κ_P, κ_T", "meaning": "Q1机理模型对R/P/T的标定修正系数", "unit": "无量纲", "scope": "Q1,Q2"},
+    {"symbol": "μ_i(x)", "meaning": "GPR对指标i的预测均值（i=R,P,T）", "unit": "同指标量纲", "scope": "Q2,Q5"},
+    {"symbol": "σ_i²(x)", "meaning": "GPR对指标i的预测方差（认知不确定度）", "unit": "同指标量纲²", "scope": "Q2,Q5"},
+    {"symbol": "k(x,x')", "meaning": "Matern 5/2 ARD协方差核函数", "unit": "-", "scope": "Q2"},
+    {"symbol": "θ", "meaning": "GPR核超参数 {σ_f, ρ_r, ρ_h, ρ_n, σ_n}", "unit": "-", "scope": "Q2"},
+    {"symbol": "y", "meaning": "代理建模观测目标值（R/P/T之一）", "unit": "同指标量纲", "scope": "Q2"},
+    {"symbol": "R², RMSE, MAE, RRMSE", "meaning": "代理模型拟合/预测评价指标（RRMSE=RMSE/量程）", "unit": "RRMSE为无量纲", "scope": "Q2"},
+    {"symbol": "N", "meaning": "样本数（84）或蒙特卡洛采样数（20000）", "unit": "无量纲", "scope": "Q2,Q5"},
+    {"symbol": "CV", "meaning": "变异系数 = std/mean", "unit": "无量纲", "scope": "Q5"},
+    {"symbol": "S_i", "meaning": "局部弹性系数 = (∂y/∂x_i)·x_i/y", "unit": "无量纲", "scope": "Q5"},
+    {"symbol": "S_Ti", "meaning": "Sobol总效应指数", "unit": "无量纲", "scope": "Q5"},
+    {"symbol": "σ_r, σ_h", "meaning": "加工误差标准差（r取0.01，h取0.075）", "unit": "同变量量纲", "scope": "Q5"},
+    {"symbol": "P10, P50, P90", "meaning": "扰动后指标分布分位数", "unit": "同指标量纲", "scope": "Q5"},
+    {"symbol": "p_fail", "meaning": "失效概率 Pr(指标 > 阈值)", "unit": "无量纲", "scope": "Q5"},
+    {"symbol": "δ", "meaning": "有限差分步长 / 稳定性容差", "unit": "同变量量纲", "scope": "Q4,Q5"}
+  ],
+  "model_dag": {
+    "Q1": {"depends_on": [], "outputs_to": ["Q2", "Q3"], "note": "机理模型为Q2提供物理先验结构、为Q3提供可行域与初始解方向"},
+    "Q2": {"depends_on": ["Q1"], "outputs_to": ["Q3", "Q5"], "note": "GPR代理供Q3优化与Q5扰动传播"},
+    "Q3": {"depends_on": ["Q1", "Q2"], "outputs_to": ["Q4", "Q5"], "note": "Pareto前沿/综合最优供Q4鲁棒分析与Q5稳定性评估"},
+    "Q4": {"depends_on": ["Q3"], "outputs_to": ["Q5"], "note": "鲁棒设计方案作为Q5待评估设计之一"},
+    "Q5": {"depends_on": ["Q2", "Q3", "Q4"], "outputs_to": [], "note": "对Q3综合最优与Q4鲁棒设计做敏感性/稳定性评估，输出最终稳定性结论"}
+  },
+  "innovation_points": [
+    "Q1 流向分段热-流耦合模型：以1D流向温度剖面机理地解释'针肋排数n增多反而使温度非均匀性T上升'的U型非单调现象（横向混合改善 vs 沿程温升抬高下游Tmax 的双效应竞争），并与附件2数据双验证——区别于纯集总/纯关联式的套路化建模",
+    "Q1 机理-数据联合标定：机理模型修正系数κ用附件2 84样本最小二乘标定，实现'物理机理+数据校准'，既满足题设'结合传热与流动基本机理'又保证与数据自洽",
+    "Q2 双校验防过拟合：GPR主模型配5折CV+LOOCV双评估、与多项式/树模型基线对比，R指标采用RRMSE相对误差（量程仅7%）；GPR预测方差σ²(x)直接成为Q5认知不确定度来源，形成'代理→不确定度→稳定性'可追溯闭环",
+    "Q3 归一化+整数三步法：min-max归一化防R量程主导加权（对齐coder防错细则'多目标不能直接加不同量纲目标'）；整数n'连续松弛→就近取整→代理复算校正'三步法避免四舍五入落入(r>0,n=0)不可行组合",
+    "Q4 顶点闭式约简：加权分S(x,w)对w线性、权重单纯形为凸多胞形，max_{w∈Δ³}S=顶点处=max{R̃,P̃,T̃}，把不可解的双层max-min约简为可解单层minimax'最劣势指标最小化'（Chebyshev准则），完全规避'鲁棒双层不可解'陷阱；并给出W/B/E_S三指标鲁棒性判定体系",
+    "Q4 场景权重箱跨场景鲁棒：将'不同应用场景偏好差异'建模为权重箱W_s，利用线性函数顶点性质枚举箱顶点，得到跨场景稳健的单一设计方案",
+    "Q5 双源不确定度蒙特卡洛：参数偶然不确定度（加工误差截断正态+排数取整）+模型认知不确定度（GPR预测方差）+工况波动小噪声三源融合传播，输出P10/P50/P90、失效概率、CV、方差贡献排序的概率化稳定性评估",
+    "Q3/Q4/Q5 设计-鲁棒-验证三级闭环：综合最优(Q3)→鲁棒设计(Q4)→双方案敏感性/稳定性对比(Q5)，形成完整'优化-稳健-检验'证据链，服务论文模型检验三件套"
+  ],
+  "implementation_guidance": {
+    "optimization_anti_error_rules": [
+      "多目标归一化：Q3/Q4所有加权/TOPSIS/鲁棒计算前，必须对R/P/T做min-max归一化（用设计域稠密采样求极值）；严禁直接加不同量纲目标",
+      "整数与耦合约束：n连续化求解后必须就近取可行整数（r>0→n∈[2,10]；r≈0→n=0），并用代理复算校正；优化器需惩罚(r>0,n=0)与(r=0,n>0)组合",
+      "求解器方向：scipy.minimize仅做最小化，最大化目标取负并在结果中还原；不等式约束按 fun(x)≥0 方向书写，代入边界点验证符号",
+      "Q4顶点约简落地：鲁棒目标直接写 max(R̃,P̃,T̃) 单层minimax，用differential_evolution求解，不实现嵌套双层；场景箱情况枚举箱∩Δ³顶点集",
+      "启发式算法：NSGA-II/DE固定随机种子、≥5次独立运行、报告均值±标准差、与ε-约束或权重法交叉验证，不宣称全局最优",
+      "不信任求解器success标志：最优解重新代入全部约束逐条输出值/边界/松弛量/活跃性"
+    ],
+    "surrogate_and_uncertainty_rules": [
+      "数据读取后先校验：84×7形状、列名、r∈[0,0.3]/h∈[3,4.5]/n∈{0,2,4,6,8,10}范围、缺失重复为0，列名乱码不得继续建模",
+      "GPR实现：sklearn GPR+Matern(5/2)+ARD，多随机重启优化NLL（固定seed），评估用5折CV+LOOCV，R指标同时报R²与RRMSE",
+      "Q5不确定度：MC采样固定seed、N≥20000、GPR预测方差σ²(x)经向量化逐点注入；输出min/max/mean/std/CV/P10/P50/P90供论文引用",
+      "统计量输出：每组关键结果打印 min/max/mean/std/CV/amplitude（对齐coder两阶段规范），写入q{i}_results.json保证证据链",
+      "图规范：图内不画set_title，中文字体SimHei/微软雅黑，去上右边框，PNG(300dpi)+PDF矢量双输出，散点alpha=0.7，非数据图禁手写零散坐标"
+    ]
+  },
+  "self_check": {
+    "candidates_per_question": {"Q1": 3, "Q2": 4, "Q3": 3, "Q4": 3, "Q5": 3, "all_ge_2": true},
+    "selected_models": {"Q1": "Q1_C2", "Q2": "Q2_C2", "Q3": "Q3_C2", "Q4": "Q4_C2", "Q5": "Q5_C2"},
+    "assumption_count": 14,
+    "assumption_no_redundancy": "已合并A10/A11（无量纲相对基准与工况一阶不敏感）为一案，剔除旧版冗余，14条无重复",
+    "assumption_consistency": "无矛盾：A11层流与A2物性恒定相容；A6连续化与A13训练域内相容（取整点在训练域内）；A14温度定义统一Q1/Q2目标",
+    "symbol_count": 58,
+    "symbol_uniqueness": "全局唯一，R̃/P̃/T̃与R/P/T区分，w与S/W/B/E_S区分",
+    "dag_acyclic": true,
+    "dag_topological_order": ["Q1", "Q2", "Q3", "Q4", "Q5"],
+    "dag_consistency": "depends_on 与 outputs_to 双向一致，无缺失边",
+    "formulation_depth": "每题mathematical_formulation含具体公式（L3深度），覆盖可行域、归一化、整数处理、顶点约简、双源不确定度等实现级细节",
+    "solvability": "全部模型可用现有84样本+附件1物性求解；GPR/NSGA-II/DE/MC均为成熟库，计算量可控（GPR 84样本O(84³)、NSGA-II 3.6万评估、MC 2万×3指标）",
+    "coverage_of_constraints": "r/h/n范围、n整数、r-n耦合、三指标归一化、权重单纯形、扰动范围全部覆盖",
+    "enhanced_requirements_met": {
+      "multi_objective_normalization": true,
+      "integer_rounding_verify": true,
+      "maxmin_solvable_strategy": true,
+      "q2_cv_and_uncertainty": true
+    }
+  },
+  "self_check_score": 8.9
+}

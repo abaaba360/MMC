@@ -1,0 +1,56 @@
+{
+  "generated_by": "master_controller",
+  "phase": "S4_baseline_lock",
+  "date": "2026-08-12",
+  "rerun": true,
+  "title": "高性能芯片歧管式微通道热管理系统的多目标优化与鲁棒设计",
+  "locked_assumptions": {
+    "locked": true,
+    "note": "以下假设已锁定（14条），后续修改需正式变更记录。全量假设见 model_design.json assumptions A1-A14",
+    "key_values": {
+      "A6_n_rounding": "整数n连续化处理，优化结果就近取整后用代理模型复算校正，禁止直接四舍五入",
+      "A9_perturbation": "加工误差：截断正态 σ≈±2%~3%（±5%内）；n取整误差±1排；工况流量波动±10%",
+      "A14_temp_nonuniformity": "T_nd = (T_s,max - T_s,min) / (T_s,mean - T_in)（归一化最大温差）",
+      "feasible_region": "可行域含耦合约束：r=0 ⟺ n=0（无针肋基线）；r>0 时 n∈{2,4,...,10}（数据支撑的偶数集），禁止 (r>0,n=0) 与 (r=0,n>0)"
+    }
+  },
+  "locked_symbols": {
+    "locked": true,
+    "count": 60,
+    "note": "符号表见 model_design.json symbols，全局唯一。关键符号：r/h/n 设计变量，R/P/T 无量纲指标，R̃/P̃/T̃ min-max归一化指标，w_R/w_P/w_T 权重，η_f 肋效率，σ²(x) GPR预测方差"
+  },
+  "chapter_outline": [
+    {"chapter": "摘要", "pages": 1, "key_points": "虎头-猪肚-豹尾三段式，300-500字，含5问对应量化结果(机理模型R²、GPR 5折CV R²、TOPSIS最优方案、Max-Min鲁棒方案、MC稳健性CV)"},
+    {"chapter": "一、问题重述", "pages": 0.5, "key_points": "芯片散热背景+歧管式微通道+针肋强化，5问任务凝练（防查重改写）"},
+    {"chapter": "二、问题分析", "pages": 1.5, "key_points": "问题分解、物理机理(热阻/压降/温度非均匀)、总体技术路线图(route_map)"},
+    {"chapter": "三、模型假设与符号说明", "pages": 1.5, "key_points": "A1-A14假设表(每条含理由)、60符号三线表"},
+    {"chapter": "四、Q1机理建模与影响规律", "pages": 5, "key_points": "流向分段热-流耦合模型(针肋排数空间解析)+无量纲分析(L3深度)、κ系数数据标定、r/h/n影响规律(U型非单调解释)、三指标合理性论证(R-P强负相关-0.68、R-T近独立-0.08)"},
+    {"chapter": "五、Q2代理模型", "pages": 4, "key_points": "GPR(Matern5/2 ARD+NLL)+5折CV/LOOCV双校验、与多项式/树基线对比、残差分析、σ²(x)不确定性可视化"},
+    {"chapter": "六、Q3多目标优化", "pages": 4, "key_points": "min-max归一化防量纲淹没、NSGA-II(混合整数+可行域耦合约束)求Pareto前沿、TOPSIS综合最优方案、与熵权/等权重/ε-约束交叉验证、整数复算校正"},
+    {"chapter": "七、Q4权重鲁棒设计", "pages": 4, "key_points": "权重单纯形扫描敏感性可视化、Max-Min鲁棒优化(顶点闭式约简: max_w S = max{R̃,P̃,T̃})、场景权重箱跨场景鲁棒方案、判定依据与优势"},
+    {"chapter": "八、Q5敏感性稳健性分析", "pages": 3.5, "key_points": "局部弹性灵敏度排序、双源不确定度蒙特卡洛(P10/P50/P90、失效概率、CV)、Sobol全局灵敏度、双方案对比"},
+    {"chapter": "九、模型评价与推广", "pages": 1.5, "key_points": "优点4条(证据支撑)、缺点2条(真实不足)、改进方向"},
+    {"chapter": "参考文献", "pages": 1, "key_points": "GB/T 7714-2015，附件1参考文献3篇+方法文献+AI工具引用"},
+    {"chapter": "附录", "pages": "不限", "key_points": "附件文件列表、全部源代码(标注语言/AI工具)、中间结果表"}
+  ],
+  "total_main_text_pages": 26.5,
+  "word_budget": {"摘要": "300-500字", "正文": "约1.2万字", "代码附录": "全部源程序"},
+  "experiment_plan": [
+    {"step": "E1", "task": "数据加载与探索性分析(相关性/分布/结构化全因子网格识别)", "output": "results/figures/eda_*.png", "phase": "S5"},
+    {"step": "E2", "task": "Q1流向分段热-流耦合机理模型+κ标定+影响规律", "output": "code/q1_model.py, results/q1_results.json", "phase": "S5"},
+    {"step": "E3", "task": "Q2 GPR代理模型(3指标)+5折CV/LOOCV+基线对比", "output": "code/q2_model.py, results/q2_results.json, results/models/surrogates.joblib", "phase": "S5"},
+    {"step": "E4", "task": "Q3 NSGA-II+Pareto+TOPSIS综合最优(含整数复算)", "output": "code/q3_model.py, results/q3_results.json", "phase": "S5"},
+    {"step": "E5", "task": "Q4 权重扫描+Max-Min鲁棒+场景权重箱", "output": "code/q4_model.py, results/q4_results.json", "phase": "S5"},
+    {"step": "E6", "task": "Q5 局部灵敏度+双源蒙特卡洛+Sobol", "output": "code/q5_model.py, results/q5_results.json", "phase": "S5"},
+    {"step": "E7", "task": "Phase6灵敏度扩展与Phase7模型评价素材", "output": "state/agent_outputs/sensitivity_report.json, model_evaluation.md", "phase": "S6-S7"}
+  ],
+  "figure_plan": {
+    "required_total": 15,
+    "Q1": ["图4-1 流向分段模型示意", "图4-2 r/h/n单变量影响规律(3x3)", "图4-3 机理模型vs数据验证"],
+    "Q2": ["图5-1 相关性热图", "图5-2 GPR拟合散点+区间", "图5-3 残差图", "图5-4 GPR vs 多项式/树对比"],
+    "Q3": ["图6-1 Pareto前沿3D/投影", "图6-2 最优方案与数据基线对比", "图6-3 权重法交叉验证"],
+    "Q4": ["图7-1 权重扫描方案演化", "图7-2 鲁棒方案性能分布/均值-方差", "图7-3 三方案对比"],
+    "Q5": ["图8-1 局部灵敏度柱状图", "图8-2 蒙特卡洛R/P/T分布", "图8-3 Sobol主/总效应"]
+  },
+  "self_check_score": 8.6
+}

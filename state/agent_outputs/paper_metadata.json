@@ -1,0 +1,16 @@
+{
+ "title": "高性能芯片歧管式微通道热管理系统的多目标优化与鲁棒设计",
+ "total_pages": 30,
+ "abstract_word_count": 469,
+ "figure_count": 22,
+ "table_count": 9,
+ "reference_count": 12,
+ "format_check_passed": true,
+ "main_text_chars": 11942,
+ "num_equations": 28,
+ "formats": {
+  "markdown": "paper/final_paper.md",
+  "word_docx": "paper/final_paper.docx (A4, 2.5cm边距, 宋体12pt, 三线表, 22图)",
+  "pdf": "paper/final_paper.pdf (XeLaTeX编译, 30页)"
+ }
+}

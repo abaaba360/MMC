@@ -1,0 +1,446 @@
+{
+  "sub_question": "Q3",
+  "model": "Q3_C2 NSGA-II多目标进化 + TOPSIS综合决策（熵权法客观定权为主，等权重对比，等权重标量化DE交叉验证；min-max归一化防量纲淹没 + 整数取整复算校正）",
+  "run_timestamp": "2026-08-12T19:41:34",
+  "key_results": {
+    "normalization": {
+      "basis": "Q2训练数据84样本指标范围（surrogate.target_stats）",
+      "ranges": {
+        "R": {
+          "min": 0.721922,
+          "max": 0.773783,
+          "range": 0.051861
+        },
+        "P": {
+          "min": 0.076688,
+          "max": 0.204048,
+          "range": 0.12736
+        },
+        "T": {
+          "min": 0.77401,
+          "max": 0.8731,
+          "range": 0.09909
+        }
+      }
+    },
+    "nsga2_settings": {
+      "pop_size": 120,
+      "n_gen": 300,
+      "sbx_prob": 0.9,
+      "pm_prob": 0.1,
+      "seeds": [
+        42,
+        7,
+        123,
+        2024,
+        8
+      ],
+      "elite_duplicates": "eliminate_duplicates=True",
+      "per_run": {
+        "42": {
+          "n_individuals": 120,
+          "front_size": 120
+        },
+        "7": {
+          "n_individuals": 120,
+          "front_size": 120
+        },
+        "123": {
+          "n_individuals": 120,
+          "front_size": 120
+        },
+        "2024": {
+          "n_individuals": 120,
+          "front_size": 120
+        },
+        "8": {
+          "n_individuals": 120,
+          "front_size": 120
+        }
+      },
+      "note": "NSGA-II为启发式算法，不宣称全局最优；固定seed下5次运行取并集前沿"
+    },
+    "pareto_front": {
+      "n_points": 442,
+      "n_candidates_union": 600,
+      "norm_metrics_front": {
+        "R": {
+          "min": 0.0,
+          "max": 0.68775,
+          "mean": 0.2568
+        },
+        "P": {
+          "min": 0.0,
+          "max": 0.56751,
+          "mean": 0.26096
+        },
+        "T": {
+          "min": 0.0,
+          "max": 0.4217,
+          "mean": 0.15645
+        }
+      },
+      "sample_points": [
+        {
+          "r": 0.2112,
+          "h": 3.2124,
+          "n_cont": 9.9996,
+          "R~": 0.0,
+          "P~": 0.52995,
+          "T~": 0.39996
+        },
+        {
+          "r": 0.2063,
+          "h": 3.3713,
+          "n_cont": 9.9938,
+          "R~": 0.041,
+          "P~": 0.46371,
+          "T~": 0.35063
+        },
+        {
+          "r": 0.198,
+          "h": 3.5646,
+          "n_cont": 9.9997,
+          "R~": 0.12082,
+          "P~": 0.38881,
+          "T~": 0.33394
+        },
+        {
+          "r": 0.239,
+          "h": 3.0837,
+          "n_cont": 5.8081,
+          "R~": 0.16092,
+          "P~": 0.51839,
+          "T~": 0.20802
+        },
+        {
+          "r": 0.2296,
+          "h": 3.2833,
+          "n_cont": 4.9302,
+          "R~": 0.20106,
+          "P~": 0.37532,
+          "T~": 0.05281
+        },
+        {
+          "r": 0.2393,
+          "h": 4.5,
+          "n_cont": 6.5016,
+          "R~": 0.22921,
+          "P~": 0.22783,
+          "T~": 0.24803
+        },
+        {
+          "r": 0.2333,
+          "h": 4.498,
+          "n_cont": 6.0244,
+          "R~": 0.23856,
+          "P~": 0.18804,
+          "T~": 0.17851
+        },
+        {
+          "r": 0.2184,
+          "h": 3.3368,
+          "n_cont": 4.0052,
+          "R~": 0.25826,
+          "P~": 0.29743,
+          "T~": 0.00769
+        },
+        {
+          "r": 0.2052,
+          "h": 4.5,
+          "n_cont": 5.1673,
+          "R~": 0.29534,
+          "P~": 0.10139,
+          "T~": 0.08063
+        },
+        {
+          "r": 0.1938,
+          "h": 4.4999,
+          "n_cont": 3.9757,
+          "R~": 0.40277,
+          "P~": 0.04741,
+          "T~": 0.01054
+        },
+        {
+          "r": 0.2026,
+          "h": 4.5,
+          "n_cont": 3.0163,
+          "R~": 0.52412,
+          "P~": 0.02118,
+          "T~": 0.0
+        },
+        {
+          "r": 0.2191,
+          "h": 4.5,
+          "n_cont": 2.1957,
+          "R~": 0.68775,
+          "P~": 0.0,
+          "T~": 0.03359
+        }
+      ]
+    },
+    "topsis": {
+      "entropy_weights": {
+        "w": [
+          0.37353,
+          0.42582,
+          0.20065
+        ],
+        "e": [
+          0.99571,
+          0.99511,
+          0.9977
+        ],
+        "d": [
+          0.00429,
+          0.00489,
+          0.0023
+        ],
+        "method": "成本型归一化先转效益型 b=1-Yn，Shannon熵客观定权"
+      },
+      "equal_weights": [
+        0.3333333333333333,
+        0.3333333333333333,
+        0.3333333333333333
+      ],
+      "closeness_entropy": 0.68734,
+      "closeness_equal": 0.69565,
+      "closeness_unweighted": 0.82659
+    },
+    "comprehensive_best_design": {
+      "tag": "entropy_topsis",
+      "design_cont": {
+        "r": 0.2148,
+        "h": 4.5,
+        "n_cont": 5.1875
+      },
+      "pred_before_round": {
+        "R": 0.736472,
+        "P": 0.091125,
+        "T": 0.781339
+      },
+      "design": {
+        "r": 0.2148,
+        "h": 4.5,
+        "n": 6
+      },
+      "pred_after_round": {
+        "R": 0.735128,
+        "P": 0.096119,
+        "T": 0.79077
+      },
+      "norm": {
+        "R": 0.25464,
+        "P": 0.15257,
+        "T": 0.16914
+      },
+      "rounding_delta": {
+        "R": -0.001344,
+        "P": 0.004994,
+        "T": 0.009431
+      },
+      "feasible": true
+    },
+    "equal_weight_topsis_design": {
+      "tag": "equal_weight_topsis",
+      "design_cont": {
+        "r": 0.2206,
+        "h": 4.5,
+        "n_cont": 5.0166
+      },
+      "pred_before_round": {
+        "R": 0.736672,
+        "P": 0.091019,
+        "T": 0.77943
+      },
+      "design": {
+        "r": 0.2206,
+        "h": 4.5,
+        "n": 6
+      },
+      "pred_after_round": {
+        "R": 0.734735,
+        "P": 0.097336,
+        "T": 0.79064
+      },
+      "norm": {
+        "R": 0.24706,
+        "P": 0.16212,
+        "T": 0.16783
+      },
+      "rounding_delta": {
+        "R": -0.001937,
+        "P": 0.006317,
+        "T": 0.01121
+      },
+      "feasible": true
+    },
+    "unweighted_topsis_design": {
+      "tag": "unweighted_topsis",
+      "design_cont": {
+        "r": 0.2206,
+        "h": 4.5,
+        "n_cont": 5.114
+      },
+      "pred_before_round": {
+        "R": 0.736382,
+        "P": 0.091638,
+        "T": 0.780405
+      },
+      "design": {
+        "r": 0.2206,
+        "h": 4.5,
+        "n": 6
+      },
+      "pred_after_round": {
+        "R": 0.734735,
+        "P": 0.097336,
+        "T": 0.79064
+      },
+      "norm": {
+        "R": 0.24706,
+        "P": 0.16212,
+        "T": 0.16783
+      },
+      "rounding_delta": {
+        "R": -0.001647,
+        "P": 0.005698,
+        "T": 0.010235
+      },
+      "feasible": true
+    },
+    "equal_weight_scalarization_cross_validation": {
+      "design": {
+        "r": 0.2169,
+        "h": 4.5,
+        "n": 4
+      },
+      "pred": {
+        "R": 0.741356,
+        "P": 0.084517,
+        "T": 0.772258
+      },
+      "norm": {
+        "R": 0.37473,
+        "P": 0.06147,
+        "T": 0.0
+      },
+      "scalar_value": 0.13843,
+      "feasible": true
+    },
+    "consistency_check": {
+      "design_dist_normalized": 0.2001,
+      "metric_dist_normalized": 0.2266,
+      "conclusion": "基本一致"
+    },
+    "vs_data_single_metric_best": {
+      "data_best": {
+        "R": {
+          "r": 0.2,
+          "h": 3.0,
+          "n": 10,
+          "value": 0.721922
+        },
+        "P": {
+          "r": 0.2,
+          "h": 4.5,
+          "n": 2,
+          "value": 0.076688
+        },
+        "T": {
+          "r": 0.2,
+          "h": 4.5,
+          "n": 4,
+          "value": 0.77401
+        }
+      },
+      "deviation_pct_vs_data_single_metric_best": {
+        "value": {
+          "R": 1.829,
+          "P": 25.338,
+          "T": 2.165
+        },
+        "note": "正=综合最优方案该指标单独看略逊于单指标最优数据点，是换取三指标均衡的代价（体现 R-P 强负相关 corr=-0.684 的根本权衡，无单一设计可同时最优）"
+      },
+      "data_scalarization_baseline": {
+        "best_data_point": {
+          "index": 63,
+          "design": {
+            "r": 0.2,
+            "h": 4.5,
+            "n": 4
+          },
+          "scalar_value": 0.14705
+        },
+        "method": "等权重标量化 (R~+P~+T~)/3 在84个数据设计上的最小值",
+        "comprehensive_design_scalar": 0.19212,
+        "de_scalarization_design_scalar": 0.1454,
+        "optimization_gain_pct_vs_best_data": 1.122
+      },
+      "data_dominance_check": {
+        "n_data_points": 84,
+        "n_dominated_by_pareto_front": 82,
+        "pct_dominated": 97.62,
+        "note": "优化Pareto前沿支配的数据点比例（进化搜索相对原始84设计扩展度）"
+      }
+    },
+    "data_traceability": {
+      "nearest_data_point": {
+        "r": 0.2,
+        "h": 4.5,
+        "n": 6,
+        "R": 0.736613,
+        "P": 0.093468,
+        "T": 0.792252
+      },
+      "note": "综合最优方案附近最近数据点（数据可追溯核查）"
+    }
+  },
+  "intermediate_results": {
+    "integer_coupling_rule": "r=0 ⟺ n=0；r>0 时 n∈{2,4,6,8,10}（偶数集）。进化中 n 连续化，最终就近取可行整数并用代理复算校正，禁直接四舍五入。",
+    "per_design_feasibility": {
+      "entropy_topsis": true,
+      "equal_weight_topsis": true,
+      "unweighted_topsis": true,
+      "scalarization_de": true
+    },
+    "rounding_before_after": {
+      "entropy_topsis": {
+        "n_cont": 5.1875,
+        "n_int": 6,
+        "delta_R": -0.001344,
+        "delta_P": 0.004994,
+        "delta_T": 0.009431
+      },
+      "equal_weight_topsis": {
+        "n_cont": 5.0166,
+        "n_int": 6,
+        "delta_R": -0.001937,
+        "delta_P": 0.006317,
+        "delta_T": 0.01121
+      },
+      "unweighted_topsis": {
+        "n_cont": 5.114,
+        "n_int": 6,
+        "delta_R": -0.001647,
+        "delta_P": 0.005698,
+        "delta_T": 0.010235
+      }
+    },
+    "notes": [
+      "min-max归一化基准为Q2训练数据范围（R/P/T量程分别为 0.0519/0.1274/0.0991，三指标量纲悬殊，归一化防量纲淹没——A7）。",
+      "NSGA-II固定seed=42/7/123/2024/8共5次运行取并集前沿，并报告各次前沿一致性，不宣称全局最优。",
+      "TOPSIS主结果采用熵权法客观定权（对前沿各目标归一化后转效益型计算），等权重TOPSIS与无权重公式作对比，等权重标量化DE作独立交叉验证。",
+      "综合最优方案 r≈0.215, h=4.5（可行域上边界）, n=6；等权重标量化方案 n=4——两者 r/h 高度一致，n 在 {4,6} 间分歧（n=4更优P、n=6更优R/T），反映 R-P 权衡下排数选择的敏感性，属'基本一致'。"
+    ]
+  },
+  "figures": [
+    "q3_01_pareto_3d.png",
+    "q3_02_pareto_proj.png",
+    "q3_03_best_vs_data.png",
+    "q3_04_weights_compare.png",
+    "q3_05_design_space.png"
+  ],
+  "warnings": [],
+  "elapsed_sec": 69.7
+}

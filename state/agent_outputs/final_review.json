@@ -1,0 +1,248 @@
+{
+  "review_timestamp": "2026-08-12",
+  "reviewer": "reviewer_agent（Phase 9 终审 / 5人评审团终审标准）",
+  "review_object": "选题B全量重跑 交付物（paper/final_paper.md + final_paper.pdf/docx + results/q1~q5_results.json + code/q1~q5_model.py + sensitivity_report + model_evaluation）",
+  "scores": {
+    "1_model_quality": {
+      "score": 8.5,
+      "weight": "50-60%",
+      "subscores": {
+        "assumptions": 9,
+        "rigor": 8,
+        "innovation": 9,
+        "consistency": 9
+      },
+      "comment": "14条假设(A1-A14)每条含理由且源自题目/工程合理水平，无冗余无矛盾（model_design.json self_check 已验证）。Q1流向分段热-流耦合模型以流向分辨率机理地解释T-n U型、R-P权衡，系数经84样本过原点标定(κ_R=1.780/κ_P=4.925e-5/κ_T=1.227，与q1_results一致)，创新评分高；Q4顶点闭式约简(max_w S=max{R~,P~,T~}，双层max-min退化为单层minimax，§7.2式(3))是关键可解性创新；Q5双源不确定度(参数偶然+GPR认知σ²+工况)三源融合传播，闭环完整。逻辑自洽：DAG无环、Q3/Q4归一化基准统一沿用Q2训练范围、整数复算校正一致。降分点：(1)机理模型对R/T拟合弱(R²=0.307/0.212，论文已诚实披露于§4.4/§9.2)；(2)摘要及§4.3/4.4声称机理模型『再现R随r的U形谷值』，但q1_results模型r扫描曲线中R从r=0的0.7354单调降至r=0.3的0.7298、并无U形回升（数据水平均值才呈U形，谷值r=0.2），属声明过强，见issue#2。"
+    },
+    "2_problem_solving": {
+      "score": 8.9,
+      "weight": "30-40%",
+      "subscores": {
+        "constraint_coverage": 9,
+        "result_validity": 9,
+        "efficiency": 8,
+        "analysis_depth": 9
+      },
+      "comment": "Q1-Q5全约束覆盖：r/h/n取值范围、n整数偶数集、r=0⟺n=0耦合约束（假设12）、权重单纯形（假设8）、扰动分布（假设9）均显式建模。结果有效性经多路线交叉验证：熵权TOPSIS/等权重TOPSIS/等权重标量化DE三条路径r*、h*高度一致(r≈0.215~0.236、h*=4.5)，设计距离0.2001判定『基本一致』；Pareto前沿442点支配97.62%数据设计，综合方案较数据最优(等权标量化口径)提升1.12%。求解高效可复现：NSGA-II固定seed×5次、DE、MC N=20000均固定种子，文档注明不宣称全局最优。分析有深度：识别P为主要风险源(失效概率7.02%)、R/T高度稳定(CV<2%)、给出工程建议r∈[0.20,0.24]、h=4.5、n∈{4,6}及公差控制优先级。"
+    },
+    "3_paper_format": {
+      "score": 8.0,
+      "weight": "10-20%",
+      "subscores": {
+        "abstract": 8,
+        "structure": 9,
+        "figures": 9,
+        "format": 7,
+        "references": 9
+      },
+      "comment": "摘要378个汉字（官方300-500字区间内），虎头-猪肚-豹尾三段式，五问量化结果齐备，但『较数据最优提升1.12%』未注明等权重标量化口径（§6.5有说明），且含issue#2的过度声明。结构完整：一-九章+参考文献+AI声明+附录，对齐Word模板五段式(5.X.1~5.X.5)。图表专业：22图9表编号与正文引用全部匹配（程序核验一致），图文件齐全(300dpi+PDF)。格式合规项：A4/2.5cm边距/无目录/摘要独立1页/主文约27页(总30页≤30)/无身份信息/参考文献GB/T7714+AI工具[12]('Claude Code, 3.x, Anthropic, 2026-08-12.')均达标。降分点：(1)Word版final_paper.docx全部公式以原始LaTeX文本保留(1126个$、431个LaTeX命令如\\frac/\\kappa)，未转换为Word公式编辑器(OMML)——违反『公式用编辑器生成』，PDF版(LaTeX编译)公式正常，见issue#1；(2)附录A引用工作流内部路径state/agent_outputs/（含工作流内部名称agent_outputs），见issue#4。"
+    },
+    "4_verification": {
+      "score": 9.3,
+      "weight": "5-10%",
+      "subscores": {
+        "sensitivity": 10,
+        "comparison": 9,
+        "robustness": 9,
+        "error_analysis": 9
+      },
+      "comment": "灵敏度分析三视角互补且结论互证：局部弹性±1%(P-h弹性-0.821最强，§8.2)、有限扰动±10%/±20%与±2排(sensitivity_report，P-h±20%达21.5%)、Sobol全局S1/ST含交互(T-n S1=0.56、R三参数均衡，§8.4)。MC方差来源三分解(R工况92%/P加工93%/T工况69%)、失效概率与CV分级(表8-1)完整。模型对比量化充分：GPR 5折R²=0.9981/0.9988/0.9941、留一0.9986/0.9991/0.9966 vs 多项式/随机森林(0.65~0.82)，并明确多项式R²=1.0为插值的判读。鲁棒性检验：±2%噪声注入、边界设计点(r=0基线/r=0.3/n=10)、r/n全扫描、三场景权重箱跨场景。误差分析：Q2留一残差统计、失效边界(fail threshold=名义×1.05)明确。"
+    },
+    "5_overall_impression": {
+      "score": 9.3,
+      "weight": "佐证(不计加权)",
+      "subscores": {
+        "evidence_chain": 10,
+        "logic_flow": 9,
+        "physical_meaning": 9,
+        "integrity": 9
+      },
+      "comment": "证据链完整：抽查3个定量声明沿『论文→q{i}_results.json→代码』全部一致（见evidence_trace），且Q3论文引用取整复算校正后值(pred_after_round)与results同名方案字段一致。逻辑流『机理→代理→多目标优化→权重鲁棒→稳健验证』闭环清晰。物理意义充分：R-P强负相关(-0.684)的换热-能耗权衡、P∝1/h²、T-n U型、压降为主要风险源等均有数据+机理双重解读。学术诚信合规：正文AI工具使用声明、参考文献[12]列出Claude Code、delivery/AI工具使用详情.md(11次交互分阶段记录+人工审核声明)、附录B代码AI标注齐全。"
+    }
+  },
+  "weighted_total": 86.3,
+  "average_score_5dim": 8.8,
+  "verdict": "通过（原\"有条件通过\"之条件已全部处理）",
+  "verdict_note": "各维得分(8.5/8.9/8.0/9.3/9.3)均≥6.5，均分8.8≥7.0，加权总分86.3≥70，学术诚信门禁全部通过——按评审标准『通过』。因存在Word版公式未转编辑器等非阻断问题，终审判定『有条件通过』：完成清单#1（Word公式转OMML或明确以PDF为提交件）后可正式交付。",
+  "format_gate": {
+    "passed": true,
+    "violations": [
+      "delivery/final_paper.docx 公式以原始LaTeX文本保留，未用公式编辑器/OMML（PDF版合规）——见issue#1"
+    ],
+    "checks": {
+      "A4": "pass",
+      "margin_2.5cm": "pass",
+      "main_text_pages_le30": "pass（总30页，主文约27页，摘要1页，附录/文献3页）",
+      "abstract_own_page": "pass（第1页）",
+      "abstract_300_500": "pass（378汉字）",
+      "no_toc": "pass",
+      "no_identity": "pass",
+      "figure_caption": "pass（22图编号与引用全匹配）",
+      "ref_gbt7714": "pass（含AI工具[12]）"
+    }
+  },
+  "integrity_gate": {
+    "passed": true,
+    "violations": [],
+    "checks": {
+      "ai_declaration_in_paper": "pass",
+      "ai_tool_detail": "pass（delivery/AI工具使用详情.md，11次交互）",
+      "ref12_ai_tool": "pass（Claude Code, 3.x, Anthropic, 2026-08-12）",
+      "source_code_in_appendix": "pass（附录B，code/13个文件均存在）",
+      "no_plagiarism_suspect": "pass",
+      "data_source": "pass（附件1/附件2，问题重述§一注明）"
+    }
+  },
+  "evidence_trace": {
+    "total_claims_checked": 18,
+    "traced_consistent": 17,
+    "traced_minor_mismatch": 1,
+    "spot_checks": [
+      {
+        "claim": "Q3综合最优方案 R=0.7351（摘要/表6-1）",
+        "trace": "q3_results.json comprehensive_best_design.pred_after_round.R = 0.735128 → code/q3_model.py resolve_design：n_cont=5.1875经round_n_feasible取偶数6后pred_at复算",
+        "consistent": true,
+        "note": "论文为取整复算后值4位小数(0.7351=0.735128)，取整前连续值R=0.736472；results同名方案字段(pred_after_round)与论文一致"
+      },
+      {
+        "claim": "Q5 Q3方案 P 失效概率 7.02%（表8-1/§8.5）",
+        "trace": "q5_results.json monte_carlo_stats.Q3_综合最优.P.p_fail = 0.07015 → code/q5_model.py failure_probability：Pr(P>名义×1.05=0.100924)",
+        "consistent": true,
+        "note": "CV 6.04%(0.060449)、稳定性分级『基本稳定』亦与论文一致"
+      },
+      {
+        "claim": "Q2 GPR留一法 R²=0.9966（摘要/§5.4）",
+        "trace": "q2_results.json gpr_loocv.T.r2 = 0.9966 → code/q2_model.py GPR LOOCV（84次留一）",
+        "consistent": true,
+        "note": "5折CV R²=0.9981/0.9988/0.9941、留一0.9986/0.9991/0.9966与论文逐项一致"
+      },
+      {
+        "claim": "Q4全域Max-Min鲁棒方案 r=0.2364,h=4.5,n=6，W=0.2380/B=0.0590/E_S=0.2033（表7-1）",
+        "trace": "q4_results.json global_robust_design：design(r=0.2364,h=4.5,n=6)、raw(R=0.734263,P=0.101269,T=0.791745)、W=0.23796/B=0.05898/E_S=0.20331",
+        "consistent": true,
+        "note": "论文取4位小数，W/B/E_S与results一致；R=0.7343/P=0.1013/T=0.7917为raw取整"
+      },
+      {
+        "claim": "GPR相对随机森林R²提升0.24~0.35（§5.4）",
+        "trace": "q2_results.json improvement_gpr_vs_rf = R 0.2393 / P 0.1835 / T 0.3461",
+        "consistent": false,
+        "note": "不一致（minor）：实际提升范围为0.18~0.35，P仅0.1835不在『0.24~0.35』区间内；model_evaluation.md『低0.18~0.35』表述准确，建议论文改一致"
+      }
+    ],
+    "extra_verified": [
+      "Q1 Pearson 0.554/0.882/0.461、R²=0.307/0.779/0.212、κ 标定值与q1_results一致",
+      "Q1三指标相关系数 R-P=-0.684/R-T=-0.079/P-T=0.474 与q1_results.rationale一致",
+      "Q3熵权 w=(0.3735,0.4258,0.2006)、442 Pareto点、支配82/84(97.62%)、提升1.12%均一致",
+      "Q5 Q4案P的CV=7.03%/p_fail=9.57%、R/T的p_fail=0.22%/0.08%、Sobol S1与方差来源分解均一致",
+      "Q5局部弹性 P-h=-0.821、r=0.448、n=0.370 与q5一致",
+      "PDF编译文本复核：0.7351/0.0961/0.7908/0.2380/7.02%/0.9966/97.62%/-0.684/AI声明/参考文献[12]均在PDF中正确呈现"
+    ]
+  },
+  "issues": [
+    {
+      "severity": "refine",
+      "dimension": "paper_format",
+      "location": "delivery/final_paper.docx（全文公式）",
+      "description": "Word版所有公式以原始LaTeX文本保留：document.xml含1126个'$'标记与431个LaTeX命令(\\frac×36、\\kappa×11等)，未转换为Word公式编辑器(OMML，oMath=0)。违反『公式一律用公式编辑器，严禁截图』。根源为scripts/md_to_docx.py第195行注释『公式保留$...$文本』。PDF版(final_paper.pdf)经md_to_latex编译公式渲染正常、合规。",
+      "suggestion": "若Word为提交格式：用pandoc(md→docx，自动转OMML)或WPS批量替换公式；若以PDF为唯一提交件(国赛支持PDF)，在交付说明中注明，并将该docx标记为工作底稿。"
+    },
+    {
+      "severity": "refine",
+      "dimension": "model_quality",
+      "location": "摘要第5行、§4.3末段、§4.4",
+      "description": "摘要与§4.3声称机理模型『再现R随r、T随n的U形谷值』。经q1_results influence_trends.curve.r核验：模型R随r在[0,0.3]上单调下降(0.7354→0.7298)，未复现U形回升；数据水平均值才呈U形(谷值r=0.2)。T-n U形(谷值n=4)模型确有复现。即『再现R随r的U形谷值』与机理模型输出不符，声明过强。",
+      "suggestion": "将相关表述弱化为『数据呈R-r U形谷值、机理模型影响方向正确、T-n U形被复现』，或将R-r U形归因于GPR代理(r扫描在h=4.5,n=6截面谷值r≈0.24，sensitivity_report可证)而非机理模型。"
+    },
+    {
+      "severity": "minor",
+      "dimension": "paper_format",
+      "location": "§5.4",
+      "description": "『GPR相对随机森林R²提升0.24~0.35』与q2_results improvement_gpr_vs_rf(R 0.2393/P 0.1835/T 0.3461)不符，P提升实为0.18。",
+      "suggestion": "改为『提升0.18~0.35』（与model_evaluation.md一致）。"
+    },
+    {
+      "severity": "minor",
+      "dimension": "paper_format",
+      "location": "附录A（文件列表）",
+      "description": "附录A将各问结果列为 state/agent_outputs/q1_results.json~q5_results.json。该路径为工作流内部目录且含工作流内部名称『agent_outputs』（正文规范禁内部名称）；规范结果文件位于 results/。两处文件均存在，不影响可追溯，但交付版不宜暴露内部路径。",
+      "suggestion": "交付版附录A统一改为 results/q{i}_results.json，并移除对 state/ 目录的引用。"
+    },
+    {
+      "severity": "minor",
+      "dimension": "paper_format",
+      "location": "§AI工具使用声明第3条、附录C",
+      "description": "正文与附录C声明《AI工具使用详情》为『PDF格式』，交付物实际为 delivery/AI工具使用详情.md。",
+      "suggestion": "将md转PDF随支撑材料提交，或同步文案为『.md/电子文档』。"
+    },
+    {
+      "severity": "minor",
+      "dimension": "paper_format",
+      "location": "摘要第9行",
+      "description": "『较数据最优提升1.12%』未注明口径；该1.12%为相对『等权重标量化数据最优基线』(q3 optimization_gain_pct_vs_best_data=1.122)，而非相对数据单指标最优。§6.5已说明，摘要可更严谨。",
+      "suggestion": "摘要补『（等权重标量化口径）』或与§6.5表述统一。"
+    }
+  ],
+  "recommendation": "论文质量达国奖候选水平：机理-代理混合建模+权重域Max-Min顶点约简+双源不确定度传播三级创新自洽，证据链完整，验证分析(灵敏度三视角+多模型对比+失效边界)超出常规深度，摘要与格式基本合规。完成6项修改建议（重点#1 Word公式转OMML或明确PDF为提交件、#2 摘要/§4.3对R-r U形的声明弱化）后可正式交付。",
+  "self_check": {
+    "5dim_scored_independently": true,
+    "each_score_has_location_evidence": true,
+    "evidence_trace_covers_quantitative_claims": true,
+    "format_gate_checked_itemwise": true,
+    "integrity_gate_passed": true,
+    "recommendations_actionable": true,
+    "self_score": 8.9
+  },
+  "issues_resolved": [
+    {
+      "id": 1,
+      "severity": "refine",
+      "status": "partially",
+      "desc": "Word版公式为LaTeX文本未转OMML公式编辑器",
+      "action": "保留为已知限制：pandoc不可用，md_to_docx.py按python-docx机制保留$...$文本；PDF版(LaTeX编译)公式全部正常，以PDF为主要提交件，Word为回退格式"
+    },
+    {
+      "id": 2,
+      "severity": "refine",
+      "status": "fixed",
+      "desc": "摘要/§4.3声称机理模型再现R-r U形谷值，实为数据层面U形、机理模型单调下降",
+      "action": "已修正00_abstract.md、05_q1.md(4.3/4.4/4.5)：明确区分'数据层面U形谷值'与'机理模型复现下降趋势、U形由GPR代理精确捕捉'"
+    },
+    {
+      "id": 3,
+      "severity": "minor",
+      "status": "fixed",
+      "desc": "§5.4 'GPR较RF提升0.24~0.35'区间不覆盖P(0.1835)",
+      "action": "已修正05_q2.md为'0.18~0.35'"
+    },
+    {
+      "id": 4,
+      "severity": "minor",
+      "status": "fixed",
+      "desc": "附录A引用工作流内部路径state/agent_outputs/",
+      "action": "已修正10_appendix.md为results/q1_results.json~q5_results.json + results/models/surrogates.joblib"
+    },
+    {
+      "id": 5,
+      "severity": "minor",
+      "status": "fixed",
+      "desc": "AI工具使用详情声明为PDF实为md",
+      "action": "已修正09_ai_declaration.md与10_appendix.md为'Markdown格式'"
+    },
+    {
+      "id": 6,
+      "severity": "minor",
+      "status": "fixed",
+      "desc": "摘要'较数据最优提升1.12%'未注明等权重标量化口径",
+      "action": "已修正00_abstract.md为'等权重标量化方案较数据最优设计提升1.12%'"
+    }
+  ],
+  "recompile_note": {
+    "paper_final_md": "已按章节顺序重新拼接(修正后)",
+    "docx": "md_to_docx.py 重新生成",
+    "tex_pdf": "md_to_latex.py 重新生成 + xelatex 两遍编译, 30页 Error=0",
+    "gates": "修正后 evidence/format/integrity 全部通过",
+    "delivery": "论文产物+AI工具使用详情+支撑材料.zip 已同步更新",
+    "ledger": "ai_usage_ledger.json 更新为22条交互(含本次全量重跑11条)"
+  },
+  "updated_at": "2026-08-12T21:07:26"
+}
