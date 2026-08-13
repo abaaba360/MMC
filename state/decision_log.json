@@ -1,50 +1,44 @@
 {
   "metadata": {
     "competition": "CUMCM_2026",
-    "problem": "选题B",
-    "mode": "rerun",
-    "start_time": "2026-08-12T16:30:00",
+    "problem": "选题A",
+    "mode": "standard",
+    "start_time": "2026-08-12T23:59:17",
     "pipeline_version": "1.0.0",
-    "rerun_note": "2026-08-12 全量重跑：模型设计+代码实现+求解+论文全部重新生成，旧产物备份于 backup_20260812/"
+    "note": "选题A 数学建模论文智能评估系统与多智能体优化方法"
   },
   "stages": {
     "S0": {
       "status": "complete",
       "score": null,
       "outputs": [
-        "state/input_manifest.json",
-        "环境依赖验证通过"
+        "43篇论文PDF文本提取到 state/agent_outputs/qA_papers/"
       ],
-      "started_at": "2026-08-04T12:06:20",
-      "completed_at": "2026-08-04T14:23:04"
+      "completed_at": "2026-08-12T23:59:17"
     },
     "S1": {
       "status": "complete",
       "score": null,
       "outputs": [
-        "state/agent_outputs/problem_comparison.json",
-        "选题B已确认"
+        "选题A已确认"
       ],
-      "started_at": "2026-08-04T14:23:04",
-      "completed_at": "2026-08-04T14:24:15"
+      "completed_at": "2026-08-12T23:59:17"
     },
     "S2": {
       "status": "complete",
-      "score": 8.8,
+      "score": null,
       "outputs": [
         "state/agent_outputs/problem_decomposition.json"
       ],
-      "started_at": "2026-08-12T18:59:48",
-      "completed_at": "2026-08-12T18:59:48"
+      "completed_at": "2026-08-12T23:59:17"
     },
     "S3": {
       "status": "complete",
-      "score": 8.9,
+      "score": 8.8,
       "outputs": [
         "state/agent_outputs/model_design.json"
       ],
-      "started_at": "2026-08-12T18:59:48",
-      "completed_at": "2026-08-12T18:59:48"
+      "completed_at": "2026-08-12T23:59:17"
     },
     "S4": {
       "status": "complete",
@@ -53,34 +47,29 @@
         "state/agent_outputs/paper_outline.json",
         "求解/求解计划.md"
       ],
-      "started_at": "2026-08-12T19:00:52",
-      "completed_at": "2026-08-12T19:00:52"
+      "completed_at": "2026-08-12T23:59:17"
     },
     "S5": {
       "status": "complete",
       "score": null,
       "outputs": [
-        "code/q1_model.py + results/q1_results.json (流向分段热-流耦合, Pearson P=0.882/R=0.554/T=0.461)",
-        "code/q2_model.py + results/q2_results.json (GPR 5折CV R^2=0.9981/0.9988/0.9941, LOOCV=0.9986/0.9991/0.9966)",
-        "results/models/surrogates.joblib (Q2 GPR代理模型)",
-        "code/q3_model.py + results/q3_results.json (NSGA-II+TOPSIS, r*=0.2148,h*=4.5,n*=6 -> R=0.7351,P=0.0961,T=0.7908)",
-        "code/q4_model.py + results/q4_results.json (Max-Min鲁棒+顶点闭式约简, r*=0.2364,h*=4.5,n*=6, W=0.2380)",
-        "code/q5_model.py + results/q5_results.json (双源MC, R/T高度稳定CV<2%, P基本稳定5-10%)",
-        "results/figures/ 30张图 + figure_index.json"
+        "code/features.py + results/feature_matrix.json (43篇×30特征)",
+        "code/q1_model.py + results/q1_results.json (6一级21二级指标, AHP+熵权组合赋权, Jenks分级, CR=0.01)",
+        "code/q2_model.py + results/q2_results.json (4关键特征X12/X13/X41/X62, Ridge R^2=0.913)",
+        "code/q3_model.py + results/q3_results.json (AI痕迹检测+逻辑断层+优化策略, 3篇得分预测)",
+        "results/figures/ 13张图"
       ],
-      "started_at": "2026-08-12T19:00:52",
-      "completed_at": "2026-08-12T20:30:06"
+      "started_at": "2026-08-12T23:00:00",
+      "completed_at": "2026-08-13T01:25:38"
     },
     "S6": {
       "status": "complete",
       "score": null,
       "outputs": [
         "state/agent_outputs/sensitivity_report.json",
-        "code/q6_verifier.py",
-        "results/figures/s6_verifier_01..04.png"
+        "code/q6_verifier.py"
       ],
-      "started_at": "2026-08-12T20:31:30",
-      "completed_at": "2026-08-12T20:40:02"
+      "completed_at": "2026-08-13T01:42:52"
     },
     "S7": {
       "status": "complete",
@@ -88,79 +77,56 @@
       "outputs": [
         "state/agent_outputs/model_evaluation.md"
       ],
-      "started_at": "2026-08-12T20:31:30",
-      "completed_at": "2026-08-12T20:40:02"
+      "completed_at": "2026-08-13T01:42:52"
     },
     "S8": {
       "status": "complete",
       "score": null,
       "outputs": [
         "paper/final_paper.md/docx/tex/pdf",
-        "paper/paper_sections/ (15 files)",
+        "paper/paper_sections/ (15章节)",
         "state/agent_outputs/paper_metadata.json",
-        "gates: evidence/format/integrity 全部通过"
+        "gates全过"
       ],
-      "started_at": "2026-08-12T20:42:00",
-      "completed_at": "2026-08-12T20:56:05"
+      "completed_at": "2026-08-13T01:58:28"
     },
     "S9": {
       "status": "complete",
-      "score": 8.8,
+      "score": 8.84,
       "outputs": [
-        "state/agent_outputs/final_review.json (5维均分8.8, 加权86.3)",
-        "6项refine问题修复(见 final_review.issues_resolved)",
-        "delivery/: final_paper.docx/pdf/tex + 论文_芯片散热优化.md + AI工具使用详情.md + 支撑材料.zip(62文件)",
-        "ai_usage_ledger.json 更新为22条交互",
-        "gates: evidence/format/integrity 全部通过"
+        "state/agent_outputs/final_review.json (5维均分8.84)",
+        "2项refine修复",
+        "delivery/ 论文+支撑材料"
       ],
-      "started_at": "2026-08-12T21:00:00",
-      "completed_at": "2026-08-12T21:07:36"
+      "completed_at": "2026-08-13T08:06:07"
     }
   },
   "current_stage": "S9",
   "sub_questions": {
-    "Q1": "hard",
-    "Q2": "medium",
-    "Q3": "medium",
-    "Q4": "hard",
-    "Q5": "medium"
+    "Q1": "medium",
+    "Q2": "medium_high",
+    "Q3": "high"
   },
   "assumptions": {
     "locked": true,
     "count": 14,
-    "note": "见model_design.json assumptions A1-A14，关键取值见paper_outline.json locked_assumptions"
+    "note": "见model_design.json assumptions A1-A14"
   },
   "symbols": {
     "locked": true,
-    "count": 60,
+    "count": 52,
     "note": "见model_design.json symbols"
   },
   "issues": [],
   "review_results": {
     "final_review": {
-      "avg_score": 8.8,
-      "weighted": 86.3,
+      "avg_score": 8.84,
       "verdict": "通过"
-    },
-    "scores_by_dimension": {
-      "模型质量": 8.5,
-      "问题解决": 8.9,
-      "论文规范": 8.0,
-      "验证分析": 9.3,
-      "综合印象": 9.3
     }
   },
   "rollback_history": [],
   "delivery": {
     "status": "complete",
-    "path": "delivery/",
-    "contents": [
-      "final_paper.docx",
-      "final_paper.pdf",
-      "final_paper.tex",
-      "论文_芯片散热优化.md",
-      "AI工具使用详情.md",
-      "支撑材料.zip"
-    ]
+    "path": "delivery/"
   }
 }

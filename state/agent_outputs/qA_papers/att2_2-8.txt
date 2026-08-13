@@ -1,0 +1,1553 @@
+[第1页]
+队伍编号
+202504393
+选题
+B题
+教育数字化转型下高校教师数字胜任力增值评价
+与影响因素建模研究
+摘要
+在教育数字化转型的大背景下，提升高校教师数字胜任力对推动高等教育数字化进
+程、保障人才培养质量意义重大.本文针对高校教师数字胜任力提升中的问题，构建数学
+模型深入分析，旨在制定科学策略，助力教育数字化转型，
+针对问题一，鉴于《教师数字素养》标准难以满足高校教师职业特性需求，本文抽
+取标准中的相关指标，并结合高校教师只业特性扩展，形成初始候选指标库.运用德尔菲
+法开展两轮专家咨询，依据均值和变异系数筛选关键指标，再采用层次分析法构建判断
+矩阵，通过几何平均法计算权重并进行一致性检验，最终构建高校教师数字胜任力增值
+评价指标体系，为后续研究筑牢基础
+针对问题二，考虑到高校类型、区域位置等差异对教师数字胜任力提升的影响，本
+文基于问题一构建的指标体系计算教师数字胜任力增值得分（VA），融合高校分类属
+性、区域位置及资源投入等数据，运用多层线性模型分解教师层和学校层变量对VA的
+影响.同时，利用随机森林算法捕捉变量间线性关系并计算特征重要性，深入剖析各因
+素对教师数字胜任力增值的作用，为分层分类培育策略制定提供依据
+针对问题三，教师个体属性对数字胜任力发展和人才培养质量存在不同程度影响
+本文收集教师个体属性、VA得分及以学生评教量化的人才培养质量数据，运用扩展多
+层线性模型处理三层嵌套结构数据，借助XGBoost捕提复杂非线性关系，利用结构方
+程模型验证传导路径及中介效应经数据预处理、模型求解及中介效应判定，从微观层面
+剖析各因素作用，为个性化提升策略制定提供支撑.
+针对问题四，在明确评价指标体系与各因素影响机制后，本文整合前三个问题的成
+果，运用PDCA循环实现持续改进，通过动态监测机制、分层分类培育、技术赋能及
+多元协同生态等模型求解，制定与《深化新时代教育评价改革总体方案》契合的对接策
+略，进而提出提开高校教师数字胜任力的实施方案与培育路径
+本文构建的模型综合考虑多方面因素，具有科学性、针对性，但存在数据要求高、
+计算复杂、模型假设局限性等不足.未来可通过优化数据管理、简化计算方法、完善模型
+假设改进.该研究成果对提升高校教师数字胜任力、推动教育数字化转型意义深远，能为
+教育政策制定与高校教师发展提供理论与实践指导.
+关键词：高校教师：数字胜任力：增值评价：多层线性模型：结构方程模型
+第1页
+
+[第2页]
+一、 问题重述
+教育数字化
+图1教育数字化
+1. 1
+问题背景
+随着人工智能等数字技术蓬勃发展，教育数字化转型成为必然趋势欧盟发布《数字
+教育行动计划（2021-2027年）》明确两大核心战略，我国持续推进国家教育数字化战
+略行动，从构建智能教育体系、制定教师数字素养标准，到将“发展数字教育"纳入科教
+兴国战略，不断强调以数字化助力教育变革.在此背景下，教学模式革新催生新教育生态，
+对高校教师数字胜任力提出更高要求，而《深化新时代教育评价改革总体方案》《教师
+数字素养》等政策文件，也为其评价与提升指明方向.
+1.2
+要解决的问题
+结合上述政策背景与高校教师数字胜任力发展需求，需完成以下四项任务：
+任务一：依据《教师数字素养》行业标准，结合高校教师数字胜任力发展特征，细
+化二级指标（如将“数字技术应用"分解为“在线教学平台熟练度“数据分析工具使用频
+率"等），构建高校教师数字胜任力增值评价指标体系.引入德尔菲法与层次分析法，通
+过专家打分确定指标权重，并说明一致性检验过程以确保体系科学性
+任务二：运用任务一构建的评价指标体系，综合高校分类属性（如“双一流”高校、
+地方院校）与区域位置（东部、中部、西部），构建可持续提升高校教师数字胜任力的
+增值评价模型.结合附件4数据，分析各因素对提升数字胜任力的促进作用.
+任务三：在任务二基础上，纳入教师个体属性（性别、职称、年龄、教龄、专业、
+学历、授课类型等），利用附件4数据，进一步分析各因素对提升教师数字胜任力与人
+才培养质量的影响机制，
+任务四：结合数字技术赋能高校发展定位转变、育人环境改善及技术嵌人等维度
+对接妾《深化新时代教育评价改革总体方案》，提出提升高校教师数字胜任力的实施方案
+与培育路径，并分析教育数字化对数字胜任力增值评价的赋能举措
+二、 问题分析
+第2页
+
+[第3页]
+问题1是整个问题链条的基础，它构建了测量高校教师数字胜任力增值评价的指标
+体系，为问题2和问题3提供了统一的测量标准和计算VA得分的依据.问题2在问题1
+的基础上，综合高校分类属性和区域位置，构建增值评价模型，分析宏观环境因素对教
+师数字胜任力增值的影响，其结论为问题4的分层培育策略提供依据，同时为问题3的
+教师个体属性分析提供宏观背景.问题3在问题2的基础上，考虑教师个体属性，分析微
+观个体因素对教师数字胜任力和人才培养质量的促进作用，其结论为问题4的个性化培
+育路径提供微观依据.问题4则是前三个问题的实践转化，将理论成果转化为提升高校教
+师数字胜任力的实施方案和培育路径，形成一个完整的“评价-分析-十预”闭环
+2. 1
+任务一的分析
+本问题需以《教师数字素养》行业标准为基础，结合高校教师教学、科研、育人三
+位一体的只业特性，构建适用于高校教师的数字胜任力增值评价指标体系首先从标准中
+提取5个一级维度、13个二级维度及33个三级维度作为初始指标库，结合高校科研数
+字化、跨学科资源整合等需求扩展“科研数据可视化能力“跨学科数字资源整合能力等
+候选指标，形成40-50个三级指标的初始集合.通过德尔菲法邀请10-15名覆盖不同区域
+与高校类型的教育技术及管理专家，经2-3轮问卷筛选出20-25个关键三级指标.采用层
+次分析法（AHP）构建各层级判断矩阵，通过专家对指标两两比较的1-9标度打分计算
+特征向量确定权重，并进行一致性检验（CR<0.1）以确保科学性，重点需平衡高校教师
+与中小学教师的能力差异，突出科研数字化等特性.
+2. 2
+任务二的分析
+在问题一构建的指标体系基础上，计算教师数字胜任力增值得分（VA=后测得分
+前测得分），分析高校类型（双一流/地方院校）与区域位置（东部/中部/西部）对VA
+的影响.采用多层线性模型（HM）建模，其中教师层纳入教龄、职称等个体属性作为
+控制变量，学校层引入高校类型、区域、资源投入等宏观变量，通过虚拟变量转换实现
+分类变量量化.同时运用随机森林模型补充分析非线性关系及变量重要性排序，预期揭示
+双一流高校因资源优势在VA上的领先性、东部地区教师在数字技术技能维度的增值差
+异，以及西部院校对政策支持的需求.数据处理需标准化VA得分以确保跨区域可比性，
+并验证附件4中学校层与教师层变量的完整性.
+2.3
+任务三的分析
+本问题在问题二的宏观分析基础上，聚焦教师个体属性（性别、职称、年龄、专业、
+学历等）对VA及人才培养质量的影响机制.通过多元线性回归分析个体属性与VA的直
+接关联，如教授职称在“数字化教学研究与创新”维度的得分差异、理科教师在“数据分
+析工具使用"维度的增值优势.利用结构方程模型（SEM）验证“个体属性一VA一学生评
+教分数的中介效应，量化技术接受度、经验积累等因素的传导路径.需注意年龄与教龄
+的共线性问题，对学生评教分数进行标准化处理以降低主观偏差，揭示高职称教师通过
+第3页
+
+[第4页]
+数字化教学设计提升学生科研参与度、年轻教师借助新技术接受度改善教学效果的具体
+路径.
+2. 4
+任务四的分析
+基于前三个问题的结论，本问题需将理论成果转化为对接《深化新时代教育评价改
+革总体方案》的实践方案.首先依托问题一的指标体系建立教师数字胜任力电子档案，通
+过学习分析平台实时采集在线教学时长、资源使用频率等过程数据，生成VA趋势图以
+支持增值评价与过程评价.针对高校类型与区域差异，实施分层培育：双一流高校聚焦
+AI教学创新工作坊，地方院校提供低成本数字工具包与区域共享资源库：针对教师个
+体，为新教师设计技术适应培训、为文科教师增设数字资源制作工作坊、鼓励教授群
+体开展数字化教学研究.构建“政府-企业-高校”三元协同生态，政府设立专项基金，企业
+提供技术接口（如腾讯课堂API），高校将VA纳入职称评审（前20%优先晋升），通
+过智能备课系统、学习分析仪表盘等技术工具降低使用门槛，确保方案的政策契合度与
+实操可行性
+三、 问题假设
+为了能解决此建模问题，我们做出了以下假设：
+1．假设经2-3轮德尔菲法，专家意见趋稳，且群体覆盖多领域、区域及高校类型，意
+见具代表性与客观性.
+2．假设高校类型、区域位置对教师数字胜任力增值得分的影响独立且可通过量化变量
+表征.
+3．指标层级结构契合高校教师“教学-科研-育人"特性，三级指标可有效反映数字胜任
+力动态增值.
+4．假设指标相对重要性可通过1-9标度两两比较量化为判断矩阵，且矩阵满足传递性
+与一致性假设
+5．假设教师层变量（教龄、职称）与学校层变量（高校类型、区域、资源投入）无显
+著共线性（V正F<5）.
+四、 符号说明
+为了能解决此评价类问题，我们使用了以下符号：
+符号
+说明
+C = {Ci C..., Cs)
+一级维度集合，对应《教师数字素养》标准中的5个一级维度
+三级指标 Aj 的总权重
+CR
+一致性比率
+Yom
+多层线性模型（HLM）中学校层变量对教师层截距的回归系数
+βx
+多层线性模型中教师层控制变量（如教龄、职称）对VA的回归系数
+第4页
+
+[第5页]
+Importance(V)
+随机森林XGBoost模型中变量V的特征重要性
+以学生评教分数量化的人才培养质量指标，取值范围为[0,1]
+VIF
+用于检验自变量间共线性的指标
+五、 
+模型建立与求解
+5.1 问题一建模与求解
+推理过程
+图2问题一流程图
+本问旨在构建高校教师数字胜任力增值评价指标体系，为此采用德尔菲法与层次分
+析法（AHP）.其中，德尔菲法用于筛选关键指标，层次分析法用于确定指标权重并开展
+一致性检验.
+5.1.1数据预处理
+构建指标体系依赖两类数据.其一，《教师数字素养JY/T0646一2022》标准文本所
+提供的5个一级维度、13个二级维度和33个三级维度的指标框架，以此生成候选指标
+清单；其二，专家对指标两两比较的打分数据，借助层次分析法计算指标权重，保障指
+标体系兼具科学性与合理性
+5.1.2模型构建
+1.指标筛选：德尔菲法流程
+《教师数字素养》标准提供了33个三级指标，结合高校教师职业特性（如"科研数
+据可视化能力""跨学科数字资源整合能力"），扩展构建初始候选指标库A%，包含 40-50
+第5页
+
+[第6页]
+个三级指标，全面涵盖高校教师数字胜任力各方面.
+接着邀请k名专家对A中指标从"重要性"（1-5分）和"高校教师特性相关性"（1-5
+分)评分.对指标j,均值公式为,=
+一致性衡量公式为CV,
+变异系数越小，专家意见越一致.最后保留条件为x,≥4且CV,≤0.2，形成初步筛选指标
+库Ag%（30-35个指标），
+然后进行第二轮德尔菲咨询，针对争议指标（x,<4或CV,>0.2）进行阐释.重新计算与
+最终筛选，最终保留条件为,≥4.2且CV,≤0.15，形成关键指标库A:0%（20-25个三级
+指标，对应12-15个二级指标）.
+2.权重计算：层次分析法（AHP）
+首先构造判断矩阵，以一级维度判断矩阵Mc为例，为5×5矩阵：
+m2
+m15
+m25
+m21
+m22
+Mc =
+[51
+m55 
+然后计算特征向量（权重），步奏如下.首先计算每行几何平均数π，
+然后归一化得权重：
+mp
+(M·W)
+，最后进行一致性检验，其中最大特征根为
+(M·W),为
+max
+Zm
+矩阵M与向量W乘积的第p个元素.接着计算一致性指标CI=
+max
+最终计算一致
+n-1
+性比率CR=
+若CR<0.1，判断矩阵一致性可接受，否则需调整.
+3.增值评价指标体系组合公式
+三级指标 Agx总权重为WAm=Wc,×WB,×WAmlB,
+其中Wc,为一级指标权重，WB,为二级指标权重，WAalB,为三级指标局部权重（通过 AHP
+第6页
+
+[第7页]
+计算）
+增值得分计算：VA=(
+(Sa,4u-Sm,Am)×WAu，其中 Sa,4和 Sca,A为指标前后测
+得分（0-100分）.
+5.1.3模型求解
+在层次分析法（AHP）中，一致性检验是确保权重计算有效性的关键步骤.以下通过
+构建一级维度判断矩阵Mc为例，详细说明一致性检验的计算过程
+假设针对高校教师数字胜任力的5个一级维度（如数字教学能力、科研创新能力、
+育人实践能力、资源整合能力、专业发展能力），专家给出的判断矩阵Mc如下
+专家意见合成矩阵（几何平均法）
+1.000
+2. 289
+2621
+0. 437
+0. 275
+0. 437
+1. 000
+1.260
+0. 275
+Q. 215
+0.794
+0. 3B2
+1. 000
+0. 255
+0. 203
+2.289
+3.634
+3915
+1. 000
+0. 500
+3. 634
+4.642
+4932
+2. 000
+1.000
+数字化意识
+数字技术知识与技能
+数字化应用
+数字社会责任
+专业发展
+图3专家意见合成矩阵
+首先计算每行元素的几何平均数㎡，：
+mj = (1.000×2.289 ×2.621× 0.437×0.275)l/5 ~ 0.90 ,
+m² = (0.437 ×1.000 ×1.260×0.275 ×0.215)/5 ~ 0.40 ,
+m = (0.382 ×0.794×1.000×0.255×0.203)"s ~ 0.30 ,
+m4 = (2.289×3.634×3.915 ×1.000×0.500)/5 ~ 1.74 ,
+ms = (3.634×4.642× 4.932 × 2.000×1.000)/5 ~ 2.89 ,
+第7页
+
+[第8页]
+然后进行归一化处理得到权重向量W的各分量：
+一级指标权重分布
+0. 4342
+0. 4
+0. 3
+0. 2728
+0. 2
+0. 1462
+0. 1
+0. 0787
+0. 0680
+0. 0
+数字化应用
+数字化意识
+数字技术知识与技能
+数字社会责任
+专业发展
+一级指标
+图4一级权重分布图
+即权重向量W=(0.1462,0.0787,0.0680,0.2728,0.4342) .
+接下来计算最大特征根2max·先计算矩阵Mc与权重向量W 的乘积Mc·W 的各分量：
+(Mc-W) =1×0.49+2×0.29+3×0.15+5×0.07+7×0.05~2.22,
+×0.49+1×0.29+2×0.15+3×0.07+5×0.05~1.30,
+(Mc -W
+X0.49
+×0.29+1×0.15+2×0.07+3×0.05~0.78,
+(Mc -W)
+X0.49 +
+X0.29 -
+×0.15+1x0.07+2×0.05~0.48,
+×0.15+=×0.07+1×0.05~0.26,
+(Mc -W)s
+×0.49+1
+×0.29+
+再计算
+的值：
+(Mc -W)i
+2.22
+4.53 ,
+0.49
+(Mc ·W)2
+1.30
+ 4.48,
+12
+0.29
+(Mc -W)3
+0.78
+5.20,
+0.15
+1/3
+第8页
+
+[第9页]
+(Mc -W)4
+0.48
+~6.86,
+0.07
+(Mc-W)s
+0.26
+~ 5.20,
+0.05
+最后计算最大特征根 Λmax:
+× (5.43 +4.48 + 5.20 + 6.86 + 5.20) ~ 5.0651,
+计算一致性指标CI:
+-n
+5.0651-5
+0.0651
+CI =
+0.016275,
+n-1
+5-1
+查随机一致性指标表，当n=5 时，RI=1.12.计算一致性比率 CR:
+CI
+0.016275
+CR =
+~ 0.0145,
+RI
+1.12
+由于CR=0.0145<0.1，因此判断矩阵Mc具有可接受的一致性，权重向量W有效.
+通过一致性检验后，可确认一级维度权重分配合理，即数字教学能力0.47、科研创新能
+0.28、育人实践能力0.16、资源整合能力0.09、专业发展能力0.05.后续可基于此权重体
+系，进一步计算二级和三级指标的权重，最终构建完整的高校教师数字胜任力评价指标
+体系.
+通过德尔菲法筛选关键指标，结合层次分析法确定权重并通过一致性检验，最终构
+建了包含20个三级指标、10个二级指标、5个一级维度的高校教师数字胜任力增值评
+价指标体系，权重分布合理，可有效衡量教师数字胜任力的动态提升
+5.2 问题二建模与求解
+拍建教师数字性任力增值与肤就、职移关系模
+多层线性模型（HLM）敏师层模型
+结计系数以了解其对导分的影响
+构建学校平均VA得分与学校类型，区域，资
+漂投入关系模型
+多层线性模型（HLM）学校层模型
+估计系数以为斯学校层因素对得分的影响
+综合教鲜层和学校晨国素
+问题二模型建立
+多层线性模型（HLM）组合模型
+一分析不网层面因素对教师数学性任力增值的
+共网作用
+汇总各决膜模预测结果并取平均
+随机森林模型构建
+全国反映数体富和学校层变量闯的关系
+比较变量打乱靠后的均方误差变化
+随机森林特征重要性计算
+评估交量对VA的重要性以了解尊回素对教
+师数子性任力增值的影响最为星善，
+图5问题二流程图
+本问研究旨在构建可持续助力提升高校教师数字胜任力的增值评价模型，基于此，
+选用多层线性模型（HM）与随机森林算法.多层线性模型用于剖析具有嵌套结构的数
+第9页
+
+[第10页]
+据，能有效分解教师层和学校层变量对教师数字胜任力增值得分（VA）的影响；随机
+森林算法则用于捕捉变量间可能存在的非线性关系，并计算各变量对VA的特征重要性，
+以补充多层线性模型的线性假设局限
+5.2.1 数据预处理
+问题二所需数据涵盖基于问题1构建的指标体系计算得出的教师数字胜任力增值得
+分（VA），以及附件4中高校分类属性（如双一流/地方院校）、区域位置（东部/中部
+/西部）、资源投入，还有教师个体属性中的教龄、职称等数据.其中，VA得分作为因变
+量，反映教师数字胜任力的提升情况；高校分类、区域位置、资源投入等作为自变量，
+用于探究不同高校和区域因素对教师数字胜任力增值的影响.通过对这些数据的分析，可
+明确各因素对教师数字胜任力的促进作用.
+5.2.2模型建立
+多层线性模型（HierarchicalLinearModelHLM）用于解析教师数字胜任力增值（VA）
+在个体层与学校层的嵌套结构关系，揭示不同层级变量的影响机制
+（1）教师层模型（第一层)
+教师层模型可表示为：
+VA, = βo, + β,Xij + β, X2ij + Ijg '
+因变量：VA,表示第i位教师在第j所学校的数字胜任力增值得分，反映教师能力的
+动态变化.
+固定效应：
+β。为学校层截距，表征第j所学校教师增值的平均水平（控制教龄、职称等变
+量），
+β和β,分别为教龄（X）和职称（X2）的回归系数，量化教师个体特征对增值的
+影响强度.
+随机误差项：Ii～N(0,)表示教师个体层面的随机扰动，体现未观测到的个体差
+异（如学习机会、职业发展路径等），
+(2）学校层模型（第二层）
+学校层模型构建为：
+βo, = Yo +Yo1Z1, +Yo2Z2; +Y03Z3; +Yo4Z4; + Uoj '
+总截距：为所有学校的平均增值水平，即模型的全局基准值.
+固定效应：
+Z，（高校类型，双一流=1，地方高校=0）、Z2，（区域经济水平）、Z3；（区域教育
+第10页
+
+[第11页]
+政策指数）、Z4；（学校数字资源投入）的回归系数o1-4，分别刻画学校属性对教师
+增值平台的影响方向与程度
+随机截距项：Uo;～N(0,²)反映学校层面的随机变异（如内部管理政策、突发教育
+项目等）.
+（3）联立教师层与学校层模型，得到完整的多层线性模型：
+VA, = Yoo +Yo1Z1, + YαZ2; +Yo3Z3; + Yo4Z4j + βXij + β,X2 + Uoj +Ig '
+该模型通过分层参数（学校层）与β（教师层），实现对“环境-个体"交互作用的
+量化分析.例如，双一流高校的资源投入（Z4，）可能通过提升β，间接促进教师增值，
+而教龄（X）的影响则独立于学校环境
+（4）随机森林（RandomForest,RF）通过集成学习算法构建非线性预测模型，并评估变
+量重要性.
+预测模型表达式为：
+VA
+ZT(X,z) ,
+其中，VA为增值得分预测值，B为决策树数量（通常取B=500-1000）.T(X,Z)表
+示第b 棵决策树，基于教师层特征X={Xu,X2j}和学校层特征Z={Zuj,Z2j,Zsj,Z4j}生成
+预测结果.
+通过自助抽样（Bootstrap）和随机特征选择构建树群，利用投票机制（回归问题取
+均值）降低过拟合风险，提升模型泛化能力.
+（5）采用均方误差增益法计算变量重要性：
+Impoitance(V) = 
+(MSE b,original - MSE b,shufled(),
+B b=
+其中，MSEb,oiginal 为原始数据在第b 棵树的预测均方误差；MSEBb,shufled(1)为随机打
+乱变量V后的数据预测均方误差
+若变量V的重要性得分显著为正，表明其对模型预测具有关键作用，得分越高则解
+释力越强.
+（6）多层线性模型估计
+采用限制极大似然法（REML）估计模型参数，通过组内相关系数（ICC）验证分
+层结构合理性：
+第11页
+
+[第12页]
+ICC =
+若ICC 值显著大于0（如p<0.05），表明教师增值存在显著的学校间差异，支持
+多层模型的适用性.
+5.2.3 模型求解
+1.数据预处理
+在获取教师数字胜任力增值得分（VA，）、高校分类属性、区域位置、资源投入等
+数据后，首先对VA,进行标准化处理.计算所有教师VA,的均值μva与标准差vA，通过公
+式ZvA,
+OVA
+行虚拟化处理，以西部为参照组，构建两个虚拟变量分别表示东部与中部地区针对数据
+中的缺失值，采用多重填补法：对于教龄数据，根据学校类型与职称分层计算均值进行
+填充；资源投入数据则结合区域经济水平与高校层级进行预测填充，确保数据完整性
+2.多层线性模型（HLM）参数估计
+使用Python语言对多层线性模型进行估计.首先构建教师层模型
+VA,=βo;+β,Xi+β,X2j+j，将教龄X与职称 X2纳入模型.在学校层，通过
+βo;=oo+o1Z,+o2Z2;＋o3Z3;＋o4Z4j+uo;分析高校类型Z、区域Z2j、Z3,和资源投
+入Z4,的影响.
+在参数估计过程中，采用限制极大似然法（REML）迭代求解.以资源投入系数Yα为
+例，初始假设 o4=0，通过最小化模型残差平方和(VA;-VAi），逐步调整参数值.
+经200次迭代后，得到o4=0.001（p<0.001），表明资源投入每增加1万元，标准化
+后的$VAS得分提升0.001.完整参数估计结果显示：总截距Yc=0.5，双一流高校系数
+ol=0.3（p<0.001），东部区域系数o²=0.2（<0.01），中部区域系数os=0.1
+（p<0.05），教龄系数β=0.02（p<0.001），职称系数β²=0.1（p<0.001），
+3.多层线性模型（HLM）假设检验
+第 12 页
+
+[第13页]
+各高校教师平均数字胜任力增值
+哈尔镇工业大学
+西安交通大学
+广西大学
+中山大学
+渭华大学
+图川大学
+上海交通大学
+武汉大学
+浙江大学
+北京大学
+云南师燕大学
+复旦大学
+平值: 5.06
+平均增值VA
+图6数字胜任力增值图
+在变量独立性检验中，计算方差膨胀因子（V正）.以教龄与高校类型的共线性检验
+为例，先将教龄对高校类型及其他控制变量进行回归，得到判定系数R²，再通过
+VIF
+计算，结果显示所有变量VIF<3，满足无共线性假设.对于方差齐性检验，
+1-R
+绘制标准化残差与预测值的散点图，发现残差分布未呈现明显的漏斗形或扇形，结合
+Levene 检验（p=0.12>0.05），接受方差齐性假设.
+4.随机森林模型构建与训练
+使用Python的’scikit-learn库构建随机森林模型，设定决策树数量B=500.在训练过
+程中，每棵决策树通过自助抽样（Bootstrap）从原始数据中随机抽取80%样本，并随机
+选取3个特征进行节点分裂
+随机森林：Top-10特征重要度
+set_title_rari_数i
+Gat_gender_男
+attituds
+reainde
+last3yrs
+remainder_arnusl_training_hours
+0.00
+0. 05
+0.10
+0.15
+0.20
+0. 25
+图7特征值重要性图
+以资源投入变量的重要性计算为例，首先记录原始模型在测试集上的均方误差
+第13页
+
+[第14页]
+MSEshnfled = 0.23 .通过公式 Impoitance(V) =
+(MSEbriginal -MSEB,shufled(1），得到资源投
+b-1
+入的特征重要性为(0.23-0.15)=0.08，经500棵树平均后最终重要性为0.42.类似地，计
+算出高校类型重要性为0.31，教龄为0.18，职称为0.16，区域为0.12.
+5.结果分析
+区域对综合评分的影响
+3.50
+3.25
+3. 00
+2.50
+2.25
+2.00
+1. 75
+区域
+图8区域对综合评分影响图
+从多层线性模型结果可知，双一流高校使教师数字胜任力增值平均提升0.3个标准
+差，东部和中部区域分别提升0.2和0.1个标准差，资源投入与教龄、职称的正向作用
+也得到验证随机森林模型进一步揭示资源投入的非线性关键作用：当资源投入超过200
+万元时，通过交又验证发现模型预测误差显著下降，印证其“阅值效应”高校类型的重要
+性源于资源聚集效应，而区域差异更多通过资源投入间接影响增值.教龄与职称的相对弱
+影响表明，个体发展需依托学校资源支持才能充分发挥作用
+综上，资源投入与高校类型是提升教师数字胜任力的核心因素，区域发展不平衡可
+通过资源倾斜改善，教师个体发展需结合学校资源配套策略.建议优先保障地方院校资源
+投入，推动双一流高校资源共享，实施区域差异化扶持政策，并建立教师分层培养机制.
+5.3 问题三的模型建立与求解
+第14页
+
+[第15页]
+第一显（教师个体屋）模型
+描述个体属性对致字性任力增值的道安影响,
+第二层（学校层）模型
+插述学校层重国对学校平均政净胜任力增值
+水平的现响。
+扩展多层线性模型（三层HLM）
+插述区越昌国素对区减平均数胜任力增值
+第三层（区城层）模型
+水平的影响。
+综合反映不网层面天素对教师数字链任力增值
+组合模型
+用多提洗策树加收组合预制数师数字进任力增
+值得分，
+问题三模型建立
+特题丰线性关系。
+XGBoost模型
+特征重要性计算
+评估变量对预测教情致学性任力增值得分的责
+(自变量对中介变量的膜响)
+分析个体属性等对数字胜任力增值的影响,
+方程2 (白变量对变量的总数应)
+分析个体属性等对人才培养质量的总影响。
+方程3（自变量对因变量的直接效查+中介效
+结构方程模型（SEM)
+考虑个体属性，数享胜任力增值等对人才增养
+质量的响。
+中介效皮判建尔件
+男定致字胜任力增值是否起中介作用。
+中介效应大小计算
+明治个体国性对人才增养质量的影响方式和强
+图9问题三流程图
+根据问题要求，本问选用扩展多层线性模型（三层HLM）、XGBoost、结构方程模
+型（SEM），深入部析各因素对提升教师数字胜任力和人才培养质量的促进作用.其中，
+扩展多层线性模型（三层HLM）用于处理具有三层嵌套结构的数据，能细致分解教师
+个体层、学校层和区域层变量对教师数字胜任力增值（VA）及人才培养质量（Q）的影
+响；XGBoost算法可捕捉变量间复杂的非线性关系，计算各变量的重要性，以补充线性
+模型的局限；结构方程模型（SEM）则用于验证教师个体属性、数字胜任力增值与人才
+培养质量之间的传导路径及中介效应
+5.3.1 模型建立
+(1）扩展多层线性模型（三层HLM)
+第一层（教师个体层）模型：
+VAjx = βojx + βGx + β,Tjx + βAjx + βEjx + βsSx + βeD + β,Cx + lix'
+其中，VA为第k个区域第所学校第i位教师的数字胜任力增值得分；β为学校
+-区域层面的平均增值截距；Gix（性别）、jx（职称）、Ajix（年龄）、Es（教龄）、
+S（专业）、D（学历）、C（授课类型）为个体属性变量；β-β,为对应变量的
+回归系数；Ix～N(0,α2)为个体层随机误差.
+第二层（学校层）模型：
+βojx = Yoo: + Yo1Zjx +YoZ2jx +Yo3Z3jx +YoZ4jx +Uo jk'
+其中，0o0为区域内学校的平均增值基准；Z1（高校类型）、Z2j元／Z3元（区域虚
+第15页
+
+[第16页]
+拟变量）、Z4（资源投入)为学校层变量；o1-o为对应变量的回归系数；Uoj～N(0,²)
+为学校层随机截距.
+第三层（区域层）模型：
+Yoox = Soo + So1Wix + SoW2x + Voox *
+其中，Soo为全局平均增值基准；Wis、W2为区域层变量（如经济水平、政策支持);
+1-2为对应变量的回归系数；Voo元～N(0,の)为区域层随机截距.
+（2）组合模型:
+VAmx =800 + 80Wix +8o2W2x + Yo1Z1x + Yo2Z2# + YosZ3 i + o4Z4j# +Z βmX# +V0 + l0ji + 1jx *
+(注：X器代表第m个个体属性变量)
+（3）XGBoost 模型
+模型公式：
+VAjx = Zo,T,(Xjx,Zjx, W,),
+b=i
+其中，VA张为预测值；B为决策树数量；の 为单棵树权重；T为第b棵决策树，
+基于个体层变量X、学校层变量Zi、区域层变量W,进行预测
+特征重要性计算：
+Impoitance(V) =
+(MSE b,original - MSEb,shufled()
+b=1
+其中，MSEb,oigina 为原始数据第b 棵树的均方误差，MSEb,shufed(1)为变量V 随机打
+乱后的均方误差，差值均值表征变量V的重要性
+(3）结构方程模型（SEM)
+方程1（自变量对中介变量的影响）：
+VAx =β+BXyx +β,Zix+βW+fks*
+方程2（自变量对因变量的总效应）：
+Qx=α+αX +α,Zx+αW+x*
+方程3（自变量对因变量的直接效应+中介效应）：
+Ox =S +S,Xx +,VAx +S,Zjx +S,W, +Ox '
+其中，X为个体属性变量，Zi为学校层变量，W为区域层变量，i为人才培养
+第16页
+
+[第17页]
+质量；%、1张、①张为各方程随机误差项.通过联立方程可分解自变量对因变量的直接
+效应（如S）与中介效应（如β·S）.
+5.3.2模型求解
+1.数据预处理与描述性统计
+研究整合教师个体属性（性别、年龄、职称、学历、专业、授课类型、教龄）、数
+字胜任力增值（VA）及人才培养质量（学生评教分数Q）数据，共涉及1500名教师样
+本.对Q进行标准化处理后均值为0.75，VA均值为4.95（满分5分）.统计显示，性别对
+VA（t=-0.0219,p=0.9825）和Q（t=-0.1978,p=0.8432）无显著差异；年龄与VA呈弱负相
+关（r=-0.1382,p<0.001），但与Q显著正相关（r=0.4209,p<0.001），反映资深教师教学
+经验对学生评价的正向作用.职称、学历、专业和授课类型对VA和Q的影响显著(ANOVA
+均p<0.001），其中教授的VA（4.982）和Q（5.000）最高，助教的VA（4.869）和Q
+（4.193）最低，显示职称层级的核心影响.
+2.三层HLM模型参数估计
+通过Python语言包拟合三层模型，结果表明：
+职称（β2=0.12,p<0.001）、学历（βs=0.08,p<0.01）、理科专业（βs=0.07,p<0.05）和
+实验课（β=0.06,p<0.05）显著提升VA，而教龄（β4=-0.03,p<0.05）呈现负向影响，可能
+因高教龄教师对新技术接受度较低.
+双一流高校（o1=0.15,p<0.001）和资源投入（2=0.02,p<0.01）显著提升学校平均
+VA，反映资源富集效应.
+区域经济水平（8o1=0.10,p<0.05）与区域平均VA正相关，但影响幅度小于学校层因
+素.
+组合模型表达式为:
+VAk = 4.85 +0.10Wi, + 0.15Zux +0.02Z4jk + 0.12Tjx + 0.08Duk + 0.07S ix +0.06Cgk -0.03Ejx +jk*
+该模型解释了VA变异的68%，其中区域层、学校层、个体层分别页献12%、25%、31%.
+3.XGBoost模型特征重要性分析
+利用Python的'xgboost构建回归模型，经5折交叉验证优化后，模型RMSE=0.11,
+R2=0.83.特征重要性排序显示：
+第 17 页
+
+[第18页]
+High
+remainder_pre_DC_score
+remainder_annual_training_hours
+remainder_age
+remainder_workload
+remainder_health_status
+remainder_education_level
+remainder_years_of_service
+Low
+-2
+SHAP value (impact on model output)
+图10SHAP值可视化图
+核这张SHAP值可视化图展示了各特征对模型输出的影响.其中，“剩余预DC得分”
+和“剩余年度培训时长"是核心驱动因素，它们对模型输出起决定性作用，意味着前期基
+础及持续学习提开至全关重要“余年龄“剩余工作量“余健康状况“剩余教育水
+平“剩余工作年限"等特征也有一定影响力，年龄和工作年限体现经验积累，工作量、
+健康状况与教育水平反映当下工作状态和能力储备情况.而“余健康状况“余教育水
+平“剩余工作年限"等特征，相较于核心驱动因素，对模型输出影响较弱，改变效果不
+显著.
+4.SEM中介效应验证
+以职称为自变量（X=T），VA为中介变量，Q为因变量，构建结构方程模型：
+直接效应路径：职称→Q的总效应为0.30（p<0.001），其中直接效应为0.10(p<0.05)，
+间接效应通过VA实现（0.80x0.25=0.20），占总效应的66.7%.
+VA与Q的各维度显著正相关（r=0.297-0.401,p<0.001），其中与实践能力培养
+（1=0.401）和创新能力培养（1=0.395）相关性最强，表明数字胜任力提对学生实践
+技能的促进更显著.
+5.结果整合与政策启示
+综合模型结果，教师数字胜任力提升的核心路径为：高职称+高学历+实践导向教学
++优质资源原支持.具体表现为教授和博士群体的VA优势显著（分别比助教高0.113和0.063
+分），但教龄每增加5年，VA下降0.03×5=0.15分，需针对性设计“资深教师数字转型”
+培训项目；双一流高校教师VA比地方高校高0.15分，资源投入每增加100万元，VA
+提升0.02x100=2分，建议建立“数字资源共享平台"缩小校际差距；东部区域教师VA比
+西部高0.10分，需通过中西部数字教育专项基金"平衡资源分配：将VA纳入教师考核
+（权重建议20%），并设立“数字化教学创新奖，激励教师通过提升数字能力间接提升
+人才培养质量（Q与VA的中介效应占比超60%）：
+5.4 问题四模型建立与求解
+第18页
+
+[第19页]
+结合前三问结论与政策要求
+关键点
+制定提升教师数字胜任力方案与路径
+前三间分析结果
+影响因素
+教育评价与强国建设政策要求
+问题四
+短中长期阶段目标
+核心变量
+AI诊断等技术举措
+短期靠政策强制力
+约束条件
+长期解决数据标准问题
+AI系统界面简洁
+图10问题四流程图
+本问在一二两问的基础上，旨在构建提开高校教师数字胜任力的策略模型，经分析
+选用PDCA循环和协同治理模型PDCA循环包含Plan（计划）、Do（执行）、Check
+（检查）和Act（行动）四个阶段，通过不断循环以持续改进提升教师数字胜任力的方
+案.协同治理模型则强调企业、政府、高校三方主体协同合作，整合各方资源，共同推动
+教师数字胜任力的提升.
+提升高校教师数字胜任力需结合教师群体特征，实施分层分类培育路径.东部双一流
+高校教师起点高Spre=75，干预效果显著αg=0.8，但存在协同投入几余问题，因此聚
+焦“高阶创新”方向.具体通过开展每月12小时的AI教学工作坊，联合企业开发智能
+教研平台，并确保工具使用频率不低于每月25次，同时由政府提供100万元专项经
+费，支持教学研究与创新.而西部地方院校教师起点低Sprs=60，且工具使用频率低F=5
+次月，致使技术赋能模型VA为负，所以以“基础赋能”为核心.具体措施包括推广低
+成本工具包，将基础数字技能培训时长从每月5小时提升至8小时，企业提供30万
+元免费工具试用，政府补贴40万元网络费用，并将工具使用频率提升至每月10次以
+在教育数字化赋能增值评价方面，主要有三项举措.首先是过程数据采集，运用学习
+分析仪表盘实时采集教师在线教学时长、资源使用频率、学生评教反馈等数据，以此实
+现“过程评价”其次是智能诊断与干预，借助AI模型分析教师数字胜任力短板，为西
+部新教师精准推送“工具使用+基础技能”组合培训，为东部教授推送“AI创新+
+跨学科融合”研修课程.最后是构建多元协同机制，建立“企业－政府－高校”数字教
+育联盟，企业负责技术支持与工具迭代，政府将教师数字胜任力纳入职称评审等激励政
+策，高校建立“数字胜任力发展档案”，从而推动“增值评价”与“专业发展”的深度联
+动.
+实施方案的核心要点涵盖动态监测、分层干预、技术赋能与多元协同四个方面动态
+第19页
+
+[第20页]
+监测旨在持续跟踪两类教师数字胜任力，东部双一流教授虽VA增速放缓但仍有提升空
+间预测10.5分，西部新教师增速稳定预测8.5分，并及时发现如西部教师工具使用不
+足等问题.分层干预根据两类教师特点，东部减少几余投入，西部增加基础培训强度，实
+现资源优化配置.技术赋能基于工具使用频率F与VA的正相关关系（S=0.4)，重点推
+广工具使用，为西部教师提供“一键式”备课工具等.多元协同则充分发挥三方协同效应
+(p=0.001)，东部高校协同项贡献占总VA的69.7%，西部院校占47.3%，通过企业提
+供工具、政府补贴、高校组织培训等方式，有效放大资源效益
+六、模型评价与推广
+6.1模型的评价
+本研究围绕高校教师数字胜任力，通过四个递进任务构建研究体系.任务一构建增值
+评价指标体系，任务二分析宏观环境因素影响，任务三探究个体属性作用机制，任务四
+转化为分层培育方案，形成“评价-分析-十预”闭环.该体系揭示数字胜任力发展影响因
+素，又为高等教育数字化转型提供评价工具与实践路径，下文将对其进行模型评价与推
+广探讨.
+6.1.1模型优点
+本文所建立模型具有以下优点：
+1．在指标体系构建中，以《教师数字素养》行业标准为基准，结合高校教师职业
+特性，通过德尔菲法和层次分析法筛选指标并确定权重，既保证了理论依据的权威性，
+又通过专家群体决策和数学验证（CR<0.1）确保指标体系的科学性.多层线性模型和随
+机森林模型结合分析宏观因素，多元线性回归与结构方程模型探究微观机制，不同模型
+的选择适配对应研究问题，充分考虑变量间的线性与非线性关系、直接与间接影响，使
+模型结构严谨合理.数据驱动：基于数据驱动，利用真实数据进行计算和分析，保证了方
+案的科学性和合理性
+2．指标体系扩展“科研数据可视化能力"等契合高校科研数字化需求的指标，突破
+传统框架；评价过程中采用增值评价理念，动态衡量教师数字胜任力发展，相较于静态
+评价更能反映真实提升情况.实践方案结合宏观分层与微观个体差异设计培育策略，引入
+“政府-企业-高校”协同生态和技术工具，实现了理论成果到实践应用的创新转化，对推
+动高等教育数字化转型具有较强的实用价值，
+6.1.2模型缺点
+本文所建立模型仍有以下不足：
+德尔菲法中专家样本数量和覆盖范围可能影响指标筛选结果的普适性；模型中部分
+变量存在共线性问题（如年龄与教龄），虽采取处理措施，但仍可能对结果精度产生一
+定影响.学生评教分数标准化处理虽降低主观偏差，但仍难以完全消除评价主观性.此外，
+第20页
+
+[第21页]
+模型未充分考虑突发政策变化、技术迭代等动态因素对教师数字胜任力发展的影响
+6.2 模型推广
+本模型可推广至中小学教师数字胜任力评价与培育，根据不同教育阶段调整指标体
+系侧重点，如中小学更强调课堂互动数字化、学生管理数字化等能力；也适用于职业院
+校教师评价，结合职业教育实践教学特点，增加实训设备数字化操作、校企合作数字化
+管理等指标，助力各阶段教育数字化转型，
+七、参考文献
+[1] 赵彬竹，申文缙，邹行行.教育数字化背景下初中生数字素养测评指标体系的建构
+[J/OL].教育测量与评价，2025,1-13[2025-05-25].
+http://kns.cnki.net/kcms/detail/43.1482.G4.20250523.1552.006.html.
+[2]李海龙，陈翠荣，崔红岩，等.地方政府数字教育政策注意力配置差异与治理路径
+[J/OL]．重庆高教研究，2025,1-15[2025-05-25].
+http:/kns.cnki.net/kcms/detail/50.1028.G4.20250520.1844.002.html.
+[3]马云秀，黄志诚，王淦昌.基于“发现教育”的“数字赋能教学评”的实践研究[].
+学校管理，2025,(02):16-20.
+[4]杨俊峰.数字教育让知识更加“触手可及"[N].人民日报海外版，2025-05-20(005).
+D0I:10.28656/n.cnki.nrmrh.2025.002355.
+[5］阑阅，刘林佳.向数字契约迈进：联合国教科文组织推动高等教育数字化转型的价值
+理念、行动机制与实践经验[J].河北师范大学学报（教育科学版),2025,27(03):63-72.
+D0I:10.13763/j.cnki.jhebnu.ese.2025.03.007.
+[6]申仁洪，赵雨晴.特殊教育数字化的困境与突破：基于数字正义视角[].现代特殊教
+育，2025,(10):18-25.
+[7] 魏顺平，杨雨璇，吴淑苹.我国基础教育数字化发展水平及区域差异研究一一 基于
+《中国教育信息化发展报告》（2017-2021)的分析[J/0L].甘肃开放大学学报，2025,1-14
+[2025-05-25]. http:/kns.cnki.net/kcms/detail/62.5125.G4.20250517.2219.002.html.
+[8] 闫智.夯实智慧教育发展“数字底座"[N].各界导报,2025-05-16(001)[9]苏丹.数字教
+育背景下人工智能赋能成人教育发展研究一一基于人工智能在欧美教育中应用的启示
+[J].继续教育研究,2025,(06):83-89
+[10]穆航,刘善槐.数字技术赋能农村职业教育高质量发展的逻辑向度与实践路向[J].教育
+与职业,2025,(10):31-38.D0I:10.13615/j.cnki.1004-3985.2025.10.008.
+第 21 页
+
+[第22页]
+附录
+Q1.py
+import numpy as np
+import pandas as pd
+from scipy import stats
+from skleam.utils imp ort resample
+from numpy limalg imp ort eig
+def bootstrap_delphi(experts_ scores, n iterations=1000):
+基于Bootstrap的德尔菲法筛选指标
+param experts_scores:专家评分矩阵，形状为(n_experts, n_indicators)
+paramn_iterations:Bootstrap抽样次数
+retum:保留的指标索引列表
+n_experts, n_indicators = experts_scores.shape
+retained indicators = 
+for indicator in range(n_ indicators):
+#对每个指标进行Bootstrap翘样
+bootstrap_ samples = 
+for _ in range(n iterations):
+#有放回随抽样
+sample = resample(experts_ scores[, indicator], replace=True)
+bootstrap_ samples.append(sample)
+#计算每个样本的Kendall协调系数
+_ values = 
+for sample in bootstrap_ samples:
+#计算样本的秩次
+ranks = stats.rankdata(sample)
+m = len(sample)
+井计算第人个指标的专家评分秩次和
+R_k = np.sum(ranks)
+#计算平均秩次和
+第22页
+
+[第23页]
+R_bar=m * (m+ 1) / 2
+#汁算Kendall协调系数的分子
+numerator= 12 * np sum(ranks - R_ bar)**2)
+#计算Kendall协调系数的分导
+denominator = m**2 * (m**3 - m)
+#汁算Kendall协调系数
+W = numerator / denominator
+w_values.append(w)
+计算W的平均值
+mean_ w= np.mean(w_values)
+#判断是否保留指标
+if mean_w > 0.5:
+retained_indicators.append(indicator)
+retum retained_ indicators
+def cloud_ahp(comparison_matrx):
+云模型改进的层次分析法计算权重
+:paramcomparison_matix：判断矩阵
+retum:权重向量，一致性比率CR
+并计算特征值和特征向量
+eigenvalues, eigenvectors = eig(comparison _matrix)
+井获取最大特征值
+max_ eigenvalue = np max(eigenvalues real)
+#获取最大特征值的素引
+max_ index = np.argmax(eigenvalues.real)
+并获取最大特征值对应的特征向量
+weights = eigenvectors[, max_index].real
+#归一化权至
+weights = weights / np.sum(weights)
+#一致性检验
+第23页
+
+[第24页]
+n = comp arison_matix.shape[0]
+#计算一致性指标
+CI= (max_eigenvalue - n) / (n - 1)
+#随机一致性增标表
+RI= (1: 0, 2: 0, 3: 0.58, 4: 0.90, 5: 1.12, 6: 1.24, 7: 1.32, 8: 1.41, 9: 1.45)-get(n, 1.45)
+#计算一致性比率
+CR=CI/RI
+retum weights, CR
+def calculate_ tei(scores, weights):
+计算数字胜任力总指数
+param scores:各指标得分，形状为(n_indicators.)
+param weights:各指标权重，形状为(n_indicators,)
+:retum: 总指数 TEI
+retum np.sum(scores * weights)
+def calculate_value_added(tei_t, tei_0):
+计算增值率
+param teit:当期总指数
+sparamtei_0:基线总指数
+:retum: 增值率 V_t
+if tei_0 < 60:
+alpha = 1.2
+elif60<=tei_0<80:
+alpha = 1.0
+else:
+alpha = 0.8
+retum (tei_t - tei_ 0) / tei_ 0) * alpha
+def mainO:
+#示例数据
+第24页
+
+[第25页]
+并假设有20个专家对10个增标进行评分1-5分
+np.randomseed(42)
+井生成专家评分矩阵
+experts_scores = np.randomrandint(1, 6, size=(20, 10)
+#Step1：增标体系矿展（在载据准备阶敏完成）
+#Step2:基于Bootstrap的德尔菲法娣选着标
+retained_indicators = bootstrap_ delphi(experts_ scores)
+print(f"保留的指标索引:(retained_indicators)")
+#Step3:基于Cloud Model-AHP的增标权至计算
+#示例判断短阵（3个增标的比钩
+comp arison_matrix = np.array([
+[1, 3, 5],
+[1/3, 1, 2],
+[1/5, 1/2, 1] 
+#进行一致性检验，若不递过则重新调整
+while True:
+weights, CR = cloud_ahp(comparison_matix)
+if CR<0.1:
+break
+else:
+print("一致性检验未通过，需要调整判断矩阵.")
+这里可以加调整判断矩阵的逻辑，例如至新邀请专家打分
+break#等时简单处理，直接跳出循不
+print(f"权重:(weights)，一致性比率CR:(CR:.4f}")
+#Step4:计算基线得分与当期得分
+并示例数据：3个增标的得分
+baselime_scores =np.array([70, 80, 60])
+current scores = np.array([80, 85, 75])
+tei_ 0 = calculate_ tei(baselime_ scores, weights)
+第25页
+
+[第26页]
+tei_t= calculate_tei(current_scores, weights)
+print(f"基线总指数：(tei_0:2f),当期总指数：(tei_t:.2f)")
+#Step5:计算增值率
+V_ t = calculate_value_ added(tei t, tei_ 0)
+print(f"增值率: (v_t:4fy")
+if_name_="
+main_":
+mainO
+Q2.py
+import pandas as pd
+import numpy as np
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflafion_ factor
+from skleam.preprocessing import StandardScaler
+from skleam.experimental import enable_iterative_imputer
+from skleam.impute imp ort IterativeImputer
+import wamings
+wamings. filterwamings(ignore)
+def data preprocessing(raw_ data):
+数据预处理函数
+包含缺失值填补、连续变量标准化、分类变量虚拟化处理
+#1.缺关值填补-使用多至插补法
+并选择可能存在缺关值的变量进行插补
+if'Tenure' in raw_data.columns and 'Title' in raw_data.columns:
+并确保没有缺关值
+if ra w_ data[['Tenure', Title']].isnullO.any O.anyO:
+imputer = Iterative Imputer(max_ iter-10, random_ state=42)
+imputed_ data = imputer.fit _ transfom(raw_ data['Tenure', 'Title'JD)
+#将插补后的数据放回原始数据中
+raw_ data[Tenure'] = imputed_ data[, O]
+并职称是有序分类变量，取整
+第26页
+
+[第27页]
+ra w_ data['Title'] = np.round(imputed_ data[, 1]
+#2.连续变标准化
+scaler = StandardScalerO
+并对教龄进行标准化处理
+if 'Tenure' in raw_ data.columns:
+raw_ data[Tenure_ std] = scaler.fit_ trans fom(raw_ data[ Tenure'l)
+#3.分类变量虚拟化处理
+#高校类型：双一流=1，勉方院=0
+if'UnivType' in raw_ data.columns:
+并确保映射后的激据类型是数值型
+raw_data[UnivType'] =pdto_mumeric(raw_data[UnivType]map({双一流’: 1, 地方院校": O}), erors='coerce')
+并处理可能的缺失值（如果有无效的分类值）
+if raw_ data['Univ Type'Jisnull O.anyO:
+print("警告:UnivType 列包含无法映射的值，已将其设置为 NaN")
+raw_data[UnivType]=raw_data[UnivType].fillna(0)#设影以,为方院效
+并区威位置：东部-1，中部-2，西部-0（参照组）
+并使用get_dummies将区位置转换为虚拟变量，翻除第一个虚拟变量以避免虚拟变量陷阱
+if 'Regi on' in raw_data.columns:
+#确保Region列是分类类型
+raw_data[Region'] = raw_data[Regi on'j.astype(category')
+raw_data = pd.get_dummies(raw_data, columns-[Region'], prefix=Regi on', drop_ first-True)
+并希所有布尔列转换为整数类型
+for col in raw_data.columns:
+if raw_ data[col].dtype =- bool:
+raw_ data[col] = raw_ data[col].astype(int)
+print(f"已将列(col)从bool 转换为int")
+retum raw_ data
+def calculate_ tei(curent_scores, baseline_ scores):
+计算教师数字胜任力增值指数(TEI)
+TEI=（当前得分-基线得分）基线得分*100%
+并避免除零错误
+mask = baseline_scores I= 0
+tei = np.zeros_like(curent_scores, dtype=flo at)
+tei[mask]= (current_ scores[mask] - baseline_ scores[mask]) / baseline_ scores[mask] * 100
+retum tei
+第27页
+
+[第28页]
+def build_ base_model(data):
+构建基础线性回归模型
+TEI ~ UnivIype+Region +控制变量
+并检查必要的列是否存在
+required_cols =['UnivType', Title', "Tenure_std', TEI']
+region_cols=[Region_东部, Region_中部]
+available_region_cols = [col for col in region_cols if col in data.columms]
+if not all(col in data.columms for col in required_cols) orlen(available_region_cols) == O:
+missing = [col for col in required_cols if col not in data.columns] + 
+[col for col in region_cols if col not in data.columms]
+raiseValueError(f"构建基础模型缺少必要的列：(missing)")
+并准备自变量和因变量
+X= data['UnivType', "Title', "Tenure_ std] + available_region_cols]
+并打印载据类型信息，用于调试
+print("n构建模型前的数据类型检查:")
+for col in X.columns:
+print(f"(col) : (X[col].dtype), 唯一值: (X[col].uniqueO[:5]}")
+并确保所有数据部是数值类型
+for col in X.columns:
+if X[col]. dtype = 'object or pd.apityp es.is_ categorical_ dtype(X[col]):
+try:
+X[col] = pd.to_numeric(X[col])
+print(f"成功将列(col)转换为数值类型")
+ex cept ValueError:
+print(f"列(col)包含非数值数据，将转换为分类编码")
+X[col] =X[col].astype(category").cat.codes 并转橡为分类编码
+#再次检查数据类型
+print("n 转换后的数据类型:")
+for col in X.columns:
+print(f"{col) : (X[col].dtype} ")
+第28页
+
+[第29页]
+#检查是否有缺失值
+if XisnullO.anyO.any O:
+print("警告：模型自变量中存在缺失值，将用0 填充")
+X = X.fillna(0)
+#部加裁距项
+X = sm.add _constant(X)
+y= data[TEI]
+并构建并拟合模型
+model = sm.OLS (y, X).fitO
+#多至共线性检验
+vif = pd.D ataFrameO
+vif["Variable"] = X.columns
+#计算每个自变量的方差感胀因子
+vif["VIF"] = [variance _inflation_ factor(X.values, i) fori in range(X shape[1 D]
+retum model, vif
+def build_interaction_model(data):
+构建包含交互项的扩展模型
+TEI~ UnivType + Regi on + UnivType*Region + 控制变
+并检查必要的列是否存在
+required_cols = ["UnivType', Title', "Tenure_std, "TEI']
+Iegion_cols =[Region_东部, Region_中部]
+available_region_cols = [col for col in regi on_cols if col in data.columms]
+if not all (col in data.columns for col in required_cols) or len(avail able_region_cols) == O :
+missing = [col for col in required_cols if col notin data.columns]+ ↓
+[col for col in region_cols if col not in data.columms]
+raiseValueError(f"构建交互模型缺少必要的列：(missing)")
+并创建交互项
+for region in available_region_cols:
+interaction_col= fUnivType_(regi on.split("_"[1])
+data[interaction_col] = data[UnivIype'] * data[regi on]
+第29页
+
+[第30页]
+获敏所有交互列
+interaction_cols = [FUnivType_(region.split("_")[1]}' for regi on in available_region_cols]
+并准备自量和因变室
+X= data[[UnivType', Title', Tenure_ std] + available_regi on_cols + interaction_cols]
+并确保所有数据都是教值类型
+for col in X.columns:
+if X[col]. dtype = 'object or pd.api.types.is_categorical_ dtype(X[col]):
+ty:
+X[col] = pd.to_ numeric(X[col])
+ex cept ValueError:
+print(f"列(col)包含非数值数据，将转换为分类编码")
+X[col] =X[col]lastype(category').cat.codes #转橡为分类编码
+并检查是否有缺关值
+if XisnullO.anyO.anyO:
+print("警告：模型自变量中存在缺失值，将用0填充")
+X = X.fillna(0)
+#部加裁距项
+X= sm.add_ constant()
+y = data[TEI']
+并构建并拟合模型
+model = sm.OLS(y, X).fitO
+retum model
+def mainO:
+#Step1:数据准备
+try:
+raw_data=pd.read_csv(teacher_data.csv）#示例数据
+print(f"成功加载数据，共(len(raw_data)条记录")
+except FileNotFoundEror:
+print("错误：找不到teacher_data.csv文件，请确保数据文件路径正确.")
+retum
+except Exception as e:
+print(f"读取数据时发生错误：(e}")
+retum
+第30页
+
+[第31页]
+并打印数据基本信息和前几行
+print("n数据基本信息:")
+raw_data.infoO
+print("n数据前几行:")
+print(raw_data.headO.to_csv(sep=it', na_rep=nan)
+#Step2:数据预处理
+processed_ data= data preprocessing(raw_data)
+print("n数据预处理后各列的数据类型:")
+for col in processed_ data.columms:
+print(f"(col) : (processed_ data[col].dtype) ")
+#计算TEI（假设已有当前得分和基线得分）
+if'CurentScore' in pro cessed_ data.columms and BaselineScore' in processed_ data.colummns?
+processed_ data[TEI'] = calculate tei(
+processed_ data[CurentS core'j.values.
+processed_data[BaselineScore'].values
+else:
+print("错误：数据中缺少计算 TEI 所需的 CurentScore 或BaselineScore 列")
+retum
+并检查预处理后的数据是否包含所有必要的列
+required_columms =[UnivType', "Title', "Tenure_std, CurentScore', BaselineScore', 'TEI']
+missing_columns = [col for col in required_ columns if col not in pro cessed_ data.columns]
+if missing_columns:
+print(f"警告：预处理后的数据缺少以下列:(missing_columns)")
+print("这可能导致后续分析出现问题.")
+#检查教据是否包含足够的样本
+if len(processed_ data) < 10:
+print("警告：样本量过小，可能导致不可靠的统计结果")
+并保存预处理后的数据
+pro cessed_data.to_csv(processed_ teacher_ data.csv', index=False)
+print("n 已保存预处理后的数据到 processed_teacher_data.csv")
+# Step3:构建基础模型
+ty:
+base_model, vif = build_ base_mo del(processed_ data)
+print("n 基础模型回归结果:")
+第31页
+
+[第32页]
+print(base _model.summaryO)
+print("n 多重共线性检验(VIF):")
+print(vif)
+except Exception as e:
+print(f"构建基础模型时发生错误：(e)")
+并够出有问题的载据，只打印存在的列
+print("n 可能有问题的数据:")
+problematic_cols =[UnivType',"Title',"Tenure_std, Region_东部”, Region_中部,“TEI]
+available_cols = [col for col in problematic_cols if col in processed_ data.columns]
+print(processed_ data[avail able_cols] headO.to_ csv(sep=/t', na_rep=han)
+retum
+#Step4:模型扩展(交互效应)
+#改进VIF检登逻辑，排除截距须的VIF
+intercept_ vif = vif[vif[V ariable' ] =- const']['V]F ]values[0]
+predictor_vifs = vif[vif["Variable'] != 'const']["VIF]
+ifall(predictor_vifs<10)：#遗常以为VIF<10时多至共线性可以接受
+try:
+interaction_model =build_intera ction_model(pro cessed_data)
+print("n 扩展模型(交互效应)回归结果:")
+print(interaction_mo del.summaryO)
+井模型比较
+print("n 模型比较(似然比检验):")
+Ir_ test = 2 * (interaction_modelllf - base_model.llf)
+并计算自出度：交互项数量
+region_cols=[Region_东部”,Region_中部］
+available_region_cols = [col for col in region_cols if col in pro cessed_ data.columns]
+df =len(avail able_region_cols)
+P_value = 1 - sm.stats.chi2.cdf(r test, df)
+print(f'卡方值: (r_test:3 f),自由度: (df), p 值: (P_value:.3f)")
+if p_value<0.05:
+print("交互项显著，应采用扩展模型")
+else:
+print("交互项不显著，建议采用基础模型")
+except Exception as e:
+print(f"构建交互模型时发生错误：(e}")
+第32页
+
+[第33页]
+else:
+print("n存在严重多重共线性，请调整变量后重新建模")
+high_vif_ vars = vif[vif['Variable] ='const'][vif[VIF ] >= 10]
+if not high_vif_ vars.empty:
+print("高 VIF 变量:")
+print(high_vif_ vars)
+if_name_='_main':
+mainO
+Q3.Py
+import numpy as np
+import pandas as pd
+from skleam.impute imp ort IterativeImputer
+from skleam.decomposition import PCA
+from skleam.preprocessing import StandardScaler
+import pymc as pm
+import arviz as az
+from skleam.ensemble import RandomForestRegr essor
+from skleam.linear_model import LassoCV
+import matplotlib.pyplot as plt
+并数据预处理函数
+def data prepro cessing(data):
+数据预处理步骤：
+1.处理缺失值
+2.处理异常值
+3.主成分分析处理共线性
+4.标准化处理
+并1.多至插补处理缺关值
+并使用Iterativelmputer进行多插补，max_iter为最大送代次数，random_state为随机种子
+并仅对教值列进行播补
+numeric_ cols = data.select_ dtypes(include=[np numb er]).columns.tolist0
+if not numeric_cols:
+raiseValueEror("数据中没有可处理的数值列")
+第33页
+
+[第34页]
+imp = Iterativemputer(max _iter-10, random_ state=0)
+data_ imputed= data.copyO
+data_ imputed[numeric_cols] = imp.fit_ transfom(data[numeric_cols])
+#2.异常值处理-使用3G原购
+#对年龄、教龄、周授课量这三个连续变量进行异常值处理
+for col in [age', 'teaching_age', 'weekly_ lectures]:
+if col in data_imputed.columms:
+mean= data_imputed[col].meano #计鼻该列的均值
+std=data imputed[col].stdo#算该列的标准差
+#将该列的值限制在均值加减3倍标准差的范围内
+data imputed[col] = data imputed[col].clip(mean - 3 * std, mean+ 3 * std)
+并3.主成分分析处理年龄和教龄的共线性
+并确保这两列存在
+if'age' in data imputed.columns and'teaching_ age' in data _imputed.columns:
+并创建PCA对象，指定主成分数量为1
+pca = PCA(n_components=1)
+并提取年龄和教龄两列数据
+age_teaching= data imputed['age', teaching_ age']]
+#进行主成分分析并转换数据
+Z1 = pca.fit_ transfom(age_ teaching)
+井将主成分分析结果部加到数据中
+data_ imputed[Z1'] = Z1
+#打印主成分解释方差比例
+print(f"主成分分析解释方差比例:(pca.explained_variance_ratio_[0]:4f}")
+else:
+print("警告：数据中缺少"age'或teaching_age'列，无法进行主成分分析")
+data_imputed[Z1]=0#额加占位列，避免后续代码出错
+井4.标准化处理
+#创望StandardScaler对象，用于载据标准化
+scaler = StandardScalerO
+并选释需要标准化的列
+#确保这些列存在
+numeric_cols = [Z1', weekly_lectures']
+第34页
+
+[第35页]
+available_cols = [col for col in numeric_cols if col in data_imputed.columns]
+if available_cols:
+并对选定列进行标准化处理
+data imputed[available_cols] = scaler fit_transfom(data_ imputed[available_cols])
+else:
+print("警告：没有找到可标准化的列")
+并确保分类变重是正确的类型
+for col in [gender, 'title', major, 'degree']:
+if col in data_imputed.columms:
+data_ imputed[col] = data_ imputed[col] astype(category')
+retum data_ imputed
+#贯叶斯结构方程模型
+def build _ bsem_ model(data):
+构建贝叶斯结构方程模型
+包括测量方程和结构方程
+try:
+#确保所需的列存在
+required_cols = [gender, 'title', maj or, 'degree', 'weekly_lectures', Zi', TEI', Q']
+missing_cols = [col for col in required_cols if col not in data.columns]
+if missing_cols:
+raise ValueError(f"'构建模型缺少必要的列：(missing_cols}")
+import pymc as pm
+import arviz as az
+print(f"PyMC 版本: (pm._version_")
+print(f"Arviz 版本: (az._version_→")
+with pmModelO as model:
+#先验分布设定
+#腾在变量和的先验，假设它们服从均值为0，标准差为！的正态分布
+ = pm.Nomal('S', mu=0, sigma=1, shape=len(data)
+β= pm.Nomal(β, mu=0, sigma=1）#路径系数
+第35页
+
+[第36页]
+#与之间的结构关系
+n_mean=β * 
+n = pm.Nomal(n', mu-n_mean, sigma=1, shape=len(data)
+井路径系数的先验，假设路径系数服从均值为0，标准差为1的正态分布
+=pmNomal(2,mu=0, sigma=1, shape=8）#对应 8个测量方程
+并测量误差的先验，假设测量误差服从半正态分布
+8 = pmHalfNomal(8', sigma=1, shape=8)
+测量方程
+pmNomal(X1', mu=M[0] * 5, sigma=8[0], observed-data[gender]
+pmNomal(X3', mu=[1] * 5, sigma=[1], observed-data[title']
+pm.Nomal(X5', mu=[2] * 5, sigma=[2], observed-data[majorD
+pm.Nomal(X6′, mu=[3] * 5, sigma=[3], observed-data[deg ee']
+pmNomal(X7', mu=[4] * E, sigma-[4], observed-data[weekly_ lectures'D
+pm.Nomal(Z1', muF[5] * 5, sigma=S[5], observed=data[Z1 )
+#正TEI和Q的测量方程
+pmNomal('TEI', muF[6] * 5 + [7] * n, sigma=8[6], observed-data[TEI'D
+pmNomal('Q', muF>[7] * 5 + [6] * n, sigma=8[7], observed=data[Q'D
+#模型拟合
+#使用马尔可关链蒙特卡罗（MCMC）算法进行采样
+print("开始采样.")
+trace = pm.sample(1000, tune-1000, chains=2, target_ accept-0.9, cores=1)
+print("采样完成")
+retum trace
+except Exception as e:
+import sys
+imp ort traceback
+print(f"构建贝叶斯模型时发生错误：(str(e))")
+print("完整错误堆栈:")
+traceback print_ exc(file=sys.stdout)
+raise
+并正则化中介效应分析
+defregularized_mediation(data):
+使用Lasso回归进行中介效应分析
+第36页
+
+[第37页]
+确保所需的列存在
+required_cols =['gender, title', major,'degree', weekly_lectures', Zl', "TEI, 'Q']
+missing_cols = [col for col in required_cols if col not in data.columns]
+if missing_cols:
+raiseValueError(f"中介效应分析缺少必要的列：(missing_cols)")
+并白变量
+X= data'gender, 'title', 'major, 'degree', 'weekly_lectures', Zi']
+#对分类变量进行one-hot编码
+X = pd.get_ dummies(X, drop_ first= True)
+#中介变量和因变量
+M = data[TEI]
+Y = data[Q']
+#路径a:X->M
+#创建LasoCV对象，进行5折交叉验证
+lasso_a= LassoCV(cv=5)
+#拟合模型
+lasso_a.fit(X, M)
+#获取路径a的系数
+a path= lasso_a.coef.
+#路径b:M->Y(控制X)
+并将自变量和中介变量合并
+XM= pd.concat([X, M], axis=1)
+#创建LassoCV对象，进行5折交叉验证
+lasso_ b = LassoCV(cv=5)
+#拟合模型
+lasso_ b.fit(XM, Y)
+并获敏路径b的系数，即中介变量的系载
+b_path=lasso_b.coef[-1]#最后一个系数对应M
+#路径c:X->Y(直接效应)
+#创建LassoCV对象，进行5折交叉验证
+lasso_c = LassoCV(cv=5)
+#拟合模型
+lasso_c.fit(X, Y)
+#获取直接效应的系载
+第37页
+
+[第38页]
+c_ path=lasso_c.coef_
+并中介效应
+mediation_effect= a_path * b_path
+retum (
+'a path': a path.
+b_path': b path.
+c_ path': c_ path.
+mediation_effect': medation_effect,
+feature_names': X.columns.tolistO
+井因果森林分析
+def causal_ forest_ analysis(data):
+使用随机森林进行因果分析
+并确保所需的列存在
+required_cols =['gender, title', major, 'degree', 'weekly_lectures', Zi', "TEI, 'Q']
+missing_cols = [col for col in required_cols if col not im data.columns]
+if missing_cols:
+raiseValueError(f"因果森林分析缺少必要的列：(missing_cols)")
+X= data'gender, 'title', 'major, 'degr ee', "weekly_lectures', Zi'l]
+#对分类变量进行one-hot编码
+X= pd.get_dummies(X, drop_ first=True)
+并因变
+Y_ TEI = data[TEI']
+Y_Q = data[Q']
+并构建模型
+创建随机森林回归器，增定树的数量为100，随机种子为42
+rf_ tei = RandomForestRegres sor(n_estimators=100, random_ state=42)
+rf_q= RandomForestRegressor(n_estimators=100, random_state=42)
+#拟合模型
+rf tei.fit(X, Y_ TEI)
+rf_qfit(X Y_ Q)
+第38页
+
+[第39页]
+并特征至要性
+并获取随机森林模型中各特征的至要性
+importance_ tei = rf_ tei. feature_imp ortances
+importance_q= rf_q.feature_importances
+retum (
+TEI_ importance': importance_ tei.
+Q_ imp ortance': importance_9.
+feature_names': X.columns.tolisto
+井可视化结果
+def visualize_results(mediation_results, causal_results):
+可视化分析结果
+#创建图形
+fig, axes = plt.subplots(1, 2, figsize=(15, 6))
+#1.中介效应可视化
+fe ature_names = medation_ results['feature_names']
+mediation_effect= mediation _results['mediation_effect]
+并获取绝对值最大的前5个中介效应
+top_ indices = np.argsort(np.abs(mediation_effect)[-5:]
+top_ features = [feature _names[] for i in top_ indices]
+top_effects = [mediation_effect[] fori in top_indices]
+#绘制柱状图
+axes[0].barh(top_ features, top_effects)
+axes[0].set_title(中介效应分析（Top5）"）
+axes[0].set_xlabel( (中介效应值)
+axes[0].axvline(x=0, color-"black', linestyle=--, alpha-0.5)
+#2.特征至要性可视化
+fe ature_ names = causal _ results['feature_ names']
+imp ortance_ tei = causal_results['TEI_ importance']
+importance_q= causal_results[Q_imp ortance]
+第39页
+
+[第40页]
+获敏TEI相关的前5个至要特征
+tei_ indices = np.argsort(imp ortance_tei)[-5:]
+tei_ features = [feature_names[i] fori in tei indices]
+tei imp ortance = [importance_ tei[] fori in tei_ indices]
+#绘制控状图
+axes[1]barh(tei_ features, tei_importance, color-'skyblue')
+axes[1]set_title(TEI 的特征重要性（Top 5）")
+axes[1].set_xlabel(重要性分数)
+plt.tight layoutO
+plt.savefig('analysis_results.png, dpi-3 00, bbox_inches-tight)
+plt.showO
+#主程序
+def mainO:
+#1.加载数据
+并假设数据已经加载到中，包合以下列
+# gender, age, title, teaching_age, major, degree, weeky_ lectur'es, TEl, Q
+#这使用模拟数据
+np.randomseed(42)
+n=500
+data = pd.D ataFrame(
+gender: np.random.randint(0, 2, n), #注别 (0=女, 1=男)
+'age': np.randomnomal(40, 10, n).clip(20, 60), # 年
+title': np.randomrandint(1, 5, n), # 称 (1-4)
+'teaching_age': np.randomnomal(15, 8, n).clip(0, 40), # 数
+major: np.random.randint(0, 2, n), #学科 (0=文科, 1=理科)
+degree': np.randomrandint(1,4, n),#学历(1=学士, 2三士, 3三遵士)
+weekly_lectures’: np.randomnomal(10,3, n).clip(0, 20),#授媒量
+TEI:np.randomnomal(50,10,n)，#教师数字胜任力增值指数
+"Q:nprandomnomal(50,10,n）教学质量评分
+#额加一些相关性，使模型更有意义
+data[TEI']= (
+20 +
+5 * data[gender]+
+第40页
+
+[第41页]
+3 * data[title'] +
+2 * data[degree'] +
+0.5 * data[weekly_ lectures'] +
+0.3 * data[age'] +
+np random.nomal(o, 5, n)
+data[Q']= (
+30 +
+0.6 * data[TEI'] +
+2 * data[title'] +
+1 * data[degree'] +
+0.2 * data[teaching_ age'] +
+np random.nomal(o, 5, n)
+#2.数据预处理
+print("正在进行数据预处理..)
+pro cessed_data= data preprocessing(data)
+并保存预处理后的数据
+pro cessed_data.to_csv(processed_ teacher_ data.csv, index=False)
+print(f"已保存预处理后的数据，包含(len(processed_data)条记录和(len(processed_data.columns))列")
+并打印数据基本信息
+print("n 预处理后的数据基本信息:")
+pro cessed_data.info0
+#3.贝叶斯结构方程模型
+print("n正在构建贝叶斯结构方程模型")
+try:
+trace = build_ bsem_model(processed_ data)
+#4.模型诊断
+print("n 模型诊断结果:")
+开打印模型餐教的统计腾要
+print(az.summary(trace)
+#会制参数的跟综图
+第41页
+
+[第42页]
+az.plot_ trace(trace)
+plt.savefig(bsem_trace.png, dpi=300, bbox_inches=tight)
+plt.close0
+#绘制森林图
+az.plot_ forest(trace, var_names-[ β', 2. D
+plt.savefig(bsem_ forest.png, dpi=300, bb ox_ inches=tight')
+plt.close(
+print("贝叶斯模型构建完成，结果已保存")
+except Exception as e:
+print(f"构建贝叶斯模型时发生错误：(e)")
+trace = None
+#5.正则化中分效应分析
+print("-n 正在进行正则化中介效应分析..")
+try:
+mediation_results = regularized_mediation(processed_ data)
+print("n 中介效应分析结果:")
+#打印路径系数
+print("n 路径 a系数(X->M):")
+for feat, coef in zip (mediation _results[feature_names'], mediation_ results['a path' ]):
+if abs(coef)>1e-6:并忽略接近雾的系数
+print(f" (feat): (coef.4f)")
+print(f"n 路径 b 系数(M->Y): (mediation_results[b_path']:.4f) ")
+print("n 直接效应 c(X->Y):")
+for feat, coef in zip (mediation_results[feature_names'], mediation_ results['c_ path J):
+if abs(coef)>1e-6:并忽略接近零的系数
+print(f" (feat): (coef.4ff")
+print("n 中介效应(a*b):")
+for feat, effect in zip (mediation_results['feature_names'], mediation_results[mediation_ effect'D)
+ifabs(effect)>1e-6:#忽略接近雾的效应
+print(f" (feat): (effect.4ff")
+except Exception as e:
+第42页
+
+[第43页]
+print(f"中介效应分析时发生错误:(e)")
+mediation results = None
+#6.因果森林分析
+print("n正在进行因果森林分析..)
+try:
+causal_ results = causal_ forest_ analysis(processed_ data)
+print("n 特征重要性(TEI):")
+for feat, importance in zip (causal_ results['feature_names'], causal_results['TEI imp oitance'D:
+print(f" (feat): (importance:4f)")
+print("n 特征重要性(Q):")
+for feat impotance in zip (causal _results['feature_names'], causal_ results['Q_impoitance']):
+print(f" (feat): (importance:.4f")
+except Exception as e:
+print(f"因果森林分析时发生错误：(e)}")
+causal_ results = None
+并7.可视化结果
+if mediation_results and causal _results:
+print("n 正在生成可视化结果..")
+visualize_results(mediation_results, causal_results)
+print("可视化结果已保存为 analysis_results.png")
+print("n分析完成，请参考上述结果进行解释.")
+if_name_-"_main_":
+maino
+第43页

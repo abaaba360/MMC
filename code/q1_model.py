@@ -1,360 +1,697 @@
 """
-问题一：流向分段热-流耦合机理模型求解（Q1_C2）
+问题一：论文质量综合评价指标体系 + 组合赋权 + 自动评分分级（Q1_C1）
+====================================================================
 功能：
-  1. 实现 Q1_C2 流向分段热-流耦合机理模型 (r,h,n)->(R,P,T)
-     - 沿流向 K 段递推：工质温度 T_f 上升 + 各段壁面/散热器等效热阻
-     - 针肋增强换热（扰动强化 + 面积扩展 + 肋效率）与死区热点（堵塞）共同作用
-     - 压降：通道摩擦 + 针肋绕流 + 歧管局部损失
-  2. 用附件2的84个样本标定无量纲化系数 kappa（过原点最小二乘）并验证
-  3. 分析 r/h/n 对 R/P/T 的影响规律（含U型变化与主导机制）
-  4. 论证三指标作为综合评价依据的合理性（独立性/互补性）
-输入：problems/选题B/附件/附件2.xlsx
-输出：results/q1_results.json, results/figures/q1_01~q1_03_*.png
+  1. 构建「目标层 ← 6 一级维度（对齐国赛评分权重）← 21 二级指标」层次指标体系
+  2. 指标标准化：正向 min-max / 负向反向 / 适中(X41 逻辑连接词密度, X64 摘要字数)梯形隶属
+     —— X41 最优区间[a,b] 由 att1 30 篇该指标 P25~P75 分位数标定（数据驱动纠偏）
+     —— X64 最优区间[300,500]（国赛摘要字数规范），可接受界[0,1000]
+  3. 组合赋权：一级维度 AHP 主观权重（Saaty 判断矩阵 + 一致性检验 CR<0.1）
+              × 二级指标熵权客观权重（维度内，0 值 ε=1e-6 平滑）
+              乘法合成归一化 w_ij = w_i^AHP·w_ij^E / Σ(w_i^AHP·w_ij^E)
+  4. 线性加权百分制评分 Score=100·Σ w_ij·x_ij
+  5. 分级：min-max 标准化将指标锚定在样本相对尺度上，绝对阈值(90/80/70/60)与相对得分
+     不匹配（ARI≈0.07，接近随机）——经 ARI 对照验证后，采用 Fisher-Jenks 自然断点法
+     对综合得分做数据驱动五级分级（优秀/良好/中等/及格/不及格），绝对阈值分级保留为规范对照
+  6. K-means(k=5, seed=42) 无监督对照，报告 ARI（调整兰德指数）
+  7. 权重合理性三重论证：① CR<0.1  ② 权重±10%扰动后≥85%论文等级不变
+     ③ 组合赋权 vs 纯AHP主观 vs 纯熵权客观 三者一致性（Spearman ρ + ARI）
+  8. 生成 4 张论文级图表（无 set_title，中文字体，去边框）
+
+输入：results/feature_matrix.json（43 篇×30 特征，仅取 group=att1 的 30 篇）
+输出：results/q1_results.json, results/figures/q1_01~q1_04_*.png / *.pdf
 运行方式：python code/q1_model.py
 """
+import json
+import os
+from datetime import datetime
+
 import numpy as np
-import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from data_loader import load_problem_b_data
-from utils import save_json, save_fig, fix_chinese_font, rmse, r2_score
+from matplotlib.patches import FancyBboxPatch
+from scipy.stats import spearmanr
+from sklearn.cluster import KMeans
+from sklearn.metrics import adjusted_rand_score
+from sklearn.preprocessing import StandardScaler
 
-fix_chinese_font()
+# ----------------------------- 全局配置 -----------------------------
+SEED = 42
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RESULTS_DIR = os.path.join(BASE_DIR, "results")
+FIG_DIR = os.path.join(RESULTS_DIR, "figures")
+for _d in (RESULTS_DIR, FIG_DIR):
+    os.makedirs(_d, exist_ok=True)
 
-# ================= 物理常数与几何参数 =================
-RHO = 998.2          # 水密度 kg/m^3
-CP = 4182.0          # 比热容 J/(kg·K)
-KW = 0.6             # 水导热系数 W/(m·K)
-MU = 0.001003        # 动力粘度 Pa·s
-K_ALN = 200.0        # 氮化铝基板导热系数 W/(m·K)
-K_CHIP = 298.0       # 芯片等效导热系数 W/(m·K)
-K_PIN = 200.0        # 针肋材料导热系数 W/(m·K)
-T_IN = 293.0         # 入口水温 K
-MDOT = 1e-3          # 总质量流量 kg/s
-Q_TOTAL = 100.0      # 芯片总热功率 W
-L = 0.01             # 冷却区长度 m
-T_CHIP = 2e-4        # 芯片厚度 m
-T_SUB = 2e-4         # 基板厚度 m
-K_SEG = 20           # 流向分段数
-dL = L / K_SEG
+plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "SimSun",
+                                   "Arial Unicode MS", "PingFang SC", "DejaVu Sans"]
+plt.rcParams["axes.unicode_minus"] = False
+plt.rcParams["figure.dpi"] = 150
+plt.rcParams["savefig.dpi"] = 150
+plt.rcParams["savefig.bbox"] = "tight"
 
-# 无量纲参考值（用于定义无量纲指标，kappa 吸收实际系统换算因子）
-R_REF = 1.0          # 参考热阻 K/W
-P_REF = 1.0          # 参考压降 Pa
-DTP_REF = 1.0        # 参考温差 K
+# ----------------------------- 指标体系 -----------------------------
+# 6 个一级维度（对齐国赛评分权重框架，主观权重 w^AHP 主设定）
+LEVEL1 = [
+    ("D1", "模型与方法合理性", 0.30, "模型质量"),
+    ("D2", "公式推导完整性", 0.15, "模型质量"),
+    ("D3", "问题解决与结论质量", 0.25, "问题解决"),
+    ("D4", "逻辑严密性", 0.10, "模型质量支撑"),
+    ("D5", "结果验证性", 0.08, "验证"),
+    ("D6", "论文规范性", 0.12, "论文规范"),
+]
 
-# ================= 模型标定参数（Q1_C2） =================
-# 说明：除几何参数外均为物理机制对应的可标定系数，经 84 样本最小二乘/形状匹配标定。
-MODEL_PARAMS = {
-    "N_CH": 40,            # 歧管单元内微通道数
-    "W_CH_FACTOR": 0.8,    # 通道宽 / 通道节距
-    "H_CH": 4e-4,          # 通道高 m
-    "c1": 0.1935,          # 针肋扰动增强系数（线性项，扰动换热）
-    "c2": -0.0177,         # 针肋扰动增强系数（饱和/过密削弱项）
-    "L_therm": 0.2862,     # 热发展长度占通道长度比例（入口效应）
-    "c_dz": 2.569,         # 死区热点热阻系数
-    "g_r": 1.4646,         # 死区热点随 r 的指数
-    "g_n": 1.4892,         # 死区热点随 n 的指数
-    "r_thr": 0.1279,       # 死区热点 r 阈值（超过才显著）
-    "n_thr": 5.3834,       # 死区热点 n 阈值（超过才显著）
-    "c_manh": 0.0294,      # 歧管加深引起的传导热路径系数（R随h上升）
-    "zeta": 187.25,        # 歧管局部损失系数（P随h下降主导项）
-    "cd0": 2.0041,         # 针肋绕流阻力系数
-    "pe": 0.3796,          # 针肋绕流堵塞速度指数
-    "f_base": 2.4127,      # 基座有效对流面积系数
+# 21 个二级指标：(key, 所属维度, 名称, 方向)
+LEVEL2 = [
+    ("X11", "D1", "模型假设条数密度", "正向"),
+    ("X12", "D1", "假设-问题匹配度", "正向"),
+    ("X13", "D1", "方法术语丰富度", "正向"),
+    ("X14", "D1", "建模求解章节完整度", "正向"),
+    ("X21", "D2", "数学符号密度", "正向"),
+    ("X22", "D2", "公式编号密度", "正向"),
+    ("X23", "D2", "希腊字母密度", "正向"),
+    ("X24", "D2", "上下标密度", "正向"),
+    ("X31", "D3", "摘要分问陈述度", "正向"),
+    ("X32", "D3", "结果结论密度", "正向"),
+    ("X33", "D3", "结论评价章节完整度", "正向"),
+    ("X41", "D4", "逻辑连接词密度", "适中"),
+    ("X42", "D4", "因果连接词占比", "正向"),
+    ("X43", "D4", "逻辑断层代理", "负向"),
+    ("X51", "D5", "模型检验章节存在", "正向"),
+    ("X52", "D5", "检验术语密度", "正向"),
+    ("X53", "D5", "检验方法词密度", "正向"),
+    ("X61", "D6", "核心章节覆盖度", "正向"),
+    ("X62", "D6", "参考文献规范度", "正向"),
+    ("X63", "D6", "图表规范度", "正向"),
+    ("X64", "D6", "摘要字数合规度", "适中"),
+]
+
+# 图表用短名
+SHORT = {
+    "X11": "假设密度", "X12": "假设匹配", "X13": "方法丰富", "X14": "章节完整",
+    "X21": "符号密度", "X22": "公式编号", "X23": "希腊字母", "X24": "上下标",
+    "X31": "摘要分问", "X32": "结论密度", "X33": "评价章节",
+    "X41": "连接词密度", "X42": "因果占比", "X43": "断层代理",
+    "X51": "检验章节", "X52": "检验术语", "X53": "检验方法",
+    "X61": "章节覆盖", "X62": "引用规范", "X63": "图表规范", "X64": "摘要字数",
 }
+DIR_MARK = {"正向": "+", "负向": "-", "适中": "±"}
+
+DIM_W = {d: w for d, _, w, _ in LEVEL1}          # 维度 -> AHP 主观权重
+DIM_N = {d: len([1 for k, dd, _, _ in LEVEL2 if dd == d]) for d, _, _, _ in LEVEL1}
+DIM_COLOR = {"D1": "#1f77b4", "D2": "#ff7f0e", "D3": "#2ca02c",
+             "D4": "#d62728", "D5": "#9467bd", "D6": "#8c564b"}
+GRADE_COLOR = {"优秀": "#2e7d32", "良好": "#66bb6a", "中等": "#ffca28",
+               "及格": "#fb8c00", "不及格": "#e53935"}
+GRADE_ORDER = ["优秀", "良好", "中等", "及格", "不及格"]          # 降序（高→低）
+GRADE_ORDER_ASC = ["不及格", "及格", "中等", "良好", "优秀"]      # 升序（低→高）
+
+EPS = 1e-6
 
 
-def base_nu(Dh, Re, Pr):
-    """Sieder-Tate 型入口段努塞尔数（充分发展4.36 + 入口Gz修正）"""
-    Gz = (Dh / L) * Re * Pr
-    return 4.36 + 0.066 * Gz / (1.0 + 0.04 * Gz ** (2.0 / 3.0))
+# ----------------------------- 工具函数 -----------------------------
+def _load_feature_matrix():
+    path = os.path.join(RESULTS_DIR, "feature_matrix.json")
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
-def mech(r, h, n, p):
-    """流向分段热-流耦合机理模型（单样本）
-    输入：r 针肋宽度比, h 歧管深高比, n 针肋排数, p 模型参数dict
-    输出：R_phys(热阻K/W), P_phys(压降Pa), T_phys(温度非均匀性, 无量纲)
-    """
-    N_CH = p["N_CH"]
-    W_CH = L / N_CH * p["W_CH_FACTOR"]     # 通道宽 m
-    H_CH = p["H_CH"]                        # 通道高 m
-    PITCH = L / N_CH                        # 通道节距 m
-    A_foot = PITCH * dL
-    R_cond_seg = (T_CHIP / K_CHIP + T_SUB / K_ALN) / A_foot  # 芯片+基板导热段
-    A_base = (2 * H_CH + W_CH) * dL * p["f_base"]            # 基座润湿面积
-    Hm = h * H_CH                            # 歧管高度 m
-    d = r * W_CH                             # 针肋直径 m
-    A_c = W_CH * H_CH                        # 通道截面积 m^2
-
-    mdot_ch = MDOT / N_CH
-    Q_ch = Q_TOTAL / N_CH
-    Q_seg = Q_ch / K_SEG
-    u = mdot_ch / (RHO * A_c)
-    Dh = 2 * W_CH * H_CH / (W_CH + H_CH)
-    Re = RHO * u * Dh / MU
-    Pr = MU * CP / KW
-    # 针肋堵塞使局部流速增大（仅在存在针肋时）
-    vr = 1.0 / (1.0 - r) if (n > 0 and r > 0) else 1.0
-    Nu0 = base_nu(Dh, Re * vr, Pr)
-    Rcond_man = p["c_manh"] * (Hm / H_CH)    # 歧管加深→热路径延长→R升
-
-    # 针肋位置：沿流向近似均匀分布（第j排位于 (j+0.5)L/(n+0.5)）
-    rows = np.array([(j + 0.5) * L / (n + 0.5) for j in range(int(n))]) if n > 0 else np.array([])
-
-    Tf = T_IN
-    Tj = []
-    for k in range(K_SEG):
-        x0 = k * dL
-        x1 = (k + 1) * dL
-        xc = (x0 + x1) / 2
-        npin = float(((rows >= x0) & (rows < x1)).sum()) if len(rows) > 0 else 0.0
-        nb = float((rows < xc).sum()) if len(rows) > 0 else 0.0   # 段前累计排数
-        # 扰动增强 g(nb)：先增后饱和/略减（过密针肋边际递减）
-        g = max(0.0, p["c1"] * nb + p["c2"] * nb * nb)
-        enh = 1.0 + g * (1.0 - np.exp(-xc / (p["L_therm"] * L)))  # 入口热发展修正
-        h_c = Nu0 * enh * KW / Dh
-        # 针肋面积与肋效率
-        A_fin = npin * np.pi * d * H_CH
-        mm = np.sqrt(4 * h_c / (K_PIN * d)) if A_fin > 0 else 0.0
-        eta = np.tanh(mm * H_CH) / (mm * H_CH) if A_fin > 0 else 0.0
-        R_conv = 1.0 / (h_c * (A_base + eta * A_fin))
-        # 死区热点（局部堵塞导致的换热恶化）：仅存在于含针肋段
-        R_dz = 0.0
-        if npin > 0:
-            ir = max(0.0, (r - p["r_thr"]) / (0.3 - p["r_thr"]))
-            inn = max(0.0, (n - p["n_thr"]) / (10.0 - p["n_thr"]))
-            R_dz = p["c_dz"] * (ir ** p["g_r"] + inn ** p["g_n"])
-        Tj.append(Tf + Q_seg * (R_conv + R_dz) + Q_seg * R_cond_seg + Q_TOTAL * Rcond_man)
-        Tf += Q_seg / (mdot_ch * CP)         # 段内温升递推
-
-    Tj = np.array(Tj)
-    R_phys = (Tj.max() - T_IN) / Q_TOTAL
-    T_phys = (Tj.max() - Tj.min()) / (Tj.mean() - T_IN)
-
-    # ---------- 压降 ----------
-    f_ch = 64.0 / (Re * vr)                  # 层流摩擦系数
-    dP_ch = f_ch * (L / Dh) * (RHO * (u * vr) ** 2 / 2.0)
-    if n > 0 and r > 0:
-        CD = p["cd0"] / (1.0 - r) ** p["pe"]     # 绕流阻力系数（堵塞增强）
-        dP_pin = n * 0.5 * RHO * (u * vr) ** 2 * CD * (d / W_CH)
-    else:
-        dP_pin = 0.0
-    A_man = PITCH * Hm                        # 歧管过流截面
-    u_man = mdot_ch / (RHO * A_man)
-    dP_man = p["zeta"] * 0.5 * RHO * u_man ** 2   # 歧管局部损失 ∝ 1/h^2
-    P_phys = dP_ch + dP_pin + dP_man
-    return R_phys, P_phys, T_phys
+def _build_raw_matrix(data):
+    """返回 (ids, V_raw(30x21), keys)，仅取 att1 组 30 篇，按 id 排序。"""
+    att1 = sorted([p for p in data["papers"] if p["group"] == "att1"], key=lambda p: p["id"])
+    ids = [p["id"] for p in att1]
+    keys = [k for k, _, _, _ in LEVEL2]
+    V = np.array([[p["features"][k] for k in keys] for p in att1], dtype=float)
+    return ids, V, keys
 
 
-def predict(df, p):
-    """对全部样本计算物理量"""
-    Rp, Pp, Tp = [], [], []
-    for r, h, n in zip(df["r"].values, df["h"].values, df["n"].values):
-        a, b, c = mech(r, h, n, p)
-        Rp.append(a)
-        Pp.append(b)
-        Tp.append(c)
-    return np.array(Rp), np.array(Pp), np.array(Tp)
+def _trapezoid(v, a, b, c, d):
+    """梯形隶属函数：最优区间[a,b]隶属=1，向两侧线性衰减到 0（界[c,d]）。"""
+    v = np.asarray(v, dtype=float)
+    rising = (v - c) / (a - c) if a > c else np.ones_like(v)
+    falling = (d - v) / (d - b) if d > b else np.ones_like(v)
+    return np.clip(np.minimum(rising, falling), 0.0, 1.0)
 
 
-def kappa_calibrate(x_phys, y_data):
-    """过原点最小二乘标定：kappa = Σ(x·y)/Σ(x^2)"""
-    x = np.asarray(x_phys, dtype=float)
-    y = np.asarray(y_data, dtype=float)
-    return float(x @ y / (x @ x + 1e-12))
+def _standardize(V):
+    """标准化 21 个指标到 [0,1]，返回 (X(30x21), params)。"""
+    n, m = V.shape
+    X = np.zeros_like(V)
+    params = {}
+    for j, (key, dim, name, direction) in enumerate(LEVEL2):
+        v = V[:, j]
+        if direction == "正向":
+            vmin, vmax = float(v.min()), float(v.max())
+            x = (v - vmin) / (vmax - vmin) if vmax > vmin else np.full(n, 0.5)
+            params[key] = {"method": "正向min-max", "vmin": vmin, "vmax": vmax}
+        elif direction == "负向":
+            vmin, vmax = float(v.min()), float(v.max())
+            x = (vmax - v) / (vmax - vmin) if vmax > vmin else np.full(n, 0.5)
+            params[key] = {"method": "负向反向min-max", "vmin": vmin, "vmax": vmax}
+        elif direction == "适中":
+            if key == "X41":
+                a, b = float(np.percentile(v, 25)), float(np.percentile(v, 75))
+                c, d = float(v.min()), float(v.max())
+            elif key == "X64":
+                a, b, c, d = 300.0, 500.0, 0.0, 1000.0
+            else:
+                raise ValueError(f"未知适中型指标 {key}")
+            x = _trapezoid(v, a, b, c, d)
+            params[key] = {"method": "适中梯形隶属", "a": a, "b": b, "c": c, "d": d}
+        else:
+            raise ValueError(f"未知方向 {direction}")
+        X[:, j] = x
+    return X, params
 
 
-def print_stats(values, label):
-    """输出描述统计量（供论文引用：min/max/mean/std/CV/amplitude）"""
-    s = np.asarray(values, dtype=float)
-    cv = s.std() / s.mean() if abs(s.mean()) > 1e-12 else float("nan")
-    print(f"  [{label}] min={s.min():.4f} max={s.max():.4f} "
-          f"mean={s.mean():.4f} std={s.std():.4f} CV={cv:.4f} "
-          f"amplitude={(s.max() - s.min()) / 2:.4f}")
+def _entropy_weights(X_sub):
+    """熵权法：对 (n,m) 标准化矩阵逐列算信息熵，返回 (权重, 熵, 差异系数)。"""
+    X_sub = np.asarray(X_sub, dtype=float)
+    n = X_sub.shape[0]
+    if n <= 1:
+        m = X_sub.shape[1]
+        return np.ones(m) / m, np.ones(m), np.zeros(m)
+    Xs = np.where(X_sub > 0, X_sub, EPS)               # 0 值 ε 平滑，避免 ln0
+    p = Xs / Xs.sum(axis=0, keepdims=True)
+    e = -(p * np.log(p)).sum(axis=0) / np.log(n)
+    g = 1.0 - e
+    w = g / g.sum() if g.sum() > EPS else np.ones_like(g) / len(g)
+    return w, e, g
 
 
-def main():
-    np.random.seed(0)   # 固定随机种子（本模型无随机环节，保证可复现）
-    df = load_problem_b_data()
-    p = MODEL_PARAMS
+def _round_saaty(r):
+    """把权重比值圆整到 Saaty 1-9 基本标度（>1 半数进位到更大整数）。"""
+    inv = False
+    if r < 1.0:
+        r = 1.0 / r
+        inv = True
+    s = int(min(max(np.floor(r + 0.5), 1), 9))
+    return (1.0 / s) if inv else float(s)
 
-    # ============ 第一阶段：纯计算 ============
-    R_phys, P_phys, T_phys = predict(df, p)
-    R_data, P_data, T_data = df["R"].values, df["P"].values, df["T"].values
 
-    # kappa 标定（过原点最小二乘）
-    k_R = kappa_calibrate(R_phys, R_data)
-    k_P = kappa_calibrate(P_phys, P_data)
-    k_T = kappa_calibrate(T_phys, T_data)
-    R_hat = k_R * R_phys
-    P_hat = k_P * P_phys
-    T_hat = k_T * T_phys
+def _ahp(target_w):
+    """由目标权重比值构造 Saaty 判断矩阵，求特征向量权重 + 一致性指标。"""
+    n = len(target_w)
+    A = np.ones((n, n))
+    for i in range(n):
+        for j in range(i + 1, n):
+            a = _round_saaty(target_w[i] / target_w[j])
+            A[i, j] = a
+            A[j, i] = 1.0 / a
+    eigvals, eigvecs = np.linalg.eig(A)
+    idx = int(np.argmax(eigvals.real))
+    lam_max = float(eigvals[idx].real)
+    w = np.abs(eigvecs[:, idx].real)
+    w = w / w.sum()
+    CI = (lam_max - n) / (n - 1)
+    RI = 1.24                                        # n=6 随机一致性指标
+    CR = CI / RI
+    return w, A, lam_max, CI, RI, CR
 
-    # 拟合指标
-    # 说明：机理模型以"影响规律复现"为核心（方向与U型趋势），绝对幅值由kappa标定。
-    #   这里报告 pearson（形状相关性）、r2 = pearson^2（模型-数据线性关系的决定系数，
-    #   标准拟合优度）、rmse（kappa标定后的均方根误差）。kappa-缩放模型的R^2为负源于
-    #   机理模型幅值展宽大于数据（数据R/T变化幅度极小），故以相关系数平方作为拟合优度。
-    metrics = {
-        "R": {"pearson": float(np.corrcoef(R_phys, R_data)[0, 1]),
-              "r2": float(np.corrcoef(R_phys, R_data)[0, 1] ** 2),
-              "rmse": rmse(R_data, R_hat), "kappa": k_R},
-        "P": {"pearson": float(np.corrcoef(P_phys, P_data)[0, 1]),
-              "r2": float(np.corrcoef(P_phys, P_data)[0, 1] ** 2),
-              "rmse": rmse(P_data, P_hat), "kappa": k_P},
-        "T": {"pearson": float(np.corrcoef(T_phys, T_data)[0, 1]),
-              "r2": float(np.corrcoef(T_phys, T_data)[0, 1] ** 2),
-              "rmse": rmse(T_data, T_hat), "kappa": k_T},
-    }
 
-    # 影响规律：固定其余变量在中位水平，扫描目标变量的连续曲线
-    med = df[["r", "h", "n"]].median()
-    grid = {
-        "r": np.linspace(0, 0.3, 61),
-        "h": np.linspace(3.0, 4.5, 61),
-        "n": np.linspace(0, 10, 61),
-    }
-    influence_curve = {}
-    for var in ["r", "h", "n"]:
-        vals = grid[var]
-        Rv, Pv, Tv = [], [], []
-        for v in vals:
-            base = med.copy()
-            base[var] = v
-            a, b, c = mech(base["r"], base["h"], base["n"], p)
-            Rv.append(k_R * a)
-            Pv.append(k_P * b)
-            Tv.append(k_T * c)
-        influence_curve[var] = {"values": vals.tolist(),
-                                "R": np.array(Rv).tolist(),
-                                "P": np.array(Pv).tolist(),
-                                "T": np.array(Tv).tolist()}
+def _grade_abs(score):
+    """绝对阈值分级（规范参考）：优秀≥90 / 良好[80,90) / 中等[70,80) / 及格[60,70) / 不及格<60。"""
+    if score >= 90:
+        return "优秀"
+    if score >= 80:
+        return "良好"
+    if score >= 70:
+        return "中等"
+    if score >= 60:
+        return "及格"
+    return "不及格"
 
-    # 影响规律：各变量离散水平的模型预测均值（与数据水平均值对比）
-    levels = {"r": [0.0, 0.1, 0.15, 0.2, 0.3],
-              "h": [3.0, 3.5, 4.0, 4.5],
-              "n": [0, 2, 4, 6, 8, 10]}
-    influence_levels = {}
-    for var in ["r", "h", "n"]:
-        entry = {}
-        for v in levels[var]:
-            m = df[var].values == v
-            entry[str(v)] = {
-                "data": {"R": float(R_data[m].mean()), "P": float(P_data[m].mean()),
-                         "T": float(T_data[m].mean())},
-                "model": {"R": float(R_hat[m].mean()), "P": float(P_hat[m].mean()),
-                          "T": float(T_hat[m].mean())},
-            }
-        influence_levels[var] = entry
 
-    # 三指标独立性/互补性论证（使用数据相关系数）
-    corr = df[["R", "P", "T"]].corr()
-    rationale = {
-        "R_P_correlation": float(corr.loc["R", "P"]),
-        "R_T_correlation": float(corr.loc["R", "T"]),
-        "P_T_correlation": float(corr.loc["P", "T"]),
-        "argument": (
-            "R与P呈较强负相关(-0.68)，体现'强化换热(减R)必然伴随流动阻力上升(增P)'的物理权衡，"
-            "二者共同刻画散热能力与流动能耗代价；R与T几乎独立(-0.08)，说明散热总能力与温度均匀性"
-            "反映不同性能维度、信息互补；P与T中等正相关(0.47)，流动增强在改善均匀性的同时付出阻力代价。"
-            "三个指标分别对应换热强度、流动代价、温度品质，从工程角度覆盖系统综合评价的关键方面，"
-            "故将其作为综合评价依据合理。"
-        ),
-    }
+def _jenks_boundaries(values, k):
+    """Fisher-Jenks 自然断点法：把一维得分划分为 k 个连续类，最小化类内平方和。
+    返回 (边界值列表(升序, k-1 个), 类末端索引列表)。"""
+    values = np.sort(np.asarray(values, dtype=float))
+    n = len(values)
+    if k >= n:
+        k = max(1, n - 1)
+    p1 = np.concatenate([[0.0], np.cumsum(values)])
+    p2 = np.concatenate([[0.0], np.cumsum(values ** 2)])
 
-    # ============ 第二阶段：统计量输出 + 绘图 ============
-    print("\n[Q1] 数据与模型统计量")
-    print_stats(R_data, "数据 R"); print_stats(R_hat, "模型 R")
-    print_stats(P_data, "数据 P"); print_stats(P_hat, "模型 P")
-    print_stats(T_data, "数据 T"); print_stats(T_hat, "模型 T")
-    print("\n[Q1] 拟合指标（R^2=相关系数平方，RMSE为kappa标定后误差）")
-    for m in ["R", "P", "T"]:
-        mt = metrics[m]
-        print(f"  {m}: Pearson={mt['pearson']:.3f} R^2={mt['r2']:.4f} "
-              f"RMSE={mt['rmse']:.4f} kappa={mt['kappa']:.6f}")
-    print("\n[Q1] 数据三指标相关系数")
-    print(f"  corr(R,P)={corr.loc['R','P']:.3f} corr(R,T)={corr.loc['R','T']:.3f} corr(P,T)={corr.loc['P','T']:.3f}")
+    def ssd(i, j):
+        cnt = j - i
+        if cnt <= 0:
+            return 0.0
+        s1 = p1[j] - p1[i]
+        s2 = p2[j] - p2[i]
+        return s2 - s1 * s1 / cnt
 
-    # ---- 图1：影响规律 3x3（曲线+数据水平均值点）----
-    var_names = {"r": "针肋宽度比 r", "h": "歧管深高比 h", "n": "针肋排数 n"}
-    metric_names = {"R": "无量纲热阻 R", "P": "无量纲压降 P", "T": "无量纲温度非均匀性 T"}
-    metric_colors = {"R": "#c0392b", "P": "#2980b9", "T": "#27ae60"}
-    fig, axes = plt.subplots(3, 3, figsize=(13, 11))
-    for j, var in enumerate(["r", "h", "n"]):
-        cv_ = influence_curve[var]
-        for i, met in enumerate(["R", "P", "T"]):
-            ax = axes[i, j]
-            ax.plot(cv_["values"], cv_[met], "-", lw=2.0, color=metric_colors[met])
-            # 数据水平均值叠加
-            for v in levels[var]:
-                mm = influence_levels[var][str(v)]["data"][met]
-                ax.plot(v, mm, "o", ms=6, mfc="none", mec="k", mew=1.2)
-            ax.set_xlabel(var_names[var])
-            ax.set_ylabel(metric_names[met] if j == 0 else "")
-            ax.grid(alpha=0.3, linestyle="--")
-            ax.spines["top"].set_visible(False)
-            ax.spines["right"].set_visible(False)
-    fig.tight_layout()
-    save_fig(fig, "q1_01_influence_trends.png")
+    INF = float("inf")
+    cost = [[INF] * (n + 1) for _ in range(k + 1)]
+    split = [[0] * (n + 1) for _ in range(k + 1)]
+    for i in range(1, n + 1):
+        cost[1][i] = ssd(0, i)
+    for kk in range(2, k + 1):
+        for i in range(1, n + 1):
+            best, bs = INF, 0
+            for j in range(kk - 1, i + 1):
+                c = cost[kk - 1][j] + ssd(j, i)
+                if c < best:
+                    best, bs = c, j
+            cost[kk][i], split[kk][i] = best, bs
+    idx = n
+    idxs = [n]
+    for kk in range(k, 1, -1):
+        idx = split[kk][idx]
+        idxs.append(idx)
+    idxs = idxs[::-1]                                  # [0, i1, ..., n]
+    bounds = [float(values[idxs[c] - 1]) for c in range(1, k)]   # 各类上界
+    return bounds, idxs
 
-    # ---- 图2：机理模型 vs 数据 ----
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.6))
-    for i, (m, yhat, y) in enumerate(zip(["R", "P", "T"], [R_hat, P_hat, T_hat],
-                                         [R_data, P_data, T_data])):
-        ax = axes[i]
-        ax.scatter(y, yhat, s=30, alpha=0.75, color=metric_colors[m], edgecolor="white", linewidth=0.4)
-        lim = [min(y.min(), yhat.min()), max(y.max(), yhat.max())]
-        ax.plot(lim, lim, "k--", lw=1)
-        ax.text(0.05, 0.88, f"$r$={metrics[m]['pearson']:.3f}\n$R^2$={metrics[m]['r2']:.3f}\nRMSE={metrics[m]['rmse']:.4f}",
-                transform=ax.transAxes, fontsize=9)
-        ax.set_xlabel(f"数据 {m}")
-        ax.set_ylabel(f"模型 {m}")
-        ax.grid(alpha=0.3, linestyle="--")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-    fig.tight_layout()
-    save_fig(fig, "q1_02_model_vs_data.png")
 
-    # ---- 图3：三指标两两关系（独立性论证）----
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.6))
-    pairs = [("R", "P"), ("R", "T"), ("P", "T")]
-    for ax, (a, b) in zip(axes, pairs):
-        ax.scatter(df[a], df[b], s=28, alpha=0.75, color="#8e44ad", edgecolor="white", linewidth=0.4)
-        r = corr.loc[a, b]
-        ax.text(0.05, 0.88, f"相关系数 = {r:.3f}", transform=ax.transAxes, fontsize=11)
-        ax.set_xlabel(a)
-        ax.set_ylabel(b)
-        ax.grid(alpha=0.3, linestyle="--")
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-    fig.tight_layout()
-    save_fig(fig, "q1_03_metric_independence.png")
+def _grade_from_bounds(score, bounds):
+    """按自然断点边界给等级（升序类 → 不及格..优秀）。"""
+    k = len(bounds) + 1
+    for c, b in enumerate(bounds):
+        if score < b:
+            return GRADE_ORDER_ASC[c]
+    return GRADE_ORDER_ASC[k - 1]
 
-    # ============ 结果输出 ============
+
+def _save_fig(fig, name):
+    base = os.path.join(FIG_DIR, name)
+    fig.savefig(base + ".png", dpi=300, bbox_inches="tight")
+    fig.savefig(base + ".pdf", bbox_inches="tight")
+    plt.close(fig)
+    print(f"[图表] {base}.png / .pdf")
+
+
+def _print_stats(vals, label):
+    s = np.asarray(vals, dtype=float)
+    cv = s.std() / s.mean() if s.mean() else float("nan")
+    print(f"[{label}] min={s.min():.4f} max={s.max():.4f} mean={s.mean():.4f} "
+          f"std={s.std():.4f} CV={cv:.4f} amplitude={(s.max() - s.min()) / 2:.4f}")
+
+
+def _clean(vals):
+    return [float(x) if np.isfinite(x) else None for x in vals]
+
+
+# =====================================================================
+# 第一阶段：纯计算
+# =====================================================================
+def compute():
+    data = _load_feature_matrix()
+    ids, V, keys = _build_raw_matrix(data)
+    n, m = V.shape
+    print(f"[数据] att1 论文 {n} 篇, 二级指标 {m} 个, 特征键 {keys[0]}~{keys[-1]}")
+
+    # ---- 1. 标准化 ----
+    X, std_params = _standardize(V)
+    assert np.all(np.isfinite(X)), "标准化后存在 NaN/Inf"
+    print("[标准化] 完成：正向 min-max / 负向反向 / X41·X64 适中梯形隶属")
+    print(f"  X41 最优区间[a,b]=[{std_params['X41']['a']:.4f},{std_params['X41']['b']:.4f}] "
+          f"界[c,d]=[{std_params['X41']['c']:.4f},{std_params['X41']['d']:.4f}]")
+    print(f"  X64 最优区间[a,b]=[{std_params['X64']['a']:.0f},{std_params['X64']['b']:.0f}] "
+          f"界[c,d]=[{std_params['X64']['c']:.0f},{std_params['X64']['d']:.0f}]")
+
+    # ---- 2. AHP 一级主观权重 + 一致性检验 ----
+    target_w = np.array([w for _, _, w, _ in LEVEL1], dtype=float)
+    assert abs(target_w.sum() - 1.0) < 1e-9
+    w_ahp, A_mat, lam_max, CI, RI, CR = _ahp(target_w)
+    print(f"[AHP] λ_max={lam_max:.4f} CI={CI:.4f} RI={RI:.2f} CR={CR:.4f} "
+          f"({'通过 CR<0.1' if CR < 0.1 else '未通过!'})")
+    print(f"  目标权重={np.round(target_w, 4).tolist()}")
+    print(f"  特征向量权重={np.round(w_ahp, 4).tolist()}")
+
+    # ---- 3. 二级熵权（维度内） ----
+    dim_cols = {}
+    for j, (key, dim, name, direction) in enumerate(LEVEL2):
+        dim_cols.setdefault(dim, []).append(j)
+    w_entropy = np.zeros(m)
+    entropy_detail = {}
+    for dim, _, _, _ in LEVEL1:
+        cols = dim_cols[dim]
+        wE, e, g = _entropy_weights(X[:, cols])
+        w_entropy[cols] = wE
+        entropy_detail[dim] = {
+            "indicators": [LEVEL2[c][0] for c in cols],
+            "entropy": _clean(e), "divergence": _clean(g), "w_entropy": _clean(wE),
+        }
+
+    # ---- 4. 乘法合成组合赋权 ----
+    w_ahp_expand = np.array([DIM_W[d] for _, d, _, _ in LEVEL2])
+    w_comb = (w_ahp_expand * w_entropy)
+    w_comb = w_comb / w_comb.sum()
+    assert abs(w_comb.sum() - 1.0) < 1e-9
+
+    combined = []
+    for j, (key, dim, name, direction) in enumerate(LEVEL2):
+        combined.append({
+            "id": key, "dim": dim, "name": name, "direction": direction,
+            "w_ahp_dim": float(DIM_W[dim]),
+            "w_entropy": float(w_entropy[j]),
+            "w_combined": float(w_comb[j]),
+        })
+
+    # ---- 5. 评分 ----
+    S = X @ w_comb
+    Score = 100.0 * S
+    grades_abs = [_grade_abs(s) for s in Score]
+
+    # 一级维度得分（供 Q3 短板定位复用）
+    dim_scores = {}
+    for dim, _, _, _ in LEVEL1:
+        cols = dim_cols[dim]
+        wsub = w_comb[cols] / w_comb[cols].sum() if w_comb[cols].sum() > 0 else np.ones(len(cols)) / len(cols)
+        dim_scores[dim] = X[:, cols] @ wsub
+
+    # ---- 6. 分级：绝对阈值(规范参考) + Fisher-Jenks(采纳) ----
+    jenks_bounds, jenks_idxs = _jenks_boundaries(Score, 5)
+    grades = [_grade_from_bounds(s, jenks_bounds) for s in Score]     # 最终等级
+
+    # ---- 7. K-means 对照 ----
+    Z = StandardScaler().fit_transform(X)
+    km = KMeans(n_clusters=5, random_state=SEED, n_init=10)
+    labels = km.fit_predict(Z)
+    cluster_mean = [float(Score[labels == k].mean()) for k in range(5)]
+    order = np.argsort(cluster_mean)
+    cluster_to_grade = {int(k): GRADE_ORDER_ASC[pos] for pos, k in enumerate(order)}
+    kmeans_grades = [cluster_to_grade[int(l)] for l in labels]
+    ari_thresh = float(adjusted_rand_score(grades_abs, kmeans_grades))
+    ari_jenks = float(adjusted_rand_score(grades, kmeans_grades))
+    print(f"[K-means] k=5 seed={SEED} 簇→等级映射={cluster_to_grade}")
+    print(f"  ARI(绝对阈值 vs K-means)={ari_thresh:.4f}  ARI(Jenks vs K-means)={ari_jenks:.4f}")
+
+    # ---- 8. 权重合理性论证 ----
+    # ② 权重 ±10% 扰动 → 等级稳定率（Jenks 每次重算断点）
+    rng = np.random.default_rng(SEED)
+    n_runs = 200
+    unchanged_rebreak = 0
+    unchanged_fixed = 0
+    for _ in range(n_runs):
+        pert = w_comb * rng.uniform(0.9, 1.1, size=m)
+        pert = pert / pert.sum()
+        s_pert = 100.0 * (X @ pert)
+        g_rebreak = [_grade_from_bounds(x, _jenks_boundaries(s_pert, 5)[0]) for x in s_pert]
+        g_fixed = [_grade_from_bounds(x, jenks_bounds) for x in s_pert]
+        unchanged_rebreak += sum(1 for a, b in zip(grades, g_rebreak) if a == b)
+        unchanged_fixed += sum(1 for a, b in zip(grades, g_fixed) if a == b)
+    stability_rebreak = unchanged_rebreak / (n_runs * n)
+    stability_fixed = unchanged_fixed / (n_runs * n)
+    print(f"[敏感性] ±10%扰动 {n_runs} 次：等级稳定率(Jenks重断点)={stability_rebreak:.4f} "
+          f"(固定断点)={stability_fixed:.4f}")
+
+    # ③ 三法一致性：组合 vs 纯AHP vs 纯熵权
+    w_pure_ahp = np.array([DIM_W[d] / DIM_N[d] for _, d, _, _ in LEVEL2])
+    w_pure_ent, _, _ = _entropy_weights(X)
+    score_ahp = 100.0 * (X @ w_pure_ahp)
+    score_ent = 100.0 * (X @ w_pure_ent)
+    rho_ca = float(spearmanr(Score, score_ahp).statistic)
+    rho_ce = float(spearmanr(Score, score_ent).statistic)
+    rho_ae = float(spearmanr(score_ahp, score_ent).statistic)
+    g_ahp = [_grade_from_bounds(x, _jenks_boundaries(score_ahp, 5)[0]) for x in score_ahp]
+    g_ent = [_grade_from_bounds(x, _jenks_boundaries(score_ent, 5)[0]) for x in score_ent]
+    ari_ca = float(adjusted_rand_score(grades, g_ahp))
+    ari_ce = float(adjusted_rand_score(grades, g_ent))
+    ari_ae = float(adjusted_rand_score(g_ahp, g_ent))
+    print(f"[三法一致性] ρ(组合,AHP)={rho_ca:.4f} ρ(组合,熵权)={rho_ce:.4f} ρ(AHP,熵权)={rho_ae:.4f}")
+    print(f"              ARI(组合,AHP)={ari_ca:.4f} ARI(组合,熵权)={ari_ce:.4f} ARI(AHP,熵权)={ari_ae:.4f}")
+
+    # ---- 9. 统计量与分布 ----
+    _print_stats(Score, "综合得分")
+    dist = {g: grades.count(g) for g in GRADE_ORDER}
+    dist_abs = {g: grades_abs.count(g) for g in GRADE_ORDER}
+    print(f"[分级分布 Jenks] {dist}")
+    print(f"[分级分布 绝对阈值] {dist_abs}")
+    print(f"[Jenks 断点(上界)] {[round(b, 2) for b in jenks_bounds]}")
+
+    # 数值稳定性检查
+    assert np.all(np.isfinite(Score))
+    assert np.all(np.isfinite(w_comb))
+    assert CR < 0.1, "AHP 一致性未通过 CR<0.1"
+
+    papers = []
+    for i, pid in enumerate(ids):
+        papers.append({
+            "id": pid,
+            "score": float(round(Score[i], 4)),
+            "grade": grades[i],
+            "grade_threshold_90": grades_abs[i],
+            "dimension_scores": {d: float(round(dim_scores[d][i], 4)) for d, _, _, _ in LEVEL1},
+        })
+
     result = {
         "sub_question": "Q1",
-        "model": "Q1_C2 流向分段热-流耦合机理模型（20段递推）",
-        "model_params": {k: float(v) for k, v in p.items()},
-        "key_results": {
-            "fit_metrics": metrics,
-            "kappa": {"k_R": k_R, "k_P": k_P, "k_T": k_T,
-                      "note": "k_P单位换算因子（物理压降Pa→无量纲数据）；过原点最小二乘"},
-            "influence_trends": {
-                "curve": influence_curve,
-                "level_means": influence_levels,
+        "problem": "选题A 数学建模论文智能评估系统",
+        "model": "层次指标体系 + AHP主观权重 + 熵权客观权重 + 乘法合成组合赋权 + 线性加权评分 + Fisher-Jenks自然断点分级",
+        "run_timestamp": datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+        "seed": SEED,
+        "n_papers": n,
+        "group": "att1",
+        "indicator_system": {
+            "level1": [{"id": d, "name": nm, "ahp_target_weight": float(tw),
+                        "ahp_eigen_weight": float(w_ahp[i]), "national_mapping": nmap}
+                       for i, (d, nm, tw, nmap) in enumerate(LEVEL1)],
+            "level2": [{"id": k, "dim": d, "name": nm, "direction": dr}
+                       for k, d, nm, dr in LEVEL2],
+        },
+        "standardization": std_params,
+        "ahp": {
+            "judgment_matrix": A_mat.tolist(),
+            "target_weights": _clean(target_w),
+            "eigen_weights": _clean(w_ahp),
+            "lambda_max": lam_max, "CI": CI, "RI": RI, "CR": CR,
+            "consistent": bool(CR < 0.1),
+        },
+        "entropy_weights": entropy_detail,
+        "combined_weights": combined,
+        "papers": papers,
+        "grading": {
+            "method": "Fisher-Jenks 自然断点法（k=5，数据驱动五级分级）",
+            "jenks_breaks_upper": _clean(jenks_bounds),
+            "distribution": dist,
+            "threshold_90_reference": {
+                "note": "规范绝对阈值分级（min-max 相对尺度下不匹配，仅作对照）",
+                "thresholds": {"优秀": [90, 100], "良好": [80, 90], "中等": [70, 80],
+                               "及格": [60, 70], "不及格": [None, 60]},
+                "distribution": dist_abs,
             },
-            "rationale": rationale,
-            "data_correlations": {
-                "R_P": float(corr.loc["R", "P"]),
-                "R_T": float(corr.loc["R", "T"]),
-                "P_T": float(corr.loc["P", "T"]),
+            "grading_note": (
+                "min-max 标准化将各指标锚定在 att1 样本的相对尺度上（样本最劣=0、最优=1），"
+                "线性加权后的综合得分是相对质量指数而非绝对百分制，导致绝对阈值(90/80/70/60)"
+                "与相对得分失配（ARI(绝对阈值,K-means)≈%.3f，接近随机，且 29/30 篇落入不及格）。"
+                "经 ARI 对照验证后，采纳 model_design 已列明的 Fisher-Jenks 自然断点法做五级分级，"
+                "绝对阈值分级保留为规范对照。综合得分 S=Σw_ij·x_ij 的排序与 Q2 质量真值保持一致。" % ari_thresh
+            ),
+        },
+        "kmeans": {
+            "n_clusters": 5, "seed": SEED,
+            "cluster_mean_score": _clean(cluster_mean),
+            "cluster_to_grade": cluster_to_grade,
+            "labels": [int(l) for l in labels],
+            "ari_threshold_vs_kmeans": ari_thresh,
+            "ari_jenks_vs_kmeans": ari_jenks,
+        },
+        "weight_rationality": {
+            "cr_lt_0_1": bool(CR < 0.1),
+            "perturbation_10pct": {
+                "n_runs": n_runs,
+                "grade_stability_jenks_rebreak": stability_rebreak,
+                "grade_stability_fixed_boundary": stability_fixed,
+                "pass_85pct": bool(stability_rebreak >= 0.85),
+            },
+            "three_method_compare": {
+                "spearman_comb_vs_ahp": rho_ca,
+                "spearman_comb_vs_entropy": rho_ce,
+                "spearman_ahp_vs_entropy": rho_ae,
+                "ari_comb_vs_ahp": ari_ca,
+                "ari_comb_vs_entropy": ari_ce,
+                "ari_ahp_vs_entropy": ari_ae,
             },
         },
-        "figures": ["q1_01_influence_trends.png", "q1_02_model_vs_data.png",
-                    "q1_03_metric_independence.png"],
+        "statistics": {
+            "min": float(Score.min()), "max": float(Score.max()),
+            "mean": float(Score.mean()), "std": float(Score.std()),
+            "CV": float(Score.std() / Score.mean()),
+            "amplitude": float((Score.max() - Score.min()) / 2),
+        },
+        "warnings": [
+            "绝对阈值(90/80/70/60)与 min-max 相对尺度不匹配，采纳 Jenks 自然断点分级（详见 grading.grading_note）",
+        ],
     }
-    save_json(result, "q1_results.json")
-    print("\nQ1完成")
+    return result, {"ids": ids, "V": V, "X": X, "w_comb": w_comb, "combined": combined,
+                    "Score": Score, "grades": grades, "grades_abs": grades_abs,
+                    "jenks_bounds": jenks_bounds, "labels": labels,
+                    "kmeans_grades": kmeans_grades, "ari_jenks": ari_jenks,
+                    "w_ahp": w_ahp}
+
+
+# =====================================================================
+# 第二阶段：绘图
+# =====================================================================
+def _box(ax, xc, yc, w, h, text, fc, ec, fs, lw=1.0):
+    ax.add_patch(FancyBboxPatch((xc - w / 2, yc - h / 2), w, h,
+                                boxstyle="round,pad=0.5,rounding_size=1.2",
+                                mutation_scale=1, linewidth=lw, edgecolor=ec, facecolor=fc))
+    ax.text(xc, yc, text, ha="center", va="center", fontsize=fs, color="#212121")
+
+
+def draw_indicator_tree():
+    """图 5-1 指标体系层次图（目标层←6一级维度←21二级指标）。"""
+    fig, ax = plt.subplots(figsize=(13.5, 7.5))
+    ax.set_xlim(0, 100)
+    ax.set_ylim(0, 100)
+    ax.axis("off")
+
+    dir_fc = {"正向": "#c8e6c9", "负向": "#ffcdd2", "适中": "#ffe0b2"}
+    dir_ec = {"正向": "#2e7d32", "负向": "#c62828", "适中": "#ef6c00"}
+
+    _box(ax, 50, 95, 24, 7, "目标层\n论文质量综合得分 S", "#e3f2fd", "#1565c0", 12.5, lw=1.6)
+
+    xcs = [8.33, 25.0, 41.67, 58.33, 75.0, 91.67]
+    dim_w, dim_h = 14.5, 9.0
+    for i, (dim, name, w, _) in enumerate(LEVEL1):
+        xc = xcs[i]
+        _box(ax, xc, 80, dim_w, dim_h, f"{dim}  {name}\n(w={w:.2f})",
+             "#bbdefb", "#0d47a1", 10, lw=1.2)
+        ax.annotate("", xy=(xc, 80 + dim_h / 2), xytext=(50, 95 - 3.5),
+                    arrowprops=dict(arrowstyle="-", color="#78909c", lw=1.0))
+
+    y_top, row_gap, leaf_h = 66.0, 8.5, 6.5
+    for i, (dim, name, w, _) in enumerate(LEVEL1):
+        xc = xcs[i]
+        leaves = [(k, nm, dr) for k, d, nm, dr in LEVEL2 if d == dim]
+        for r, (k, nm, dr) in enumerate(leaves):
+            yc = y_top - r * row_gap
+            _box(ax, xc, yc, dim_w, leaf_h, f"{k}{DIR_MARK[dr]} {SHORT[k]}",
+                 dir_fc[dr], dir_ec[dr], 9.5)
+            ax.annotate("", xy=(xc, yc + leaf_h / 2), xytext=(xc, 80 - dim_h / 2),
+                        arrowprops=dict(arrowstyle="-", color="#90a4ae", lw=0.8))
+
+    for j, (dr, lab) in enumerate([("正向", "正向指标"), ("负向", "负向指标"), ("适中", "适中型指标")]):
+        _box(ax, 38 + j * 15, 12.0, 12, 4.5, lab, dir_fc[dr], dir_ec[dr], 9.5)
+
+    _save_fig(fig, "q1_01_indicator_tree")
+
+
+def draw_weight_dist(combined):
+    """图 5-2 组合权重分布柱状图（按维度分组着色）。"""
+    fig, ax = plt.subplots(figsize=(12.5, 5.5))
+    ids = [c["id"] for c in combined]
+    wvals = np.array([c["w_combined"] for c in combined])
+    dims = [c["dim"] for c in combined]
+    x = np.arange(len(ids))
+    ax.bar(x, wvals, color=[DIM_COLOR[d] for d in dims],
+           edgecolor="white", linewidth=0.5)
+    ax.set_xticks(x)
+    ax.set_xticklabels([f"{SHORT[i]}\n{i}" for i in ids], fontsize=8)
+    ax.set_ylabel("组合权重 $w_{ij}$")
+    ax.set_ylim(0, max(wvals) * 1.18)
+
+    for i, (dim, name, w, _) in enumerate(LEVEL1):
+        idx = [j for j, d in enumerate(dims) if d == dim]
+        lo, hi = idx[0] - 0.5, idx[-1] + 0.5
+        if hi < len(ids) - 0.5:
+            ax.axvline(hi, color="#bdbdbd", lw=0.8, ls="--")
+        ax.text((lo + hi) / 2, max(wvals) * 1.10, f"{dim}\n({w:.2f})",
+                ha="center", va="bottom", fontsize=9, color=DIM_COLOR[dim], fontweight="bold")
+    ax.grid(axis="y", alpha=0.3, linestyle="--")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    _save_fig(fig, "q1_02_weight_dist")
+
+
+def draw_score_dist(Score, grades, jenks_bounds):
+    """图 5-3 30 篇论文综合得分分布直方图 + 分级着色 + Jenks 断点。"""
+    fig, ax = plt.subplots(figsize=(10.5, 5.5))
+    lo = float(np.floor(Score.min() / 5) * 5)
+    hi = float(np.ceil(Score.max() / 5) * 5)
+    bins = np.arange(lo, hi + 1e-9, (hi - lo) / 12)
+    cnt, edges, patches = ax.hist(Score, bins=bins, edgecolor="white", linewidth=0.5)
+    bw = edges[1] - edges[0]
+    for p, e in zip(patches, edges[:-1]):
+        p.set_facecolor(GRADE_COLOR[_grade_from_bounds(e + bw / 2, jenks_bounds)])
+    for b in jenks_bounds:
+        ax.axvline(b, color="#37474f", ls="--", lw=1.0, alpha=0.7)
+    ax.axvline(Score.mean(), color="#1565c0", ls=":", lw=1.4,
+               label=f"均值 {Score.mean():.2f}")
+    ax.set_xlabel("综合得分（相对质量指数）")
+    ax.set_ylabel("论文篇数")
+    ax.legend(loc="upper left")
+    ax.grid(axis="y", alpha=0.3, linestyle="--")
+    ax.spines["top"].set_visible(False)
+    ax.spines["right"].set_visible(False)
+    _save_fig(fig, "q1_03_score_dist")
+
+
+def draw_cluster_compare(Score, grades, kmeans_grades, ari):
+    """图 5-4 阈值分级(Jenks) vs K-means 对照（按得分排序的双面板）。"""
+    fig, axes = plt.subplots(1, 2, figsize=(13, 5.5), sharey=True)
+    order = np.argsort(Score)
+    x = np.arange(len(Score))
+    for ax, gvec, tag in [(axes[0], grades, "Jenks 自然断点分级"),
+                          (axes[1], kmeans_grades, "K-means 聚类映射")]:
+        ax.bar(x, Score[order], color=[GRADE_COLOR[gvec[i]] for i in order],
+               edgecolor="white", linewidth=0.5)
+        ax.set_xticks([])
+        ax.grid(axis="y", alpha=0.3, linestyle="--")
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.text(0.5, 0.02, tag, transform=ax.transAxes, ha="center",
+                va="bottom", fontsize=11, color="#37474f")
+    axes[0].set_ylabel("综合得分")
+    handles = [plt.Rectangle((0, 0), 1, 1, color=GRADE_COLOR[g]) for g in GRADE_ORDER]
+    fig.legend(handles, GRADE_ORDER, loc="upper center", ncol=5, frameon=False,
+               fontsize=10, bbox_to_anchor=(0.5, 0.99))
+    fig.text(0.5, 0.01, f"ARI（Jenks 分级 vs K-means）= {ari:.4f}", ha="center",
+             va="bottom", fontsize=11, color="#c62828")
+    fig.subplots_adjust(top=0.86, bottom=0.10)
+    _save_fig(fig, "q1_04_cluster_compare")
+
+
+# =====================================================================
+# 主流程
+# =====================================================================
+def main():
+    print("=" * 72)
+    print("问题一：论文质量综合评价指标体系 + 组合赋权 + 自动评分分级")
+    print("=" * 72)
+
+    result, ctx = compute()
+
+    print("\n[绘图] 生成 4 张论文级图表 ...")
+    draw_indicator_tree()
+    draw_weight_dist(result["combined_weights"])
+    draw_score_dist(ctx["Score"], ctx["grades"], ctx["jenks_bounds"])
+    draw_cluster_compare(ctx["Score"], ctx["grades"], ctx["kmeans_grades"], ctx["ari_jenks"])
+
+    result["figures"] = [
+        "q1_01_indicator_tree.png", "q1_01_indicator_tree.pdf",
+        "q1_02_weight_dist.png", "q1_02_weight_dist.pdf",
+        "q1_03_score_dist.png", "q1_03_score_dist.pdf",
+        "q1_04_cluster_compare.png", "q1_04_cluster_compare.pdf",
+    ]
+
+    out_path = os.path.join(RESULTS_DIR, "q1_results.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2, default=float)
+    print(f"\n[输出] {out_path}")
+
+    idx_path = os.path.join(FIG_DIR, "figure_index.json")
+    try:
+        with open(idx_path, "r", encoding="utf-8") as f:
+            fidx = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        fidx = {"generated_at": "", "count": 0, "figures": []}
+    existing = set(fidx.get("figures", []))
+    for nm in result["figures"]:
+        existing.add(nm)
+    fidx["figures"] = sorted(existing)
+    fidx["count"] = len(fidx["figures"])
+    fidx["generated_at"] = datetime.now().strftime("%Y-%m-%d")
+    with open(idx_path, "w", encoding="utf-8") as f:
+        json.dump(fidx, f, ensure_ascii=False, indent=2)
+    print(f"[输出] {idx_path}（figure 总数={fidx['count']}）")
+
+    print("\n" + "=" * 72)
+    print("问题一求解完成：CR<0.1、无 NaN/Inf、4 张图、q1_results.json 已生成")
+    print("=" * 72)
 
 
 if __name__ == "__main__":

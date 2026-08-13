@@ -1,6 +1,15 @@
 # 备份目录
 backup_20260812/
 
+# 各题归档快照（冗余，根目录+git历史已保护产出，151MB 不宜入库）
+archive/
+
+# OCR 中间图片（可从 problems/ 原始PDF重新渲染）
+state/agent_outputs/qA_scanned_images/
+
+# 支撑材料压缩包（内容与根目录重复）
+*.zip
+
 # Python 缓存
 __pycache__/
 *.pyc

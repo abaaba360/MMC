@@ -1,446 +1,1166 @@
 {
   "sub_question": "Q3",
-  "model": "Q3_C2 NSGA-II多目标进化 + TOPSIS综合决策（熵权法客观定权为主，等权重对比，等权重标量化DE交叉验证；min-max归一化防量纲淹没 + 整数取整复算校正）",
-  "run_timestamp": "2026-08-12T19:41:34",
-  "key_results": {
-    "normalization": {
-      "basis": "Q2训练数据84样本指标范围（surrogate.target_stats）",
-      "ranges": {
-        "R": {
-          "min": 0.721922,
-          "max": 0.773783,
-          "range": 0.051861
-        },
-        "P": {
-          "min": 0.076688,
-          "max": 0.204048,
-          "range": 0.12736
-        },
-        "T": {
-          "min": 0.77401,
-          "max": 0.8731,
-          "range": 0.09909
-        }
-      }
+  "problem": "选题A 数学建模论文智能评估系统",
+  "model": "复用Q1评分定位短板 + 无监督AI痕迹检测(9特征×3离群聚合) + 规则引擎逻辑断层识别(5类) + 特征级优化(Q2 Ridge反推得分+Bootstrap预测区间)",
+  "run_timestamp": "2026-08-13T01:23:56",
+  "seed": 42,
+  "target_papers": [
+    "att3_3-1",
+    "att3_3-2",
+    "att3_3-3"
+  ],
+  "scoring": {
+    "method": "复用 Q1 评分逻辑：读取 q1_results.json 标准化参数(att1 min/max 与适中隶属) + 组合权重 w_comb，Score=100·Σw·x；维度得分同 Q1 口径",
+    "att1_reference_dimension_P25": {
+      "D1": 0.1649,
+      "D2": 0.0673,
+      "D3": 0.4744,
+      "D4": 0.6181,
+      "D5": 0.1508,
+      "D6": 0.2498
     },
-    "nsga2_settings": {
-      "pop_size": 120,
-      "n_gen": 300,
-      "sbx_prob": 0.9,
-      "pm_prob": 0.1,
-      "seeds": [
-        42,
-        7,
-        123,
-        2024,
-        8
-      ],
-      "elite_duplicates": "eliminate_duplicates=True",
-      "per_run": {
-        "42": {
-          "n_individuals": 120,
-          "front_size": 120
+    "papers": [
+      {
+        "id": "att3_3-1",
+        "score": 38.3225,
+        "dimension_scores": {
+          "D1": 0.1289,
+          "D2": 0.3185,
+          "D3": 0.7197,
+          "D4": 0.6911,
+          "D5": 0.0506,
+          "D6": 0.364
         },
-        "7": {
-          "n_individuals": 120,
-          "front_size": 120
-        },
-        "123": {
-          "n_individuals": 120,
-          "front_size": 120
-        },
-        "2024": {
-          "n_individuals": 120,
-          "front_size": 120
-        },
-        "8": {
-          "n_individuals": 120,
-          "front_size": 120
-        }
-      },
-      "note": "NSGA-II为启发式算法，不宣称全局最优；固定seed下5次运行取并集前沿"
-    },
-    "pareto_front": {
-      "n_points": 442,
-      "n_candidates_union": 600,
-      "norm_metrics_front": {
-        "R": {
-          "min": 0.0,
-          "max": 0.68775,
-          "mean": 0.2568
-        },
-        "P": {
-          "min": 0.0,
-          "max": 0.56751,
-          "mean": 0.26096
-        },
-        "T": {
-          "min": 0.0,
-          "max": 0.4217,
-          "mean": 0.15645
-        }
-      },
-      "sample_points": [
-        {
-          "r": 0.2112,
-          "h": 3.2124,
-          "n_cont": 9.9996,
-          "R~": 0.0,
-          "P~": 0.52995,
-          "T~": 0.39996
-        },
-        {
-          "r": 0.2063,
-          "h": 3.3713,
-          "n_cont": 9.9938,
-          "R~": 0.041,
-          "P~": 0.46371,
-          "T~": 0.35063
-        },
-        {
-          "r": 0.198,
-          "h": 3.5646,
-          "n_cont": 9.9997,
-          "R~": 0.12082,
-          "P~": 0.38881,
-          "T~": 0.33394
-        },
-        {
-          "r": 0.239,
-          "h": 3.0837,
-          "n_cont": 5.8081,
-          "R~": 0.16092,
-          "P~": 0.51839,
-          "T~": 0.20802
-        },
-        {
-          "r": 0.2296,
-          "h": 3.2833,
-          "n_cont": 4.9302,
-          "R~": 0.20106,
-          "P~": 0.37532,
-          "T~": 0.05281
-        },
-        {
-          "r": 0.2393,
-          "h": 4.5,
-          "n_cont": 6.5016,
-          "R~": 0.22921,
-          "P~": 0.22783,
-          "T~": 0.24803
-        },
-        {
-          "r": 0.2333,
-          "h": 4.498,
-          "n_cont": 6.0244,
-          "R~": 0.23856,
-          "P~": 0.18804,
-          "T~": 0.17851
-        },
-        {
-          "r": 0.2184,
-          "h": 3.3368,
-          "n_cont": 4.0052,
-          "R~": 0.25826,
-          "P~": 0.29743,
-          "T~": 0.00769
-        },
-        {
-          "r": 0.2052,
-          "h": 4.5,
-          "n_cont": 5.1673,
-          "R~": 0.29534,
-          "P~": 0.10139,
-          "T~": 0.08063
-        },
-        {
-          "r": 0.1938,
-          "h": 4.4999,
-          "n_cont": 3.9757,
-          "R~": 0.40277,
-          "P~": 0.04741,
-          "T~": 0.01054
-        },
-        {
-          "r": 0.2026,
-          "h": 4.5,
-          "n_cont": 3.0163,
-          "R~": 0.52412,
-          "P~": 0.02118,
-          "T~": 0.0
-        },
-        {
-          "r": 0.2191,
-          "h": 4.5,
-          "n_cont": 2.1957,
-          "R~": 0.68775,
-          "P~": 0.0,
-          "T~": 0.03359
-        }
-      ]
-    },
-    "topsis": {
-      "entropy_weights": {
-        "w": [
-          0.37353,
-          0.42582,
-          0.20065
+        "short_dimensions": [
+          "D1",
+          "D5"
         ],
-        "e": [
-          0.99571,
-          0.99511,
-          0.9977
-        ],
-        "d": [
-          0.00429,
-          0.00489,
-          0.0023
-        ],
-        "method": "成本型归一化先转效益型 b=1-Yn，Shannon熵客观定权"
-      },
-      "equal_weights": [
-        0.3333333333333333,
-        0.3333333333333333,
-        0.3333333333333333
-      ],
-      "closeness_entropy": 0.68734,
-      "closeness_equal": 0.69565,
-      "closeness_unweighted": 0.82659
-    },
-    "comprehensive_best_design": {
-      "tag": "entropy_topsis",
-      "design_cont": {
-        "r": 0.2148,
-        "h": 4.5,
-        "n_cont": 5.1875
-      },
-      "pred_before_round": {
-        "R": 0.736472,
-        "P": 0.091125,
-        "T": 0.781339
-      },
-      "design": {
-        "r": 0.2148,
-        "h": 4.5,
-        "n": 6
-      },
-      "pred_after_round": {
-        "R": 0.735128,
-        "P": 0.096119,
-        "T": 0.79077
-      },
-      "norm": {
-        "R": 0.25464,
-        "P": 0.15257,
-        "T": 0.16914
-      },
-      "rounding_delta": {
-        "R": -0.001344,
-        "P": 0.004994,
-        "T": 0.009431
-      },
-      "feasible": true
-    },
-    "equal_weight_topsis_design": {
-      "tag": "equal_weight_topsis",
-      "design_cont": {
-        "r": 0.2206,
-        "h": 4.5,
-        "n_cont": 5.0166
-      },
-      "pred_before_round": {
-        "R": 0.736672,
-        "P": 0.091019,
-        "T": 0.77943
-      },
-      "design": {
-        "r": 0.2206,
-        "h": 4.5,
-        "n": 6
-      },
-      "pred_after_round": {
-        "R": 0.734735,
-        "P": 0.097336,
-        "T": 0.79064
-      },
-      "norm": {
-        "R": 0.24706,
-        "P": 0.16212,
-        "T": 0.16783
-      },
-      "rounding_delta": {
-        "R": -0.001937,
-        "P": 0.006317,
-        "T": 0.01121
-      },
-      "feasible": true
-    },
-    "unweighted_topsis_design": {
-      "tag": "unweighted_topsis",
-      "design_cont": {
-        "r": 0.2206,
-        "h": 4.5,
-        "n_cont": 5.114
-      },
-      "pred_before_round": {
-        "R": 0.736382,
-        "P": 0.091638,
-        "T": 0.780405
-      },
-      "design": {
-        "r": 0.2206,
-        "h": 4.5,
-        "n": 6
-      },
-      "pred_after_round": {
-        "R": 0.734735,
-        "P": 0.097336,
-        "T": 0.79064
-      },
-      "norm": {
-        "R": 0.24706,
-        "P": 0.16212,
-        "T": 0.16783
-      },
-      "rounding_delta": {
-        "R": -0.001647,
-        "P": 0.005698,
-        "T": 0.010235
-      },
-      "feasible": true
-    },
-    "equal_weight_scalarization_cross_validation": {
-      "design": {
-        "r": 0.2169,
-        "h": 4.5,
-        "n": 4
-      },
-      "pred": {
-        "R": 0.741356,
-        "P": 0.084517,
-        "T": 0.772258
-      },
-      "norm": {
-        "R": 0.37473,
-        "P": 0.06147,
-        "T": 0.0
-      },
-      "scalar_value": 0.13843,
-      "feasible": true
-    },
-    "consistency_check": {
-      "design_dist_normalized": 0.2001,
-      "metric_dist_normalized": 0.2266,
-      "conclusion": "基本一致"
-    },
-    "vs_data_single_metric_best": {
-      "data_best": {
-        "R": {
-          "r": 0.2,
-          "h": 3.0,
-          "n": 10,
-          "value": 0.721922
-        },
-        "P": {
-          "r": 0.2,
-          "h": 4.5,
-          "n": 2,
-          "value": 0.076688
-        },
-        "T": {
-          "r": 0.2,
-          "h": 4.5,
-          "n": 4,
-          "value": 0.77401
-        }
-      },
-      "deviation_pct_vs_data_single_metric_best": {
-        "value": {
-          "R": 1.829,
-          "P": 25.338,
-          "T": 2.165
-        },
-        "note": "正=综合最优方案该指标单独看略逊于单指标最优数据点，是换取三指标均衡的代价（体现 R-P 强负相关 corr=-0.684 的根本权衡，无单一设计可同时最优）"
-      },
-      "data_scalarization_baseline": {
-        "best_data_point": {
-          "index": 63,
-          "design": {
-            "r": 0.2,
-            "h": 4.5,
-            "n": 4
+        "short_features": [
+          {
+            "id": "X12",
+            "dim": "D1",
+            "name": "假设-问题匹配度",
+            "value": 0.0,
+            "P25": 0.011638208762886598
           },
-          "scalar_value": 0.14705
+          {
+            "id": "X13",
+            "dim": "D1",
+            "name": "方法术语丰富度",
+            "value": 1.2472581824437659,
+            "P25": 1.6365498283744273
+          },
+          {
+            "id": "X41",
+            "dim": "D4",
+            "name": "逻辑连接词密度",
+            "value": 1.892391725087093,
+            "optimal": [
+              0.5893432687183542,
+              1.4137065348610514
+            ],
+            "side": "偏高"
+          },
+          {
+            "id": "X52",
+            "dim": "D5",
+            "name": "检验术语密度",
+            "value": 0.12902670852866543,
+            "P25": 0.5271119691361608
+          },
+          {
+            "id": "X53",
+            "dim": "D5",
+            "name": "检验方法词密度",
+            "value": 0.0,
+            "P25": 0.058934326871835425
+          },
+          {
+            "id": "X64",
+            "dim": "D6",
+            "name": "摘要字数合规度",
+            "value": 913.0,
+            "optimal": [
+              300,
+              500
+            ],
+            "side": "超标"
+          }
+        ]
+      },
+      {
+        "id": "att3_3-2",
+        "score": 38.7128,
+        "dimension_scores": {
+          "D1": 0.183,
+          "D2": 0.362,
+          "D3": 0.5533,
+          "D4": 0.7509,
+          "D5": 0.0861,
+          "D6": 0.4804
         },
-        "method": "等权重标量化 (R~+P~+T~)/3 在84个数据设计上的最小值",
-        "comprehensive_design_scalar": 0.19212,
-        "de_scalarization_design_scalar": 0.1454,
-        "optimization_gain_pct_vs_best_data": 1.122
+        "short_dimensions": [
+          "D5"
+        ],
+        "short_features": [
+          {
+            "id": "X52",
+            "dim": "D5",
+            "name": "检验术语密度",
+            "value": 0.3301201637396012,
+            "P25": 0.5271119691361608
+          },
+          {
+            "id": "X53",
+            "dim": "D5",
+            "name": "检验方法词密度",
+            "value": 0.03301201637396012,
+            "P25": 0.058934326871835425
+          },
+          {
+            "id": "X64",
+            "dim": "D6",
+            "name": "摘要字数合规度",
+            "value": 835.0,
+            "optimal": [
+              300,
+              500
+            ],
+            "side": "超标"
+          }
+        ]
       },
-      "data_dominance_check": {
-        "n_data_points": 84,
-        "n_dominated_by_pareto_front": 82,
-        "pct_dominated": 97.62,
-        "note": "优化Pareto前沿支配的数据点比例（进化搜索相对原始84设计扩展度）"
+      {
+        "id": "att3_3-3",
+        "score": 30.4751,
+        "dimension_scores": {
+          "D1": 0.1663,
+          "D2": 0.1679,
+          "D3": 0.5069,
+          "D4": 0.7249,
+          "D5": 0.064,
+          "D6": 0.2112
+        },
+        "short_dimensions": [
+          "D5",
+          "D6"
+        ],
+        "short_features": [
+          {
+            "id": "X11",
+            "dim": "D1",
+            "name": "模型假设条数密度",
+            "value": 0.07745783389167522,
+            "P25": 0.12420677780096424
+          },
+          {
+            "id": "X13",
+            "dim": "D1",
+            "name": "方法术语丰富度",
+            "value": 1.1425030499022095,
+            "P25": 1.6365498283744273
+          },
+          {
+            "id": "X32",
+            "dim": "D3",
+            "name": "结果结论密度",
+            "value": 0.4066536279312949,
+            "P25": 0.41226657807052136
+          },
+          {
+            "id": "X41",
+            "dim": "D4",
+            "name": "逻辑连接词密度",
+            "value": 2.0526325981293936,
+            "optimal": [
+              0.5893432687183542,
+              1.4137065348610514
+            ],
+            "side": "偏高"
+          },
+          {
+            "id": "X52",
+            "dim": "D5",
+            "name": "检验术语密度",
+            "value": 0.058093375418756414,
+            "P25": 0.5271119691361608
+          },
+          {
+            "id": "X53",
+            "dim": "D5",
+            "name": "检验方法词密度",
+            "value": 0.03872891694583761,
+            "P25": 0.058934326871835425
+          },
+          {
+            "id": "X64",
+            "dim": "D6",
+            "name": "摘要字数合规度",
+            "value": 948.0,
+            "optimal": [
+              300,
+              500
+            ],
+            "side": "超标"
+          }
+        ]
       }
-    },
-    "data_traceability": {
-      "nearest_data_point": {
-        "r": 0.2,
-        "h": 4.5,
-        "n": 6,
-        "R": 0.736613,
-        "P": 0.093468,
-        "T": 0.792252
-      },
-      "note": "综合最优方案附近最近数据点（数据可追溯核查）"
-    }
-  },
-  "intermediate_results": {
-    "integer_coupling_rule": "r=0 ⟺ n=0；r>0 时 n∈{2,4,6,8,10}（偶数集）。进化中 n 连续化，最终就近取可行整数并用代理复算校正，禁直接四舍五入。",
-    "per_design_feasibility": {
-      "entropy_topsis": true,
-      "equal_weight_topsis": true,
-      "unweighted_topsis": true,
-      "scalarization_de": true
-    },
-    "rounding_before_after": {
-      "entropy_topsis": {
-        "n_cont": 5.1875,
-        "n_int": 6,
-        "delta_R": -0.001344,
-        "delta_P": 0.004994,
-        "delta_T": 0.009431
-      },
-      "equal_weight_topsis": {
-        "n_cont": 5.0166,
-        "n_int": 6,
-        "delta_R": -0.001937,
-        "delta_P": 0.006317,
-        "delta_T": 0.01121
-      },
-      "unweighted_topsis": {
-        "n_cont": 5.114,
-        "n_int": 6,
-        "delta_R": -0.001647,
-        "delta_P": 0.005698,
-        "delta_T": 0.010235
-      }
-    },
-    "notes": [
-      "min-max归一化基准为Q2训练数据范围（R/P/T量程分别为 0.0519/0.1274/0.0991，三指标量纲悬殊，归一化防量纲淹没——A7）。",
-      "NSGA-II固定seed=42/7/123/2024/8共5次运行取并集前沿，并报告各次前沿一致性，不宣称全局最优。",
-      "TOPSIS主结果采用熵权法客观定权（对前沿各目标归一化后转效益型计算），等权重TOPSIS与无权重公式作对比，等权重标量化DE作独立交叉验证。",
-      "综合最优方案 r≈0.215, h=4.5（可行域上边界）, n=6；等权重标量化方案 n=4——两者 r/h 高度一致，n 在 {4,6} 间分歧（n=4更优P、n=6更优R/T），反映 R-P 权衡下排数选择的敏感性，属'基本一致'。"
     ]
   },
-  "figures": [
-    "q3_01_pareto_3d.png",
-    "q3_02_pareto_proj.png",
-    "q3_03_best_vs_data.png",
-    "q3_04_weights_compare.png",
-    "q3_05_design_space.png"
+  "ai_detection": {
+    "method": "无监督统计代理：att1 30 篇人类基线 z 标准化 + 三法离群聚合(3σ超额度/马氏距离/IsolationForest) → 标准化均值 → min-max 映射 AIscore∈[0,1]",
+    "disclaimer": "AI痕迹检测无真值标签，结果是相对人类基线的统计离群度(统计代理)，非精确判别；AIscore 为 33 篇(30人类+3目标)内的相对尺度",
+    "features": [
+      {
+        "id": "AI1",
+        "name": "句长CV"
+      },
+      {
+        "id": "AI2",
+        "name": "2-gram重复"
+      },
+      {
+        "id": "AI3",
+        "name": "AI高频词"
+      },
+      {
+        "id": "AI4_ttr",
+        "name": "TTR型符比"
+      },
+      {
+        "id": "AI4_entropy",
+        "name": "词汇熵"
+      },
+      {
+        "id": "AI5",
+        "name": "连接词异常"
+      },
+      {
+        "id": "AI6",
+        "name": "标点熵"
+      },
+      {
+        "id": "AI7",
+        "name": "段落模板"
+      },
+      {
+        "id": "AI8",
+        "name": "公式代码"
+      }
+    ],
+    "baseline": {
+      "n": 30,
+      "group": "att1",
+      "ai_score_stats": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.30977234371793416,
+        "std": 0.235548133024495
+      }
+    },
+    "papers": [
+      {
+        "id": "att3_3-1",
+        "z_scores": {
+          "AI1": -0.9945,
+          "AI2": -0.6655,
+          "AI3": -0.3199,
+          "AI4_ttr": 0.6655,
+          "AI4_entropy": 1.6639,
+          "AI5": 1.1503,
+          "AI6": 0.34,
+          "AI7": 0.4128,
+          "AI8": 2.242
+        },
+        "outlier_scores": {
+          "O_3sigma": 0.0945,
+          "O_mahalanobis": 0.9319,
+          "O_isolation_forest": 0.5321,
+          "O_agg_mean": 0.5195,
+          "O_agg_max": 0.9319
+        },
+        "AIscore": 0.5692,
+        "grade": "中",
+        "grade_thresholds": {
+          "低": "<0.33",
+          "中": "0.33-0.66",
+          "高": ">0.66"
+        }
+      },
+      {
+        "id": "att3_3-2",
+        "z_scores": {
+          "AI1": 0.8727,
+          "AI2": 0.8163,
+          "AI3": -0.3199,
+          "AI4_ttr": -0.8163,
+          "AI4_entropy": -1.1413,
+          "AI5": 0.0544,
+          "AI6": -0.0308,
+          "AI7": 0.1949,
+          "AI8": 0.019
+        },
+        "outlier_scores": {
+          "O_3sigma": 0.0,
+          "O_mahalanobis": 0.0036,
+          "O_isolation_forest": 0.2494,
+          "O_agg_mean": 0.0843,
+          "O_agg_max": 0.2494
+        },
+        "AIscore": 0.0819,
+        "grade": "低",
+        "grade_thresholds": {
+          "低": "<0.33",
+          "中": "0.33-0.66",
+          "高": ">0.66"
+        }
+      },
+      {
+        "id": "att3_3-3",
+        "z_scores": {
+          "AI1": 2.264,
+          "AI2": 1.0817,
+          "AI3": -0.3199,
+          "AI4_ttr": -1.0817,
+          "AI4_entropy": 0.1471,
+          "AI5": 1.3886,
+          "AI6": 0.6409,
+          "AI7": 0.1593,
+          "AI8": -0.0716
+        },
+        "outlier_scores": {
+          "O_3sigma": 0.1032,
+          "O_mahalanobis": 0.8748,
+          "O_isolation_forest": 0.5216,
+          "O_agg_mean": 0.4998,
+          "O_agg_max": 0.8748
+        },
+        "AIscore": 0.5472,
+        "grade": "中",
+        "grade_thresholds": {
+          "低": "<0.33",
+          "中": "0.33-0.66",
+          "高": ">0.66"
+        }
+      }
+    ]
+  },
+  "logic_gap": {
+    "method": "规则引擎 5 类规则（G1 连续无逻辑词段 G2 段落主题跳变 G3 章节缺过渡 G4 因果断裂 G5 结论正文脱节），命中位置以段落序号/章节名标注",
+    "disclaimer": "规则阈值(连续≥3段、Jaccard<0.08、果/因<0.5 等)为示范性设定，结果定位为'方法示范'而非普适规律",
+    "rules": {
+      "G1": "连续无逻辑连接词段落占比过高",
+      "G2": "段落间主题跳变",
+      "G3": "章节间缺失过渡",
+      "G4": "因果关系断裂",
+      "G5": "结论与正文脱节"
+    },
+    "papers": {
+      "att3_3-1": {
+        "n_paragraphs": 80,
+        "n_chapters": 6,
+        "chapter_list": [
+          "第一章 引言",
+          "第二章 基本假设与符号说明",
+          "第三章 数据准备",
+          "第四章 问题一模型的建立与求解",
+          "第五章 问题二模型的建立与求解",
+          "第六章 问题三建模的分析与求解"
+        ],
+        "hits": {
+          "G1": [
+            {
+              "start_para": 6,
+              "end_para": 16,
+              "length": 11
+            },
+            {
+              "start_para": 18,
+              "end_para": 22,
+              "length": 5
+            },
+            {
+              "start_para": 24,
+              "end_para": 27,
+              "length": 4
+            },
+            {
+              "start_para": 29,
+              "end_para": 33,
+              "length": 5
+            },
+            {
+              "start_para": 38,
+              "end_para": 53,
+              "length": 16
+            },
+            {
+              "start_para": 64,
+              "end_para": 66,
+              "length": 3
+            },
+            {
+              "start_para": 68,
+              "end_para": 77,
+              "length": 10
+            }
+          ],
+          "G2": [
+            {
+              "between": [
+                14,
+                15
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                23,
+                24
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                31,
+                32
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                39,
+                40
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                42,
+                43
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                46,
+                47
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                61,
+                62
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                62,
+                63
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                64,
+                65
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                69,
+                70
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                79,
+                80
+              ],
+              "jaccard": 0.0
+            }
+          ],
+          "G3": [
+            {
+              "chapter": "第二章 基本假设与符号说明",
+              "para": 6
+            },
+            {
+              "chapter": "第三章 数据准备",
+              "para": 13
+            }
+          ],
+          "G4": [],
+          "G5": []
+        },
+        "Lgap": 20
+      },
+      "att3_3-2": {
+        "n_paragraphs": 61,
+        "n_chapters": 8,
+        "chapter_list": [
+          "一、问题重述",
+          "二、问题分析",
+          "三、模型假设",
+          "四、符号说明",
+          "五、模型建立与求解",
+          "六、模型检验",
+          "七、模型优缺点评价",
+          "八、参考文献"
+        ],
+        "hits": {
+          "G1": [
+            {
+              "start_para": 7,
+              "end_para": 12,
+              "length": 6
+            },
+            {
+              "start_para": 14,
+              "end_para": 23,
+              "length": 10
+            },
+            {
+              "start_para": 25,
+              "end_para": 28,
+              "length": 4
+            },
+            {
+              "start_para": 36,
+              "end_para": 41,
+              "length": 6
+            },
+            {
+              "start_para": 43,
+              "end_para": 61,
+              "length": 19
+            }
+          ],
+          "G2": [
+            {
+              "between": [
+                15,
+                16
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                21,
+                22
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                22,
+                23
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                27,
+                28
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                28,
+                29
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                38,
+                39
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                39,
+                40
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                44,
+                45
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                48,
+                49
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                52,
+                53
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                53,
+                54
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                55,
+                56
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                58,
+                59
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                59,
+                60
+              ],
+              "jaccard": 0.0
+            }
+          ],
+          "G3": [
+            {
+              "chapter": "三、模型假设",
+              "para": 7
+            },
+            {
+              "chapter": "四、符号说明",
+              "para": 9
+            },
+            {
+              "chapter": "五、模型建立与求解",
+              "para": 11
+            },
+            {
+              "chapter": "六、模型检验",
+              "para": 36
+            },
+            {
+              "chapter": "七、模型优缺点评价",
+              "para": 41
+            },
+            {
+              "chapter": "八、参考文献",
+              "para": 43
+            }
+          ],
+          "G4": [],
+          "G5": []
+        },
+        "Lgap": 25
+      },
+      "att3_3-3": {
+        "n_paragraphs": 111,
+        "n_chapters": 5,
+        "chapter_list": [
+          "1. 问题重述",
+          "2. 问题分析",
+          "3. 模型假设与符号说明",
+          "4. 模型建立与求解",
+          "5. 模型评价与推广"
+        ],
+        "hits": {
+          "G1": [
+            {
+              "start_para": 7,
+              "end_para": 11,
+              "length": 5
+            },
+            {
+              "start_para": 13,
+              "end_para": 15,
+              "length": 3
+            },
+            {
+              "start_para": 39,
+              "end_para": 55,
+              "length": 17
+            },
+            {
+              "start_para": 59,
+              "end_para": 61,
+              "length": 3
+            },
+            {
+              "start_para": 88,
+              "end_para": 109,
+              "length": 22
+            }
+          ],
+          "G2": [
+            {
+              "between": [
+                18,
+                19
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                22,
+                23
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                31,
+                32
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                32,
+                33
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                33,
+                34
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                37,
+                38
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                61,
+                62
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                64,
+                65
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                65,
+                66
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                80,
+                81
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                86,
+                87
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                88,
+                89
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                89,
+                90
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                90,
+                91
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                91,
+                92
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                92,
+                93
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                93,
+                94
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                94,
+                95
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                97,
+                98
+              ],
+              "jaccard": 0.0526
+            },
+            {
+              "between": [
+                99,
+                100
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                102,
+                103
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                104,
+                105
+              ],
+              "jaccard": 0.0256
+            },
+            {
+              "between": [
+                106,
+                107
+              ],
+              "jaccard": 0.0
+            },
+            {
+              "between": [
+                108,
+                109
+              ],
+              "jaccard": 0.0256
+            }
+          ],
+          "G3": [
+            {
+              "chapter": "3. 模型假设与符号说明",
+              "para": 7
+            }
+          ],
+          "G4": [],
+          "G5": []
+        },
+        "Lgap": 30
+      }
+    }
+  },
+  "optimization": {
+    "prediction_formula": "ŷ_new = β_0 + Σ β_j·z_j^new（Q2 Ridge 主模型 k=1 校准点预测；z 为 att2 样本 z-score 标准化；β_0=截距=ȳ）",
+    "beta_0": 36.546636201507525,
+    "k_multiplicative": 1.8985952350686384,
+    "key_features": [
+      "X12",
+      "X13",
+      "X41",
+      "X62"
+    ],
+    "ridge_coef": {
+      "X12": 2.4269468311949254,
+      "X13": 3.40064590756455,
+      "X41": 2.1894251055143754,
+      "X62": 2.877452452477257
+    },
+    "loocv_rmse": 4.685572953971648,
+    "note": "Q2 主模型点预测采用校准后 Ridge(k=1)；题设定义的乘法调整因子 k=1.90 施加于中心化贡献会放大离差降低 R²，故仅在 y_hat_current_k_adjusted 中作对照报告。优化方案优先提升 Q2 关键特征中单调正向的 X12/X13/X62；X41 因适中型属性(高于上界属'逻辑词堆砌')未纳入 Q2 提分，转为结构修正(Q1 重评)处理。",
+    "papers": {
+      "att3_3-1": {
+        "current_score_q1": 38.3225,
+        "y_hat_current": 32.6699,
+        "y_hat_current_k_adjusted": 29.1863,
+        "plan_P50": [
+          {
+            "feature": "X12",
+            "name": "假设匹配",
+            "from": 0.0,
+            "to": 0.0339,
+            "target_level": "P50"
+          },
+          {
+            "feature": "X13",
+            "name": "方法丰富",
+            "from": 1.2473,
+            "to": 2.0973,
+            "target_level": "P50"
+          }
+        ],
+        "plan_P75": [
+          {
+            "feature": "X12",
+            "name": "假设匹配",
+            "from": 0.0,
+            "to": 0.0679,
+            "target_level": "P75"
+          },
+          {
+            "feature": "X13",
+            "name": "方法丰富",
+            "from": 1.2473,
+            "to": 3.5492,
+            "target_level": "P75"
+          },
+          {
+            "feature": "X62",
+            "name": "引用规范",
+            "from": 0.4301,
+            "to": 0.8179,
+            "target_level": "P75"
+          }
+        ],
+        "y_new_P50": 38.5907,
+        "y_new_P75": 50.27,
+        "delta_P50": 5.9208,
+        "delta_P75": 17.6001,
+        "bootstrap_95PI": {
+          "n": 1000,
+          "low": 29.7374,
+          "high": 49.1144,
+          "point": 38.5907
+        },
+        "structural_fixes": [
+          {
+            "feature": "X41",
+            "name": "连接词密度",
+            "from": 1.8924,
+            "to": 1.4137,
+            "action": "回退至适中最优上界(精简堆砌逻辑词)"
+          },
+          {
+            "feature": "X52",
+            "name": "检验术语",
+            "from": 0.129,
+            "to": 0.9881,
+            "action": "补充模型检验/灵敏度分析"
+          },
+          {
+            "feature": "X53",
+            "name": "检验方法",
+            "from": 0.0,
+            "to": 0.1833,
+            "action": "补充模型检验/灵敏度分析"
+          }
+        ],
+        "score_q1_after_full_fix": 40.6114
+      },
+      "att3_3-2": {
+        "current_score_q1": 38.7128,
+        "y_hat_current": 45.9882,
+        "y_hat_current_k_adjusted": 54.4724,
+        "plan_P50": [
+          {
+            "feature": "X12",
+            "name": "假设匹配",
+            "from": 0.0272,
+            "to": 0.0339,
+            "target_level": "P50"
+          }
+        ],
+        "plan_P75": [
+          {
+            "feature": "X12",
+            "name": "假设匹配",
+            "from": 0.0272,
+            "to": 0.0679,
+            "target_level": "P75"
+          },
+          {
+            "feature": "X13",
+            "name": "方法丰富",
+            "from": 2.1788,
+            "to": 3.5492,
+            "target_level": "P75"
+          }
+        ],
+        "y_new_P50": 46.3824,
+        "y_new_P75": 54.7091,
+        "delta_P50": 0.3942,
+        "delta_P75": 8.7209,
+        "bootstrap_95PI": {
+          "n": 1000,
+          "low": 35.1541,
+          "high": 55.3703,
+          "point": 46.3824
+        },
+        "structural_fixes": [
+          {
+            "feature": "X52",
+            "name": "检验术语",
+            "from": 0.3301,
+            "to": 0.9881,
+            "action": "补充模型检验/灵敏度分析"
+          },
+          {
+            "feature": "X53",
+            "name": "检验方法",
+            "from": 0.033,
+            "to": 0.1833,
+            "action": "补充模型检验/灵敏度分析"
+          }
+        ],
+        "score_q1_after_full_fix": 39.8174
+      },
+      "att3_3-3": {
+        "current_score_q1": 30.4751,
+        "y_hat_current": 33.8708,
+        "y_hat_current_k_adjusted": 31.4663,
+        "plan_P50": [
+          {
+            "feature": "X12",
+            "name": "假设匹配",
+            "from": 0.0327,
+            "to": 0.0339,
+            "target_level": "P50"
+          },
+          {
+            "feature": "X13",
+            "name": "方法丰富",
+            "from": 1.1425,
+            "to": 2.0973,
+            "target_level": "P50"
+          },
+          {
+            "feature": "X62",
+            "name": "引用规范",
+            "from": 0.3292,
+            "to": 0.4139,
+            "target_level": "P50"
+          }
+        ],
+        "plan_P75": [
+          {
+            "feature": "X12",
+            "name": "假设匹配",
+            "from": 0.0327,
+            "to": 0.0679,
+            "target_level": "P75"
+          },
+          {
+            "feature": "X13",
+            "name": "方法丰富",
+            "from": 1.1425,
+            "to": 3.5492,
+            "target_level": "P75"
+          },
+          {
+            "feature": "X62",
+            "name": "引用规范",
+            "from": 0.3292,
+            "to": 0.8179,
+            "target_level": "P75"
+          }
+        ],
+        "y_new_P50": 39.0013,
+        "y_new_P75": 50.8045,
+        "delta_P50": 5.1305,
+        "delta_P75": 16.9337,
+        "bootstrap_95PI": {
+          "n": 1000,
+          "low": 30.0294,
+          "high": 49.5671,
+          "point": 39.0013
+        },
+        "structural_fixes": [
+          {
+            "feature": "X41",
+            "name": "连接词密度",
+            "from": 2.0526,
+            "to": 1.4137,
+            "action": "回退至适中最优上界(精简堆砌逻辑词)"
+          },
+          {
+            "feature": "X52",
+            "name": "检验术语",
+            "from": 0.0581,
+            "to": 0.9881,
+            "action": "补充模型检验/灵敏度分析"
+          },
+          {
+            "feature": "X53",
+            "name": "检验方法",
+            "from": 0.0387,
+            "to": 0.1833,
+            "action": "补充模型检验/灵敏度分析"
+          }
+        ],
+        "score_q1_after_full_fix": 32.9577
+      }
+    }
+  },
+  "statistics": {
+    "att3_score": [
+      30.475095316579328,
+      38.71283553400429,
+      35.83680096231637,
+      3.7946463593435187
+    ],
+    "att3_ai_score": [
+      0.08187444651276048,
+      0.5692116532195277,
+      0.39942385478597764,
+      0.224721321146876
+    ]
+  },
+  "warnings": [
+    "AI痕迹检测为统计代理(无真值标签)，结果不可解释为'AI 生成'的精确判定",
+    "3 篇案例结论定位为'方法示范'，不宣称普适规律",
+    "Q2 主模型 Ridge 系数 X41 为单调正向，与 Q1 适中型 X41 属性存在张力：逻辑词堆砌(高于最优上界)在 Q2 中反而加分，优化时需以 Q1 结构修正兜底",
+    "马氏距离因 AI2+AI4_ttr=1、AI5=X41 共线性采用伪逆(pinv)正则，属'马氏型距离'近似"
   ],
-  "warnings": [],
-  "elapsed_sec": 69.7
+  "figures": [
+    "q3_01_ai_outlier.png",
+    "q3_01_ai_outlier.pdf",
+    "q3_02_radar_shortboard.png",
+    "q3_02_radar_shortboard.pdf",
+    "q3_03_optimize_compare.png",
+    "q3_03_optimize_compare.pdf",
+    "q3_04_logic_gap.png",
+    "q3_04_logic_gap.pdf"
+  ]
 }

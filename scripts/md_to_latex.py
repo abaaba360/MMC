@@ -104,6 +104,8 @@ def convert_figure(line):
     if not m:
         return None
     caption = strip_fig_prefix(m.group(1))
+    # 转义图题中的LaTeX特殊字符（%是注释符，&是列分隔符等）
+    caption = caption.replace("%", r"\%").replace("&", r"\&").replace("_", r"\_")
     path = m.group(2).replace("..\\", "").replace("../", "")
     basename = os.path.basename(path)
     # 优先引用矢量 PDF（LaTeX 输出更清晰），同名 PDF 不存在时退回 PNG
@@ -246,8 +248,8 @@ def main():
 \renewcommand\thefigure{\arabic{section}-\arabic{figure}}
 \renewcommand\thetable{\arabic{section}-\arabic{table}}
 
-\title{高性能芯片歧管式微通道热管理系统的多目标优化与鲁棒设计}
-\tihao{B}
+\title{基于文本特征挖掘与多准则综合评价的数学建模论文智能评估研究}
+\tihao{A}
 \baominghao{}
 \schoolname{}
 \membera{}

@@ -44,6 +44,14 @@ python scripts/gates.py state        # 查看当前工作流状态
 - "加载 master-controller skill" — 手动加载总控Agent
 - "运行质量门禁检查" — 手动触发门禁
 
+### 题目归档（多题隔离）
+```bash
+python scripts/archive_problem.py A          # 归档当前产出到 archive/选题A_日期/
+python scripts/archive_problem.py B 20260812 # 指定题目和日期
+python scripts/archive_problem.py A --reset  # 归档后清空共享目录，准备跑下一题
+```
+**⚠️ 跑新题前必须先归档上一题**：`paper/`、`results/`、`code/`、`state/agent_outputs/`、`delivery/` 是**多题共享目录**，新题的 Writer/Coder 会用同名文件覆盖上一题产出。归档脚本会把当前产出完整快照到 `archive/选题X_日期/`，避免覆盖丢失。
+
 ## 工作流10阶段
 
 ```
@@ -67,6 +75,7 @@ d:\数模工作流\
 ├── results/               # 运行结果和图表
 ├── paper/                 # 论文产出
 ├── delivery/              # 最终交付物
+├── archive/               # 各题归档产出（选题A_日期/、选题B_日期/，防覆盖）
 ├── references/            # 参考资料（2026国赛备战资料等）
 └── templates/             # 论文模板（CUMCMThesis / MriteThesis / 求解计划模板）
 ```

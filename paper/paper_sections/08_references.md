@@ -1,25 +1,25 @@
 # 参考文献
 
-[1] Cang D, Dong Z, Lv S, et al. Design and intelligent optimization of TSV-based embedded microchannel heatsinks in 2.5D packaging[J]. International Journal of Heat and Mass Transfer, 2026, 255: 127908.
+[1] Saaty T L. The Analytic Hierarchy Process: Planning, Priority Setting, Resource Allocation[M]. New York: McGraw-Hill, 1980.
 
-[2] Zhang J, Sadiqbatcha S, Tan S X D. Hot-trim: thermal and reliability management for commercial multicore processors considering workload dependent hot spots[J]. IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, 2022, 42(7): 2290-2302.
+[2] Shannon C E. A mathematical theory of communication[J]. The Bell System Technical Journal, 1948, 27(3): 379-423.
 
-[3] He W, Yin E, Zhou F, et al. Integrated manifold microchannels and near-junction cooling for enhanced thermal management in 3D heterogeneous packaging technology[J]. Energy, 2024, 305: 132263.
+[3] Hoerl A E, Kennard R W. Ridge regression: biased estimation for nonorthogonal problems[J]. Technometrics, 1970, 12(1): 55-67.
 
-[4] 薛毅. "碳化硅外延层厚度的确定"的问题解析[J]. 数学建模及其应用, 2026, 15(1): 75-85.
+[4] Tibshirani R. Regression shrinkage and selection via the lasso[J]. Journal of the Royal Statistical Society: Series B, 1996, 58(1): 267-288.
 
-[5] Rasmussen C E, Williams C K I. Gaussian Processes for Machine Learning[M]. Cambridge: MIT Press, 2006.
+[5] Jenks G F. The data model concept in statistical mapping[J]. International Yearbook of Cartography, 1967, 7: 186-190.
 
-[6] Deb K, Pratap A, Agarwal S, et al. A fast and elitist multiobjective genetic algorithm: NSGA-II[J]. IEEE Transactions on Evolutionary Computation, 2002, 6(2): 182-197.
+[6] Hubert L, Arabie P. Comparing partitions[J]. Journal of Classification, 1985, 2(1): 193-218.
 
-[7] Hwang C L, Yoon K. Multiple Attribute Decision Making: Methods and Applications[M]. Berlin: Springer, 1981.
+[7] Liu F T, Ting K M, Zhou Z H. Isolation forest[C]//2008 Eighth IEEE International Conference on Data Mining, Pisa, 2008: 413-422.
 
-[8] Saltelli A. Making best use of model evaluations to compute sensitivity indices[J]. Computer Physics Communications, 2002, 145(2): 280-297.
+[8] Wold S, Sjöström M, Eriksson L. PLS-regression: a basic tool of chemometrics[J]. Chemometrics and Intelligent Laboratory Systems, 2001, 58(2): 109-130.
 
-[9] Sobol I M. Global sensitivity indices for nonlinear mathematical models and their Monte Carlo estimates[J]. Mathematics and Computers in Simulation, 2001, 55(1-3): 271-280.
+[9] Breiman L. Random forests[J]. Machine Learning, 2001, 45(1): 5-32.
 
-[10] Incropera F P, DeWitt D P, Bergman T L, et al. Fundamentals of Heat and Mass Transfer[M]. 7th ed. Hoboken: John Wiley & Sons, 2011.
+[10] 中华人民共和国国务院. 新一代人工智能发展规划[R]. 北京, 2017.
 
-[11] Tuckerman D B, Pease R F W. High-performance heat sinking for VLSI[J]. IEEE Electron Device Letters, 1981, 2(5): 126-129.
+[11] 全国信息与文献标准化技术委员会. 信息与文献 参考文献著录规则: GB/T 7714—2015[S]. 北京: 中国标准出版社, 2015.
 
-[12] Claude Code, 3.x, Anthropic, 2026-08-12.
+[12] Claude Code, Opus 5, Anthropic, 2026-08-13.
