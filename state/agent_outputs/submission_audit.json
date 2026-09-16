@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-09-11T18:18:46.363088+08:00",
+  "official_ai_declaration_text_verified": true,
+  "data_sources_verified": true,
+  "data_citations_verified": true,
+  "support_code_complete": true,
+  "ai_detail_in_support_verified": true,
+  "paper_text_anonymized": true,
+  "document_properties_anonymized": true,
+  "support_paths_anonymized": true,
+  "notes": {
+    "data_sources": "附件1—4为题目给定数据，结果JSON与代码逐项可追溯。",
+    "citations": "参考文献按GB/T 7714著录，正文标注对应编号。",
+    "support_code": "支撑材料code/含全部可运行源程序与统一入口run_all.py。",
+    "ai_detail": "支撑材料含规定文件名 AI工具使用详情.pdf。",
+    "support_paths": "支撑材料内路径均为相对路径，文件名不含身份信息。"
+  }
+}

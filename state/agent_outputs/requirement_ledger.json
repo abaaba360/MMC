@@ -1,0 +1,11 @@
+{
+  "status": "contract_locked",
+  "requirements": [
+    {"requirement_id": "R1", "question": "Q1", "source_clause": "按附件1制定计划且日初日末储电量相同", "required_output": "result1.xlsx、成本分解与指定时段结果", "acceptance_test": "144时段平衡与SOC残差不超过1e-6，E0=E144=6000且无同时充放电"},
+    {"requirement_id": "R2", "question": "Q2", "source_clause": "每天0:00制定计划，缺口按5倍价格紧急购电", "required_output": "result2.xlsx、全年成本与应急统计", "acceptance_test": "日前计划无未来泄漏，事后仅紧急购电，SOC跨日连续且覆盖334日"},
+    {"requirement_id": "R3", "question": "Q3", "source_clause": "0/6/12/18时可按新光伏预报调整，增购1.5倍、减购50%", "required_output": "result3.xlsx、逐次调整账本与必要性对照", "acceptance_test": "已执行时段不可回溯，调整相对上一版逐次结算，费用账本闭合"},
+    {"requirement_id": "R4", "question": "Q4", "source_clause": "采用附件4实时波动价格分别重算问题二和问题三", "required_output": "result4-2.xlsx、result4-3.xlsx及价格信息价值", "acceptance_test": "主结果不读取未来价格，完全信息结果仅作下界"},
+    {"requirement_id": "R5", "question": "ALL", "source_clause": "容量12000 kWh、SOC 10%至90%、功率5000 kW、充放电效率均90%", "required_output": "四问统一物理约束和单位体系", "acceptance_test": "功率乘1/6换算能量，SOC始终在[1200,10800]且效率口径统一"},
+    {"requirement_id": "R6", "question": "ALL", "source_clause": "按附件5模板提交结果", "required_output": "五份结果工作簿、代码、论文与支撑材料", "acceptance_test": "模板字段、单位、日期和汇总完整，每个数字可追溯"}
+  ]
+}

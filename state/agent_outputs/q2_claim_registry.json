@@ -1,0 +1,47 @@
+{
+  "sub_question": "Q2",
+  "claims": [
+    {
+      "claim_id": "Q2-TOTAL",
+      "requirement_id": "R2",
+      "statement": "2月至12月严格日前两阶段策略的实际总成本",
+      "result_json_path": "$.key_results.actual_total_cost_yuan",
+      "code_symbol": "solve_two_stage_day",
+      "unit": "元",
+      "validation_test": "计划费用与5倍紧急购电费用逐日复算",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q2-EMERGENCY",
+      "requirement_id": "R2",
+      "statement": "正式期紧急购电总量",
+      "result_json_path": "$.key_results.emergency_purchase_kwh",
+      "code_symbol": "actual_r",
+      "unit": "kWh",
+      "validation_test": "逐时段正缺口求和并与明细交叉核对",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q2-CAUSAL",
+      "requirement_id": "R2",
+      "statement": "日前预测只使用决策日前历史",
+      "result_json_path": "$.forecast_metrics.WAPE",
+      "code_symbol": "history_end",
+      "unit": "1",
+      "validation_test": "核查所有预测函数的历史截止索引与月度选择日志",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72"
+      },
+      "status": "verified"
+    }
+  ]
+}

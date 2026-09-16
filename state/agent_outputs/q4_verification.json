@@ -1,0 +1,24 @@
+{
+  "status": "passed",
+  "requirement_coverage": "100%",
+  "interface_status": "passed",
+  "checks": {
+    "365_days_present": true,
+    "official_window_334_days": true,
+    "q42_soc_transition": true,
+    "q42_soc_linkage": true,
+    "q42_mutex": true,
+    "q43_soc_transition": true,
+    "q43_soc_linkage": true,
+    "q43_mutex": true,
+    "pi42_soc_transition": true,
+    "pi42_soc_linkage": true,
+    "pi42_mutex": true,
+    "pi43_soc_transition": true,
+    "pi43_soc_linkage": true,
+    "pi43_mutex": true,
+    "oracle_soc_transition": true,
+    "oracle_soc_linkage": true,
+    "oracle_mutex": true
+  }
+}

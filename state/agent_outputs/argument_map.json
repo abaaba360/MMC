@@ -1,0 +1,40 @@
+{
+  "sub_questions": [
+    {
+      "sub_question_id": "Q1",
+      "requirement_ids": ["R1", "R5", "R6"],
+      "claims": ["确定性MILP给出满足物理互斥和日首尾SOC闭环的最低购电费用", "LP松弛是可验证下界"],
+      "model_propositions": ["母线能量守恒", "含双效率的SOC状态转移", "二元变量保证充放电互斥"],
+      "expected_evidence": ["q1_results.json", "result1.xlsx", "成本与SOC曲线", "MILP-LP消融表"],
+      "validation": ["平衡/SOC残差", "边界与互斥检查", "目标值与账本复算"],
+      "conclusion_boundary": "结论针对附件1给定典型日及题定储能参数，不外推到其他容量或价格制度。"
+    },
+    {
+      "sub_question_id": "Q2",
+      "requirement_ids": ["R2", "R5", "R6"],
+      "claims": ["严格日前两阶段计划在不使用未来实际值时权衡正常购电与5倍紧急购电", "一月热启动保证二月至年末SOC连续"],
+      "model_propositions": ["日前购电与储能计划对所有情景共享", "实现阶段仅紧急购电和弃光随情景变化", "联合净负荷场景保留时序相关"],
+      "expected_evidence": ["q2_results.json", "result2.xlsx", "334日成本分解", "指定日策略图"],
+      "validation": ["滚动时间切分审计", "场景覆盖率与点预测对照", "全年SOC和应急事件复算"],
+      "conclusion_boundary": "模型不允许实际阶段重调储能；其收益与风险由一年历史样本范围限定。"
+    },
+    {
+      "sub_question_id": "Q3",
+      "requirement_ids": ["R3", "R5", "R6"],
+      "claims": ["确定性MPC只修订未执行时段并正确结算每次增减购电", "是否需要日内调整由334日配对结果判定而非先验宣称"],
+      "model_propositions": ["发布时刻锚定滚动信息集", "相邻有效计划差额正负分解", "实际偏差最终由紧急购电闭合"],
+      "expected_evidence": ["q3_results.json", "result3.xlsx", "调整版本瀑布图", "九项指标对照"],
+      "validation": ["逐版本费用恒等式", "不调整对照", "时间块自助置信区间", "风险增强留删门禁"],
+      "conclusion_boundary": "若场景/CVaR增强未显著改善九项指标，则论文仅保留确定性MPC并如实报告删除理由。"
+    },
+    {
+      "sub_question_id": "Q4",
+      "requirement_ids": ["R4", "R5", "R6"],
+      "claims": ["因果在线策略是在未知未来实时价格条件下可执行的主结果", "完全价格信息结果是评价下界而非可执行方案"],
+      "model_propositions": ["价格预测仅由历史前缀产生", "Q2/Q3物理和调整规则保持不变", "同信息条件下构造完全价格基准"],
+      "expected_evidence": ["q4_results.json", "result4-2.xlsx", "result4-3.xlsx", "因果策略与下界差距图"],
+      "validation": ["无未来泄漏审计", "下界序关系", "两类工作簿成本复算"],
+      "conclusion_boundary": "完全信息差距衡量样本内价格信息价值，不代表现实中可全部获得。"
+    }
+  ]
+}

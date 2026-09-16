@@ -15,11 +15,13 @@ import base64
 import sys
 import time
 import requests
+from pathlib import Path
 
 # ==========【请修改这里】==========
-ROOT = r"D:\数模工作流\templates\award_papers"   # 论文根目录(自动遍历 B060/B157 等子文件夹)
+WORK_DIR = Path(__file__).resolve().parent.parent
+ROOT = str(WORK_DIR / "templates" / "award_papers")  # 解压到任意目录均可运行
 OUTPUT_NAME = "image_parse_result.md"             # 每个子文件夹下输出的 md 文件名
-ZHIPU_API_KEY = "填入你的智谱API-KEY"             # https://open.bigmodel.cn/ 控制台创建
+ZHIPU_API_KEY = os.environ.get("ZHIPU_API_KEY", "")  # 不在共享文件中保存密钥
 MODEL_NAME = "glm-4v-flash"                       # 免费视觉模型; 需更精准可换 glm-4v-plus(付费)
 MAX_IMAGES = 200                                  # 单文件夹最多解析页数(防止误跑全量)
 PAGES_FILTER = None                               # 例 "1-15,42" 只解析这些页; None=全部
@@ -87,8 +89,8 @@ def parse_one(img_path):
 def main():
     if not os.path.isdir(ROOT):
         sys.exit(f"文件夹不存在: {ROOT}")
-    if "填入你的" in ZHIPU_API_KEY:
-        sys.exit("请先在脚本顶部填入 ZHIPU_API_KEY")
+    if not ZHIPU_API_KEY:
+        sys.exit("请先设置环境变量 ZHIPU_API_KEY；不要把密钥写入或分享至项目文件")
     filter_pages = parse_filter(PAGES_FILTER)
     done_total = 0
 

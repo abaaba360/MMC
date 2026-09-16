@@ -86,7 +86,41 @@ def init_project(problem_letter=None):
         json.dump(ledger, f, ensure_ascii=False, indent=2)
     print(f"   ✅ state/ai_usage_ledger.json")
 
-    # 4. 扫描选题
+    # 4. 初始化AI使用详情汇总骨架；真实性确认必须由队伍在终审前填写
+    summary_file = WORK_DIR / "state" / "agent_outputs" / "ai_usage_summary.json"
+    stages = (
+        "赛题理解与问题分析", "模型假设与符号定义", "模型建立与算法设计",
+        "模型求解与编程实现", "结果分析与模型检验", "论文撰写与文字润色",
+        "其他辅助环节（文献、数据、图表等）",
+    )
+    modes = ("网页对话框交互", "代码编辑器内嵌AI", "上传文件或数据对话", "AI智能体工作流（多步自动执行）", "其他方式")
+    categories = (
+        "建模思路与方法建议", "公式推导与理论参考", "代码编写与调试",
+        "结果分析与模型评价", "论文核心论述（摘要、结论等）", "其他内容",
+    )
+    team_led_items = (
+        "模型结构与创新点", "公式推导与求解步骤", "程序逻辑与参数设置",
+        "结果分析与论文核心论述", "论文撰写与图表制作等",
+    )
+    summary = {
+        "tool_inventory": [],
+        "stage_matrix": {name: {"used": False, "purpose": "未使用", "tools": []} for name in stages},
+        "prompt_modes": {name: {"used": False, "description": "未使用"} for name in modes},
+        "output_categories": {
+            name: {"adoption_and_modification": "待根据真实台账汇总", "verification_method": "待核验"}
+            for name in categories
+        },
+        "team_led_confirmation": {
+            name: {"team_led": None, "contribution": "待队伍确认"} for name in team_led_items
+        },
+        "truthfulness_confirmation": {"confirmed_by_team": False, "confirmed_at": None, "statement": ""},
+        "representative_record_ids": [],
+    }
+    with open(summary_file, "w", encoding="utf-8") as f:
+        json.dump(summary, f, ensure_ascii=False, indent=2)
+    print(f"   ✅ state/agent_outputs/ai_usage_summary.json（待队伍终审确认）")
+
+    # 5. 扫描选题
     print("\n🔍 扫描选题...")
     problems_dir = WORK_DIR / "problems"
     if problems_dir.exists():
@@ -97,7 +131,7 @@ def init_project(problem_letter=None):
     else:
         print("   ⚠️ problems/ 目录不存在，请将赛题数据放入该目录")
 
-    # 5. 检查Python环境
+    # 6. 检查Python环境
     print("\n🐍 检查Python环境...")
     try:
         import numpy; print(f"   ✅ numpy {numpy.__version__}")

@@ -1,0 +1,49 @@
+{
+  "interfaces": [
+    {
+      "interface_id": "I1_RAW_TO_ENERGY",
+      "upstream": "附件1、附件2、附件4原始功率与价格",
+      "downstream": "四问优化模型",
+      "fields": [
+        {"name": "load", "unit": "kWh/10分钟", "dtype_or_shape": "float[day,144]", "valid_range": "非负", "semantics": "负荷功率乘1/6"},
+        {"name": "pv", "unit": "kWh/10分钟", "dtype_or_shape": "float[day,144]", "valid_range": "非负", "semantics": "光伏功率乘1/6"},
+        {"name": "price", "unit": "元/kWh", "dtype_or_shape": "float[day,144]", "valid_range": "正数", "semantics": "时段购电单价"}
+      ],
+      "status": "passed"
+    },
+    {
+      "interface_id": "I2_HISTORY_TO_FORECAST",
+      "upstream": "决策时点以前的历史数据与附件3已发布预报",
+      "downstream": "Q2/Q3/Q4滚动求解器",
+      "fields": [
+        {"name": "forecast_mean", "unit": "kWh/10分钟", "dtype_or_shape": "float[horizon]", "valid_range": "负荷非负、净负荷可正可负", "semantics": "因果点预测"},
+        {"name": "scenarios", "unit": "kWh/10分钟", "dtype_or_shape": "float[S,horizon]", "valid_range": "有限实数", "semantics": "联合时序情景"},
+        {"name": "probability", "unit": "1", "dtype_or_shape": "float[S]", "valid_range": "非负且和为1", "semantics": "由历史频率或距离权重得到"}
+      ],
+      "status": "passed"
+    },
+    {
+      "interface_id": "I3_SOLVER_TO_RESULTS",
+      "upstream": "各问MILP求解器",
+      "downstream": "q*_results.json、附件5结果工作簿与论文图表",
+      "fields": [
+        {"name": "grid_plan", "unit": "kWh/10分钟", "dtype_or_shape": "float[day,144]", "valid_range": "非负", "semantics": "0时初始计划购电量"},
+        {"name": "charge_discharge", "unit": "kWh/10分钟", "dtype_or_shape": "float[day,144,2]", "valid_range": "[0,833.3333]且互斥", "semantics": "母线侧储能流量"},
+        {"name": "soc", "unit": "kWh", "dtype_or_shape": "float[day,145]", "valid_range": "[1200,10800]", "semantics": "每时段边界SOC"},
+        {"name": "cost_ledger", "unit": "元", "dtype_or_shape": "record[day]", "valid_range": "有限实数", "semantics": "计划、调整、紧急费用分解"}
+      ],
+      "status": "passed"
+    },
+    {
+      "interface_id": "I4_TEMPLATE_EXPORT",
+      "upstream": "验证通过的结果数组与费用账本",
+      "downstream": "result1/result2/result3/result4-2/result4-3.xlsx",
+      "fields": [
+        {"name": "date", "unit": "日期", "dtype_or_shape": "334日", "valid_range": "2025-02-01至2025-12-31", "semantics": "结果期"},
+        {"name": "slot", "unit": "10分钟标签", "dtype_or_shape": "144列", "valid_range": "按模板原顺序", "semantics": "不循环移位"},
+        {"name": "daily_total", "unit": "kWh或元", "dtype_or_shape": "float[334]", "valid_range": "由明细复算", "semantics": "模板日汇总"}
+      ],
+      "status": "passed"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "competition_year": 2026,
+  "formal_mode": true,
+  "official_rules_checked_at": "2026-09-11T13:49:51.9624706+08:00",
+  "acknowledged": true,
+  "main_agent_read_complete": true,
+  "files": [
+    {"path": "AGENTS.md", "sha256": "fd5907e1ef1a4342b8266a2888d6dd4c86fc8bc38d308e5f4385c88becfc8610", "read_complete": true},
+    {"path": ".agents/skills/master-controller/SKILL.md", "sha256": "7442d0b73a9cb18f3a9f4f99b9c4bb871d4b07cccada72f29e73e0b205e6b174", "read_complete": true},
+    {"path": ".agents/skills/analyst/SKILL.md", "sha256": "a278153e7167e1068120412c77f27233c6194e94a5475fa6f2a235cd719ae862", "read_complete": true},
+    {"path": ".agents/skills/modeler/SKILL.md", "sha256": "a03ed69856dfc2c12d462ae57a59e233cacceefe96bf27769f2ceb842f361f9a", "read_complete": true},
+    {"path": ".agents/skills/coder/SKILL.md", "sha256": "9dd4d45faa5a01d47f09837552601857f3852e54bb8bca04c9b81e58df3924ba", "read_complete": true},
+    {"path": ".agents/skills/verifier/SKILL.md", "sha256": "2b24f2f7a91df3e390803c1747143fb9d648e28cd1970a0bdbda956534db7a34", "read_complete": true},
+    {"path": ".agents/skills/writer/SKILL.md", "sha256": "8e679398a66952e6be9e77a2a817340f971a498f6a504f8e3b91e8b3cec9f6c0", "read_complete": true},
+    {"path": ".agents/skills/reviewer/SKILL.md", "sha256": "4a284600940ee7daccd6469d9a6172e91632624629669149edd13efdfbb0d1e6", "read_complete": true},
+    {"path": "references/2026最新资料吸收与正式赛题执行规范.md", "sha256": "222c3b82499ed3ab1eb6b8aa4dea9fffdbd0c06eb8b881212b0864258c8ddf49", "read_complete": true},
+    {"path": "references/2026_AI工具使用详情模板填写规范.md", "sha256": "84b728f7ae83d1e76465a82a88b8035a440f20733581620b2a8d5695cf617523", "read_complete": true}
+  ]
+}

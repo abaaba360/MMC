@@ -1,18 +1,28 @@
 {
-  "timestamp": "2026-08-13T01:58:20.507023",
+  "timestamp": "2026-09-16T23:11:41.430263",
   "results": {
+    "logic_gate": {
+      "passed": true,
+      "issues": []
+    },
     "evidence_gate": {
       "passed": true,
       "issues": []
     },
     "format_gate": {
-      "passed": true,
-      "issues": []
+      "passed": false,
+      "issues": [
+        "delivery/中有多份电子论文候选，必须只保留PDF或Word一种格式"
+      ]
     },
     "integrity_gate": {
-      "passed": true,
-      "issues": []
+      "passed": false,
+      "issues": [
+        "支撑材料缺少源代码: ['check.py', 'q1.py', 'q2.py', 'q3.py', 'q4.py']",
+        "支撑材料混入论文或旧稿: ['results/figures/model_growth_route.pdf', 'results/figures/q1_dispatch_and_soc.pdf', 'results/figures/q2_monthly_cost_and_emergency.pdf', 'results/figures/q2_representative_days.pdf', 'results/figures/q3_forecast_updates.pdf', 'results/figures/q3_update_ablation.pdf', 'results/figures/q4_information_value.pdf', 'results/figures_matlab/q1_dispatch_matlab_awardstyle.pdf', 'results/figures_matlab/q2_monthly_cost_emergency_matlab.pdf', 'results/figures_matlab/q2_representative_days_matlab.pdf', 'results/figures_matlab/q2_soc_continuity_matlab.pdf', 'results/figures_matlab/q3_forecast_updates_matlab.pdf', 'results/figures_matlab/q3_update_ablation_matlab.pdf', 'results/figures_matlab/q4_information_value_matlab.pdf']",
+        "delivery中应恰有一个电子论文PDF或Word，当前找到 2 个"
+      ]
     }
   },
-  "all_passed": true
+  "all_passed": false
 }

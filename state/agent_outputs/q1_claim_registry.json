@@ -1,0 +1,44 @@
+{
+  "sub_question": "Q1",
+  "claims": [
+    {
+      "claim_id": "Q1-COST",
+      "requirement_id": "R1",
+      "statement": "确定性MILP给出附件1典型日的最小购电费用。",
+      "result_json_path": "$.milp.objective_yuan",
+      "code_symbol": "solve_deterministic_dispatch",
+      "unit": "元/日",
+      "validation_test": "目标函数由144时段价格与购电量点积独立复算，且MILP成功终止。",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q1-PHYSICS",
+      "requirement_id": "R5",
+      "statement": "SOC全程位于题定边界、首尾均为6000 kWh，且无同时充放电。",
+      "result_json_path": "$.milp.simultaneous_intervals",
+      "code_symbol": "max_soc_residual",
+      "unit": "个时段",
+      "validation_test": "逐时段检查能量平衡、状态转移、SOC边界、终端状态与充放电互斥。",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q1-LOWER-BOUND",
+      "requirement_id": "R1",
+      "statement": "LP连续松弛最优值不高于MILP，本实例两者目标值相同。",
+      "result_json_path": "$.lp_lower_bound_gap_yuan",
+      "code_symbol": "binary_mode",
+      "unit": "元",
+      "validation_test": "以相同输入分别求解binary_mode=true/false并核查下界序关系。",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377"
+      },
+      "status": "verified"
+    }
+  ]
+}

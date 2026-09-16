@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "requirement_coverage": "100%",
+  "interface_status": "passed",
+  "checks": {
+    "energy_balance_residual_le_1e-6": true,
+    "soc_transition_residual_le_1e-6": true,
+    "soc_bounds_and_terminal": true,
+    "charge_discharge_mutex": true,
+    "lp_lower_bound_relation": true,
+    "selected_intervals_and_four_hour_blocks_generated": true
+  }
+}

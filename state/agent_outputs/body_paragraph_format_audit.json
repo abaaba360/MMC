@@ -1,0 +1,3006 @@
+{
+  "source": "delivery\\C题论文_光伏微网储能购电滚动优化_模板规范修订版.docx",
+  "output": "delivery\\C题论文_光伏微网储能购电滚动优化_全文格式与参考文献终修版.docx",
+  "changed_paragraph_count": 136,
+  "citation_additions": [
+    "储能经济调度、多时间尺度协调以及功率预测与调度协同等研究，为本文的模型构造提供了方法参考[1-3]。",
+    "该处理与微网日内调度和滚动时域控制的基本思想一致[4-6]。",
+    "这种将事前计划与事后补救分开的结构也常用于含源荷不确定性的两阶段微网调度[7-9]。"
+  ],
+  "reference_count": 9,
+  "remaining_body_format_anomalies": [],
+  "changes": [
+    {
+      "paragraph_index": 7,
+      "text": "一、问题重述",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 8,
+      "text": "1.1 问题背景",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 9,
+      "text": "在分布式光伏微网中，光伏可以直接向居民负荷供电，也可以在有富余时给储能充电；当光伏不足时，储能与外网共同补足负荷。由于光伏出力、居民负荷和电价均随时间变化，某一时段看似最便宜的动作未必对全天最有利。例",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 10,
+      "text": "题目以10分钟为间隔给出价格、负荷、光伏及预测数据，并规定储能额定容量为12000 kWh、允许储电范围为1200—10800 kWh、最大充放电功率均为5000 kW，充放电效率为90%。储能使前后",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 11,
+      "text": "1.2 基本问题",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 12,
+      "text": "基于上述运行背景，本文需要利用附件数据依次解决以下四个相互递进的问题：",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 13,
+      "text": "问题一：在某日144个时段的电价、居民负荷和光伏出力均已知的条件下，确定外网购电及储能充放电计划，使当日购电费用最小，并给出结果解释与可行性检验。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 14,
+      "text": "问题二：在每天0:00只能利用历史数据制定全天计划、实际负荷和光伏随后才揭示的条件下，确定正常购电和储能计划；若实际供电不足，仅以5倍实时电价紧急购电，并计算2月1日至12月31日总费用。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 15,
+      "text": "问题三：在问题二基础上利用0:00、6:00、12:00和18:00发布的光伏预报，对尚未执行时段滚动调整购电与储能计划；按增购、减购及紧急购电规则结算，并判断增加预测更新是否真正降低费用。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 16,
+      "text": "问题四：当外网电价改为事前未知的实时价格时，分别按照问题二和问题三的信息更新方式制定可执行策略，计算全年费用，并通过不同信息基准评价价格预测与滚动调整的作用。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 17,
+      "text": "二、问题分析",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 18,
+      "text": "本文研究由光伏、储能、外网和居民负荷构成的微网调度问题。四个问题使用相同的能量流和储能运行边界，但可获得的信息、计划允许调整的时刻以及偏差结算规则逐步变化。为保证各问衔接清楚，本文先识别每一问新增的题",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 19,
+      "text": "2.1 问题一的分析",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 22,
+      "text": "2.2 问题二的分析",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 25,
+      "text": "2.3 问题三的分析",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 28,
+      "text": "2.4 问题四的分析",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 31,
+      "text": "综合以上分析，本文的总体求解过程如图2-1所示。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 33,
+      "text": "图2-1 文章总体思路图",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 3.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.0"
+      }
+    },
+    {
+      "paragraph_index": 34,
+      "text": "三、模型假设",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 35,
+      "text": "3.1 基本假设",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 36,
+      "text": "假设1（时段内平稳性）：每个10分钟时段内的负荷、光伏和电价均以附件给出的数值代表该时段平均水平。理由：附件的时间分辨率为10分钟，在该尺度内采用分段常值既与数据口径一致，也能直接完成电量换算。",
+      "before": {
+        "alignment": 3,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 37,
+      "text": "假设2（能量流完整性）：光伏可直接供给负荷，也可用于储能充电；模型不人为规定光伏、储能和外网的固定供电次序。理由：实际调度取决于当期供需、储能状态和未来电价，固定优先级会割裂跨时段决策。",
+      "before": {
+        "alignment": 3,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 38,
+      "text": "假设3（不向外网售电）：题目未给出反向上网通道和售电收益，富余光伏只能用于充电或弃置，弃光收益记为0。理由：这样处理不引入题目之外的交易机制。",
+      "before": {
+        "alignment": 3,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 39,
+      "text": "假设4（效率口径一致）：充电量和放电量均定义在交流母线侧，充、放电效率分别取题目给定的90%。理由：统一计量位置后，母线平衡与储电量递推之间不会重复计算损耗。",
+      "before": {
+        "alignment": 3,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 40,
+      "text": "假设5（跨日状态连续）：问题二至问题四的日末储电量直接作为次日初值；问题一仅采用题目明确给出的日初日末相等条件。理由：储能是连续运行设备，除题目另有规定外不应在每日零时人为复位。",
+      "before": {
+        "alignment": 3,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 41,
+      "text": "假设6（因果信息边界）：预测模型、标准化参数、情景残差及模型选择只使用决策时刻以前的数据，未来实际值仅用于计划冻结后的结算与评价。理由：该假设保证日前和滚动策略在现实中可执行。",
+      "before": {
+        "alignment": 3,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 42,
+      "text": "四、符号说明",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 43,
+      "text": "五、数据预处理与探索性分析",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 44,
+      "text": "5.1 时间与单位对齐",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 45,
+      "text": "记每日时段集合为",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 46,
+      "text": "原始附件依次给出“0:10，0:20，…，0:00+1”共144项，附件5又把首项明确写为“0:10—0:20”。因此本文把源数据中的0:10解释为区间起点，对应0:10—0:20；其余各项按同一规则",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 47,
+      "text": "负荷与光伏功率分别记为、，对应的十分钟电量为",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 48,
+      "text": "5.2 数据质量与基本特征",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 49,
+      "text": "对附件1—4逐表检查日期、时段、缺失值和取值范围。附件1、附件2及附件4均无缺失值和负值；附件3共有1095个日期空白，均来自同一日期四个预报时刻只在首行填写日期的版式设计，故在组内向下填充，而不作为",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 50,
+      "text": "探索性统计表明，附件1的负荷为3309.39—5958.97 kW，光伏最高7612.32 kW，净负荷有30个时段为负，说明部分日间时段存在可用于充电的光伏富余；分时电价为0.3713—1.3952",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 51,
+      "text": "六、问题一的模型建立与求解",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 52,
+      "text": "6.1 模型建立",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 53,
+      "text": "6.1.1 时段电量平衡",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 3.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 54,
+      "text": "在时段t开始时，储电量已经由上一时段确定。随后当期光伏、计划购电和必要的储能放电进入母线，负荷用电与储能充电从母线取电；若仍有无法消纳的光伏，则只能弃置。因而每一时段满足下式：",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 55,
+      "text": "(1)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 56,
+      "text": "式（1）不是人为规定“先光伏、后储能、再购电”的顺序，而是列清所有电量去向。由于光伏边际成本为0且题目不给售电收益，优化结果通常会优先直接利用光伏；但在储能容量、电价和未来负荷共同作用下，具体的充放电",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 57,
+      "text": "6.1.2 储能状态、边界与充放电互斥",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 3.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 58,
+      "text": "充电量和放电量都定义在交流母线侧。充入1 kWh电量后只有0.9 kWh进入电池；若要向母线送出1 kWh，则电池内部需要减少1/0.9 kWh。于是当前储电量、充电量和放电量共同决定下一时段储电量：",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 59,
+      "text": "(2)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 60,
+      "text": "容量与功率边界为",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 61,
+      "text": "(3)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 62,
+      "text": "(4)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 63,
+      "text": "互斥约束来自单套储能的实际工作方式。若允许同一时段同时充、放电，模型可能利用往返损耗人为消耗免费光伏，看似减少弃光，却没有增加负荷获得的有效电量。因此二元状态用于排除这种非物理解；去掉二元状态的连续模",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 64,
+      "text": "6.1.3 初始储电量条件",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 3.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 65,
+      "text": "题目只给出一次真实初值",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 66,
+      "text": "6.1.4 目标函数与完整模型",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 3.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 67,
+      "text": "问题一中144个时段的电价、负荷和光伏均为已知数，不存在计划偏差和紧急购电。决策的实质是在满足每时段供电与储能边界的前提下，决定何时从外网购电、何时充电、何时放电，使全天购电费用最低。因此目标函数就是",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 68,
+      "text": "(5)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 69,
+      "text": "并满足式（1）—（4），其中 ，以及",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 70,
+      "text": "求解时把144个时段一次性联立：每一时段的平衡约束决定当期供需，储电量递推把相邻时段串联，首尾相等条件又闭合整日。由于所有连续关系和目标均线性，只需用二元变量表达充放电互斥，即可由混合整数线性规划求得",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 71,
+      "text": "(6)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 72,
+      "text": "6.2 模型求解与计算结果",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 75,
+      "text": "图6-1典型日功率、储能动作与SOC轨迹",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 76,
+      "text": "表6-1指定时段购电量及全天汇总",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 77,
+      "text": "表6-2储能分段充/放电量及首末储电量",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 78,
+      "text": "6.3 结果分析与检验",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 79,
+      "text": "图6-1显示，低价或光伏富余时储电量上升，电价较高且负荷超过光伏时储能放电并压低购电量；储电量触及1200 kWh或10800 kWh边界后，后续动作受容量限制。计划购电量的突变与分时电价台阶和500",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 80,
+      "text": "七、问题二的模型建立与求解",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 81,
+      "text": "7.1 数据处理与情景构造",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 82,
+      "text": "将负荷减去光伏得到净负荷后，需要回答的不是单独预测144个无关时点，而是刻画一整天可能共同上移、下移或峰谷错位的轨迹。本文先用决策日前数据比较1日至7日季节加权基线与含日历、滞后项的岭回归，每月首日用",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 83,
+      "text": "(7)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 84,
+      "text": "从历史残差库按整日抽样，可以保留144个时段之间的相关变化，避免逐时独立抽样拼出从未出现过的曲线。各历史日按经验频率赋予概率；情景数量在10、20和30个候选中选择分布统计已稳定的最小值，从而兼顾场景",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 85,
+      "text": "7.2 两阶段模型建立",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 86,
+      "text": "(8)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 87,
+      "text": "在同一个决策日的所有可能实际情景下，0:00确定的购电、充电和放电计划必须完全相同；实际曲线揭示后，题目只明确允许供电不足时紧急购电，故只有紧急购电量和弃光量可以随情景改变。两阶段的边界不是算法设定，",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 88,
+      "text": "(9)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 89,
+      "text": "第二阶段不再允许重新安排储能，是为了严格遵守题目对事后补救手段的限定，也使问题二与问题三形成清晰区别：问题二全天计划冻结，问题三则因题目明确发布新预报而允许修改尚未执行时段。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 90,
+      "text": "Q2—Q4按自然时间顺序运行，并满足",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 91,
+      "text": "(10)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 92,
+      "text": "问题二至问题四均按自然日期连续运行，不设置人为的每日复位。上一日末储电量原样传给下一日；1月从6000 kWh起始值顺序运行，以得到2月1日的真实初始状态。每日0:00求计划时采用48小时延伸窗估计日",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 93,
+      "text": "对每个候选实际情景，正常购电费由同一份日前计划产生，紧急购电费则由该情景下的剩余缺口产生。以情景概率加权后，0:00选择使“正常购电费用+期望紧急购电费用”最小的计划：",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 94,
+      "text": "(11)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 95,
+      "text": "计划冻结后，再用当天实际净负荷逐时结算。若计划购电和既定储能动作仍不足，差额全部计为紧急购电；若出现剩余，则计为弃光。二者分别由下式给出：",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 96,
+      "text": "(12)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 97,
+      "text": "(13)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 98,
+      "text": "7.3 模型求解与计算结果",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 100,
+      "text": "2月1日至12月31日，计划购电费用为13750414.64元，紧急购电费用为1507608.25元，总费用为15258022.89元；紧急购电量为404258.73 kWh，预测加权绝对百分比误差为",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 101,
+      "text": "表7-1指定日期、指定时段的购电量及全天汇总",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 102,
+      "text": "表7-2指定日期储能分段充/放电量（单元格为充电量/放电量，kWh）",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 103,
+      "text": "表7-3指定日期紧急购电",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 105,
+      "text": "图7-1四个代表日的日前预测、实际净负荷与紧急购电",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 107,
+      "text": "图7-2正式期月度费用分解与紧急购电量",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 108,
+      "text": "7.4 结果分析与检验",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 109,
+      "text": "结果显示，正常购电覆盖了绝大部分需求，紧急费用约占总费用的9.88%；紧急购电主要出现在实际净负荷高于日前场景覆盖范围的时段，说明剩余费用来自信息不足而非供电约束失效。按实际曲线逐时结算后，母线平衡、",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 110,
+      "text": "八、问题三的模型建立与求解",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 111,
+      "text": "8.1 预测数据处理与状态更新",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 112,
+      "text": "每次求解先把附件3的整点光伏预测以发布时刻实测值为0小时锚点，线性插值到10分钟网格；负荷则由历史同星期曲线结合当天已经实现的偏差进行稳健修正。随后从当前储电量出发，对未执行时段重新求最小费用计划。该",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 113,
+      "text": "8.2 滚动优化模型建立",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 114,
+      "text": "每次滚动求解均继承问题一的能量平衡、储能状态和互斥约束，并以当前实测储电量作为新初值。设调整前仍有效的购电计划为原计划，新优化得到的未执行时段购电量为新计划；两者的正差计为增购，负差的绝对值计为减购，",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 115,
+      "text": "记  为时刻  调整前的有效计划， 为新计划。定义",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 116,
+      "text": "(14)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 117,
+      "text": "每次调整相对上一版有效计划逐次结算：",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 118,
+      "text": "(15)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 119,
+      "text": "减购项前的负号表示从已经计入的原计划费用中退回减购量正常价格的50%，不是另加50% 罚款。实际总费用为",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 120,
+      "text": "(16)",
+      "before": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 121,
+      "text": "8.3 模型求解与计算结果",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 123,
+      "text": "全年计算得到：仅在0:00制定计划的总费用为16391391.76元，采用0:00、6:00、12:00和18:00四次更新后的总费用为15731687.04元，调整净费用为499519.56元，紧急",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 125,
+      "text": "图8-1不同日内更新频率的费用与紧急购电量对比",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 127,
+      "text": "图8-2四个指定日的滚动预测修正效果",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 128,
+      "text": "表8-2指定日期、指定时段的0时计划量/最终有效量及全天汇总",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 129,
+      "text": "表8-3指定日期储能分段充/放电量（单元格为充电量/放电量，kWh）",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 130,
+      "text": "表8-4指定日期紧急购电",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 131,
+      "text": "8.4 结果分析与检验",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 132,
+      "text": "与仅0:00计划相比，四次更新使总费用减少659704.73元，降幅约4.02%，紧急购电量下降28.03%。这说明新预报减少的高价应急损失超过了逐次调整成本，故四次更新在本组数据上具有实际收益。逐版",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 133,
+      "text": "九、问题四的模型建立与求解",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 134,
+      "text": "9.1 价格数据处理与因果预测",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 135,
+      "text": "附件4记录的是全年最终实现的实时价格，并不意味着每天0:00已经知道未来144个价格。若把整日真实价格直接用于正式策略，就会产生未来信息泄漏。因此本文比较1日至7日季节加权法与“历史同星期中位曲线+已",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 136,
+      "text": "9.2 调度模型与评价基准",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 137,
+      "text": "将每个决策时刻得到的价格预测替换原模型中的已知电价：问题4-2每天0:00预测全天价格并求解两阶段计划，问题4-3在四次光伏预报更新时同步更新价格，只调整尚未执行时段。二者均按当天实际价格进行事后费用",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 138,
+      "text": "（1）完全价格信息反事实基准：只把未来实时价格交给优化器，负荷和光伏信息仍按正式策略预测，用于度量价格预测损失。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 139,
+      "text": "（2）全外生信息下界：一次性给出全年价格、负荷和光伏实际路径，并放松充放电互斥整数变量；它是现实策略成本的严格下界，但不可执行。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 140,
+      "text": "9.3 模型求解与计算结果",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 142,
+      "text": "因果价格预测下，问题4-2与问题4-3的全年总费用分别为16124373.46元和16550967.30元；对应的完全价格信息反事实费用分别为15923572.41元和16401924.52元，全外生",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.25"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 144,
+      "text": "图9-1因果策略、完全价格信息基准与全信息下界的费用对比",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 145,
+      "text": "表9-2波动电价下指定日期结果",
+      "before": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 4.0,
+        "space_after_pt": 4.0,
+        "line_spacing": "1.0"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 146,
+      "text": "9.4 结果分析与信息价值",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 147,
+      "text": "问题4-2和问题4-3相对完全价格信息基准分别增加200801.05元和149042.78元，反映价格未知带来的样本内代价。问题4-3的因果总费用比问题4-2高426593.84元，表明本样本中更频繁",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 148,
+      "text": "十、模型检验与结果可靠性",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 149,
+      "text": "10.1 硬约束与费用账本检验",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 150,
+      "text": "所有问题均逐时段复算母线能量平衡和储电量递推，检查储电量始终位于1200—10800 kWh，且不存在同时充放电。问题三、四还逐版本复算调整费用，确认每次增购和减购都相对上一版有效计划结算。全部正式策",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 151,
+      "text": "10.2 时间信息泄漏检验",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 152,
+      "text": "程序为每个预测原点保存训练截止日期，断言训练标签早于预测原点；标准化尺度、历史分位数、相似日距离、残差库和超参数均由过去数据估计。附件2、4当天未来实际值只在计划冻结后进入结算。完全信息基准使用单独函",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 153,
+      "text": "10.3 模型对照检验",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 154,
+      "text": "问题一用连续松弛与无储能方案检验互斥约束和储能收益；问题二用滚动样本外加权绝对百分比误差、紧急购电量与费用分解检验日前计划；问题三比较四种更新频率，直接判断新增预报是否值得使用；问题四比较因果策略、完",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 155,
+      "text": "十一、模型评价、改进与推广",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 156,
+      "text": "11.1 模型优点",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 161,
+      "text": "11.2 模型缺点",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 164,
+      "text": "11.3 模型改进",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 167,
+      "text": "11.4 模型推广",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 0,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 6.0,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 169,
+      "text": "十二、AI工具使用声明",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 1,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": 12.0,
+        "space_after_pt": 6.0,
+        "line_spacing": "1.5"
+      }
+    },
+    {
+      "paragraph_index": 170,
+      "text": "本参赛队在竞赛过程中使用了AI工具，主要用于赛题理解辅助、候选模型比较、代码编写与调试、结果核验、图表生成和文字润色，详细使用情况见支撑材料。",
+      "before": {
+        "alignment": null,
+        "first_line_pt": null,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "None"
+      },
+      "after": {
+        "alignment": 3,
+        "first_line_pt": 24.0,
+        "left_pt": null,
+        "right_pt": null,
+        "space_before_pt": null,
+        "space_after_pt": null,
+        "line_spacing": "1.5"
+      }
+    }
+  ]
+}

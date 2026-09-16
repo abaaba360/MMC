@@ -1,5 +1,6 @@
 # 备份目录
 backup_20260812/
+backup_*/
 
 # 各题归档快照（冗余，根目录+git历史已保护产出，151MB 不宜入库）
 archive/
@@ -7,8 +8,29 @@ archive/
 # OCR 中间图片（可从 problems/ 原始PDF重新渲染）
 state/agent_outputs/qA_scanned_images/
 
+# 工作流运行与论文排版的可再生成产物
+tmp/
+.tmp_render/
+.workbuddy/
+state/appendix_rebuild_*/
+state/award_visual_study/
+state/docx_qa_*/
+state/docx_render_qa/
+state/qa/
+state/qa_*/
+state/review_inputs/
+state/submission_render_*/
+state/submission_staging/
+state/submission_zip_test*/
+
+# 根目录临时提取、OCR、质检与协作目录
+/_*/
+/_*.txt
+/_*.jpg
+
 # 支撑材料压缩包（内容与根目录重复）
 *.zip
+!delivery/C题支撑材料_清理终版.zip
 
 # Python 缓存
 __pycache__/
@@ -27,6 +49,13 @@ paper/*.synctex*
 *.swp
 *.swo
 *~
+~$*
+*_backup.*
+scripts/_img_extract/
+
+# 最终稿对比用临时导出
+delivery/cur_*.pdf
+delivery/*.bak_*.zip
 
 # IDE
 .vscode/

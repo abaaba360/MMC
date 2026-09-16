@@ -1,0 +1,154 @@
+{
+  "selection_status": "confirmed_by_team",
+  "selected_route": "H+修订版v2",
+  "recommended_route": "H+修订版v2",
+  "decisions": [
+    {
+      "sub_question_id": "Q1",
+      "selected": "确定性MILP",
+      "baseline": "无储能直接购电策略与LP连续松弛",
+      "why_not_simpler": "纯LP不能从模型层面保证单套储能同一时段充放电互斥，可能用损耗虚增光伏消纳。",
+      "identifiability_check": "价格、负荷、光伏及全部储能参数均由题目给定，无待估计参数。",
+      "falsification_test": "与LP最优值和无储能成本对照，并核查所有时段互斥、能量平衡与SOC闭环。",
+      "failure_trigger": "任一残差超过1e-6、SOC越界、同时充放电或终端SOC不等于6000。",
+      "solver": "SciPy HiGHS MILP全局求解",
+      "time_complexity": "144个二元状态和线性连续变量；本实例由分支定界在秒级求解。",
+      "ablation_plan": "去除储能、放松互斥二元变量，比较成本与物理可行性。",
+      "elimination_rationale": "遗传算法、粒子群和动态规划在本题线性结构下更慢且难以给出严格下界。"
+    },
+    {
+      "sub_question_id": "Q2",
+      "selected": "严格日前两阶段随机MILP",
+      "baseline": "基于因果点预测的确定性日前MILP",
+      "why_not_simpler": "附件只给实际值，若把次日真实曲线当作已知，5倍紧急购电机制会被错误消除。",
+      "identifiability_check": "场景来自决策日前可见历史的联合净负荷轨迹，邻居数和权重由滚动样本外误差选择。",
+      "falsification_test": "逐日检查时间截断，并与点预测基线比较计划费、紧急费和总成本。",
+      "failure_trigger": "使用当天未来实际值、事后改动储能计划、场景参数无法复现或成本账本不闭合。",
+      "solver": "带共享日前变量与情景追索变量的SciPy HiGHS MILP",
+      "time_complexity": "变量约随时段数乘情景数线性增长；采用滚动有限场景集控制规模。",
+      "ablation_plan": "点预测MILP、等权历史场景和经验证加权场景作滚动样本外对照。",
+      "elimination_rationale": "不采用事后储能补救，因为题面只明确允许紧急购电且需与Q3的日内调整边界区分。"
+    },
+    {
+      "sub_question_id": "Q3",
+      "selected": "确定性MILP-MPC",
+      "baseline": "仅0:00制定计划且日内不调整",
+      "why_not_simpler": "每6小时新增光伏预测改变未执行时段的信息，静态日前模型不能利用题目提供的更新。",
+      "identifiability_check": "光伏预测直接取附件3并插值，负荷预测只用历史；风险参数只有经滚动样本外稳定识别才进入增强模型。",
+      "falsification_test": "在334日逐日配对比较不调整和MPC的九项指标及时间块自助置信区间。",
+      "failure_trigger": "调整回溯已执行时段、减购重复结算、预测时间泄漏，或风险增强改善不超过估计不确定性。",
+      "solver": "每6小时重求未执行时域的SciPy HiGHS MILP",
+      "time_complexity": "每日最多4次144时段以下MILP，规模随剩余时域递减。",
+      "ablation_plan": "不调整、确定性MPC、场景MPC、CVaR-MPC按九项指标比较；后两者未显著改善即删除。",
+      "elimination_rationale": "不默认采用CVaR或多阶段情景树，避免主观风险参数和情景爆炸。"
+    },
+    {
+      "sub_question_id": "Q4",
+      "selected": "因果在线价格策略加完全价格信息下界",
+      "baseline": "沿用附件1固定分时价格的Q2/Q3结果",
+      "why_not_simpler": "直接读取附件4未来价格虽能得到更低成本，却不是决策时可执行策略。",
+      "identifiability_check": "价格预测的候选方法和参数仅由截至决策时点的历史滚动验证确定。",
+      "falsification_test": "核查训练样本时间戳，并验证因果成本不低于同信息约束下的完全价格信息下界。",
+      "failure_trigger": "未来价格泄漏、因果结果低于严格可比下界、或结果工作簿费用与账本不一致。",
+      "solver": "Q4-2日前MILP与Q4-3滚动MILP，另解完全信息基准",
+      "time_complexity": "与Q2/Q3同阶，额外增加一个离线下界求解。",
+      "ablation_plan": "固定价、因果实时价和完全价格信息三类结果对照。",
+      "elimination_rationale": "强化学习在一年数据和显式线性约束下缺少稳定性与安全优势，故不作主模型。"
+    }
+  ],
+  "confirmed_component_decisions": {
+    "Q1_model_role": {
+      "status": "confirmed",
+      "decision": "问题一以确定性MILP为主模型，显式禁止同一时段同时充放电；LP作为连续松弛成本下界和消融对照。",
+      "reason": "允许同时充放电可能通过储能损耗形成虚假光伏消纳；Q1仅144个时段，增加144个二元变量的求解负担可控。",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q2_information_and_recourse": {
+      "status": "confirmed",
+      "decision": "问题二采用严格日前两阶段随机MILP：每天0:00固定计划购电与储能充放电计划；实际实现阶段仅以5倍紧急购电补足缺口，必要弃光只作物理核算；不设置储能事后再调度。",
+      "reason": "题面明确授权的事后补救是紧急购电，未明确授权重新调整储能计划；该解释也保持Q2与Q3日内调整机制的递进边界。",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q3_risk_enhancement_gate": {
+      "status": "confirmed",
+      "decision": "场景MPC和CVaR-MPC均为待证增强，不默认保留。所有参数必须由数据驱动的滚动样本外校准与稳定性检验确定；无法识别的参数或没有显著样本外增益的模块直接删除。",
+      "parameter_rules": {
+        "scenario_count": "通过增加场景数后的目标值、决策量和样本外成本收敛确定最小稳定数量",
+        "scenario_probability": "采用经验频率、聚类样本占比或自助抽样等可复现的数据频率",
+        "cvar_confidence": "不得引用惯例主观指定；只能由滚动样本外表现稳定选择，否则删除CVaR",
+        "risk_weight": "通过滚动样本外验证选择；若最优值不稳定、接近零或无显著增益，则令其为零并删除CVaR",
+        "error_sampling": "在候选抽样方法间用滚动样本外分布拟合和时序相关保持能力选择"
+      },
+      "mandatory_comparison_metrics": [
+        "平均总成本", "计划购电费用", "调整费用", "紧急购电费用", "紧急购电量",
+        "95%成本分位数", "最差情景成本", "最低SOC", "求解时间"
+      ],
+      "retention_rule": "以逐日配对的滚动样本外结果进行时间块自助法检验；若增强模型的改善未超过估计不确定性，则按简约原则保留确定性MPC并删除风险增强。",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q3_model_hierarchy": {
+      "status": "confirmed",
+      "decision": "问题三以确定性MILP-MPC完整回答题面；场景MPC和CVaR-MPC仅在参数可由滚动样本外数据稳定校准且九项强制指标显著改善时保留，否则删除。",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q3_reduction_settlement": {
+      "status": "confirmed",
+      "decision": "减购部分按交易时刻电价的50%结算，等价于从已计入的原计划费用中退回减购量正常费用的50%；增购部分按1.5倍结算，紧急购电按5倍结算。每次调整相对于上一版有效计划逐次结算，不设置附加罚款替代口径及其敏感性对照。",
+      "confirmed_at": "2026-09-11"
+    },
+    "storage_efficiency_interpretation": {
+      "status": "confirmed",
+      "decision": "题目给定90%直接解释为充电效率和放电效率均为0.9；充放电量定义在微网母线侧，SOC按E(t+1)=E(t)+0.9*C(t)-D(t)/0.9更新，四问统一。",
+      "note": "90%是题目明确给定的参数，不作数据估计，也不设置往返效率90%的替代解释。",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q4_price_information_roles": {
+      "status": "confirmed",
+      "decision": "问题四同时报告完全价格信息下界与因果在线策略：因果在线策略为主模型和result4-2/result4-3的主结果；完全价格信息模型只作为价格信息维度的成本下界与评价基准。所有在线预测和参数选择只使用决策时点以前的数据。",
+      "confirmed_at": "2026-09-11"
+    }
+  },
+  "routes": {
+    "H": {
+      "name": "统一LP/MPC混合主线（推荐）",
+      "composition": "Q1确定性LP；Q2确定性下界+经验情景/机会约束；Q3滚动MPC+轻量风险项；Q4价格感知滚动MPC",
+      "advantages": ["四问递进自然", "可解释且多数子问题可求全局最优", "计算量适中", "应急机制和预测更新不会退化为空设定"],
+      "risks": ["需明确Q2信息集和Q3减购结算", "情景数量与风险系数要做灵敏度分析"]
+    },
+    "H+修订版v2": {
+      "name": "题意约束驱动的跨日滚动统一主线",
+      "composition": "Q1以禁止同时充放电的确定性MILP为主、LP仅作连续松弛下界；Q2采用一月热启动、跨日SOC连续的严格日前两阶段随机MILP，0时固定购电与储能计划，事后只允许5倍紧急购电追索；Q3以确定性MILP-MPC为主体，减购按50%逐次结算，场景MPC/CVaR仅在参数可由滚动样本外数据稳定识别且九项指标显著改善时保留；四问统一采用题定充放电效率各90%；Q4以因果在线价格策略为主，同时报告完全价格信息成本下界。",
+      "advantages": ["每个模型部件均由题目中的物理约束、信息到达时点和结算规则直接产生", "严格区分Q2日前固定计划与Q3日内可调整机制", "避免同时充放电、未来价格泄漏和减购重复结算", "复杂风险模块必须以可复现的样本外增益证明必要性"],
+      "risks": ["Q2情景生成与Q4价格预测必须严格按时间切分，防止使用未来数据", "Q3风险增强可能因增益不足被删除，需先保证确定性MPC完整可交付", "完全价格信息结果只能称为评价下界，不能冒充现实可执行策略"]
+    },
+    "D": {
+      "name": "全确定性LP/MPC稳妥线",
+      "composition": "Q1/Q2用逐日LP，Q3/Q4用确定性滚动MPC",
+      "advantages": ["最稳、最快、公式清楚", "易复现和回填模板"],
+      "risks": ["Q2若视实际值为日前已知，应急购电恒为0，题意利用不足", "创新性较弱"]
+    },
+    "S": {
+      "name": "全随机优化进阶线",
+      "composition": "Q2两阶段SAA；Q3/Q4多阶段随机MPC或CVaR",
+      "advantages": ["风险刻画充分", "能量化应急概率和尾部成本", "创新空间大"],
+      "risks": ["情景树膨胀", "参数多、论文解释和验证负担重"]
+    },
+    "R": {
+      "name": "鲁棒/分布鲁棒线",
+      "composition": "区间或Wasserstein不确定集 + 鲁棒滚动优化",
+      "advantages": ["极端光伏与电价下更安全", "无需假定精确分布"],
+      "risks": ["容易过度购电", "不确定集半径缺乏足够依据时会显得人为"]
+    },
+    "DP": {
+      "name": "动态规划/MDP线",
+      "composition": "离散SOC后做DP或随机DP",
+      "advantages": ["状态—动作逻辑直观", "可处理非凸操作规则"],
+      "risks": ["离散误差和维数灾难", "本题线性结构下效率低于LP/MPC"]
+    }
+  },
+  "rejected_as_primary": {
+    "genetic_algorithm_or_pso": "线性/凸结构已有稳定全局求解器，启发式算法会降低精度、速度与可验证性。",
+    "reinforcement_learning": "仅一年数据且成本和状态转移已显式给出，训练稳定性、约束安全和最优性均更难证明。"
+  },
+  "team_decisions_required": []
+}

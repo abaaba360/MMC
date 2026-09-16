@@ -1,0 +1,244 @@
+{
+  "audit_meta": {
+    "audit_date": "2026-09-11",
+    "scope": "C题.pdf、附件1—4及附件5中的5个结果模板；只读审计",
+    "selected_route": "H+修订版v2",
+    "source_truth": "赛题PDF与原始附件优先；已确认的用户口径用于解决题面歧义，不把模板中的省略行或标签笔误当作数据事实",
+    "source_hashes_sha256": {
+      "C题.pdf": "2C098F6AE9DD47AE965AEBDEC3B9FACF3DE6C173F999783C1012C08FC5FB9D2D",
+      "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+      "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72",
+      "附件3.xlsx": "8A61B06C52BD0D639A1CC37C61A7D9F5B75EDCBCA718F64C1BD3498EC9F9D843",
+      "附件4.xlsx": "20E9C93AEAB5E8E21AE4DD15587F9E190F7408692504C1319598461CD654FE71",
+      "result1.xlsx": "28360E0974E7D6065394A8ABA4E14A86773AE0036CC7D3EA1B211B515B03D688",
+      "result2.xlsx": "1C26494CFC6D754E0BD9BFF7E13E1126A73D2D2DA6C5336EB251D89B9A1A1A47",
+      "result3.xlsx": "C59DA470CABD0BE23F602C95C8AA9D11EC224A0CDAC216B3E1F218E65D006BDC",
+      "result4-2.xlsx": "1C26494CFC6D754E0BD9BFF7E13E1126A73D2D2DA6C5336EB251D89B9A1A1A47",
+      "result4-3.xlsx": "C59DA470CABD0BE23F602C95C8AA9D11EC224A0CDAC216B3E1F218E65D006BDC"
+    }
+  },
+  "problem_contract": {
+    "time_grid": {
+      "steps_per_day": 144,
+      "delta_hours": 0.16666666666666666,
+      "input_power_unit": "kW",
+      "decision_energy_unit": "kWh/10分钟时段",
+      "conversion": "时段能量=功率×1/6小时",
+      "raw_labels": "00:10、00:20、…、23:50、0:00+1",
+      "executable_alignment_rule": "附件1、附件2、附件4的同序号列与结果模板的同序号时段逐行对应；内部统一使用t=1,…,144，输出时原样保留模板标签，不对数据循环移位。",
+      "alignment_warning": "原始数据没有名为0:00的首列，而模板首时段为0:10-0:20；result1末时段为0:00+1-0:10+1，其他模板写成0:00-0:10+1。题面未提供足以证明端点采样还是区间平均的信息，因此禁止凭感觉平移一格。论文须声明采用同序号对齐，并把末时段标签统一解释为次日0:00至0:10。"
+    },
+    "storage": {
+      "rated_capacity_kwh": 12000,
+      "operating_min_kwh": 1200,
+      "operating_max_kwh": 10800,
+      "initial_datetime": "2025-01-01 00:00",
+      "initial_energy_kwh": 6000,
+      "max_charge_power_kw": 5000,
+      "max_discharge_power_kw": 5000,
+      "max_charge_energy_per_slot_kwh": 833.3333333333334,
+      "max_discharge_energy_per_slot_kwh": 833.3333333333334,
+      "charge_efficiency": 0.9,
+      "discharge_efficiency": 0.9,
+      "energy_state_rule": "E[t+1]=E[t]+0.9*C[t]-D[t]/0.9；C、D定义在微网母线侧",
+      "simultaneous_charge_discharge": "四问主模型均禁止；用二元状态约束",
+      "daily_terminal_rule": "只有Q1由题面明确要求且取E[0]=E[144]=6000。Q2—Q4不擅自施加每日首尾相等，日末状态必须成为下一日初状态。"
+    },
+    "reporting_window": {
+      "raw_data": "2025-01-01至2025-12-31，共365日",
+      "warmup_and_calibration": "2025-01-01至2025-01-31；必须从6000 kWh开始按策略顺序执行，得到2025-02-01 00:00真实继承的SOC，并只用当时以前的数据校准预测/情景模型",
+      "template_output": "2025-02-01至2025-12-31，共334日",
+      "paper_designated_dates": [
+        "2025-03-20",
+        "2025-06-21",
+        "2025-09-23",
+        "2025-12-21"
+      ],
+      "q1_designated_purchase_intervals": [
+        "10:00-10:10",
+        "12:00-12:10",
+        "14:00-14:10",
+        "16:00-16:10",
+        "18:00-18:10",
+        "20:00-20:10"
+      ],
+      "storage_aggregation_intervals": [
+        "0:00-4:00",
+        "4:00-8:00",
+        "8:00-12:00",
+        "12:00-16:00",
+        "16:00-20:00",
+        "20:00-24:00"
+      ]
+    }
+  },
+  "workbooks": {
+    "附件1.xlsx": {
+      "worksheets": [
+        {
+          "name": "Sheet1",
+          "raw_shape_including_header": [145, 4],
+          "fields": [
+            {"name": "时间", "unit": "10分钟标记", "role": "日内索引"},
+            {"name": "电价", "unit": "元/kWh", "role": "Q1—Q3每日重复的已知分时价格"},
+            {"name": "小区负载", "unit": "kW", "role": "Q1确定性负荷"},
+            {"name": "光伏发电预测功率", "unit": "kW", "role": "Q1确定性光伏预测"}
+          ],
+          "time_rows": 144,
+          "time_cell_types": {"Excel_time": 60, "string": 84},
+          "time_type_break": "00:10至10:00为Excel time，10:10至0:00+1为字符串；必须统一解析后再索引",
+          "missing_values": 0,
+          "negative_values": 0,
+          "statistics": {
+            "price_yuan_per_kwh": {"min": 0.3713, "max": 1.3952, "mean": 0.7661972222222223, "std": 0.3132920983382326},
+            "load_kw": {"min": 3309.3934, "max": 5958.9696, "mean": 4626.0336708333325, "std": 977.4711321355107},
+            "pv_forecast_kw": {"min": 0.0, "max": 7612.316, "mean": 2311.7848194444446, "std": 2854.400161899623, "zero_count": 55},
+            "net_load_kw": {"min": -2117.5253, "max": 4956.4995, "negative_count": 30},
+            "daily_load_kwh": 111024.8081,
+            "daily_pv_kwh": 55482.83566666667
+          },
+          "cross_check": "附件1负荷曲线与附件2逐时刻全年均值最大绝对差5.05×10^-5 kW；附件1光伏曲线与附件2逐时刻全年均值最大绝对差0.0432 kW，表明附件1实质上是全年典型均值曲线。"
+        }
+      ]
+    },
+    "附件2.xlsx": {
+      "worksheets": [
+        {
+          "name": "小区负载",
+          "raw_shape_including_header": [366, 145],
+          "fields": "首列日期；其余144列为00:10至0:00+1的负荷功率",
+          "unit": "kW",
+          "date_range": "2025-01-01至2025-12-31",
+          "unique_dates": 365,
+          "date_gaps_or_duplicates": 0,
+          "missing_values": 0,
+          "negative_values": 0,
+          "min": 1995.7176,
+          "max": 7978.8849,
+          "mean": 4626.033670125571,
+          "daily_energy_kwh": {"min": 71490.16935, "max": 141565.53863333332, "mean": 111024.80808301372}
+        },
+        {
+          "name": "光伏发电实际功率",
+          "raw_shape_including_header": [366, 145],
+          "fields": "首列日期；其余144列为00:10至0:00+1的光伏实际功率",
+          "unit": "kW",
+          "date_range": "2025-01-01至2025-12-31",
+          "unique_dates": 365,
+          "date_gaps_or_duplicates": 0,
+          "missing_values": 0,
+          "negative_values": 0,
+          "zero_values": 23540,
+          "min": 0.0,
+          "max": 10216.2,
+          "mean": 2311.7857090962707,
+          "daily_energy_kwh": {"min": 34360.5612, "max": 75223.00616666667, "mean": 55482.857018310504}
+        }
+      ],
+      "modeling_warning": "该附件只含实际值，不含日前负荷预测或日前光伏预测。Q2若在0:00直接读取当天整日实际值会发生未来信息泄漏；必须用d日0:00以前的历史生成条件预测或情景，当天实际值只用于结算紧急购电和事后评价。"
+    },
+    "附件3.xlsx": {
+      "worksheets": [
+        {
+          "name": "Sheet1",
+          "raw_shape_including_header": [1461, 26],
+          "fields": ["日期", "预报时刻", "预报1小时", "…", "预报24小时"],
+          "unit": "kW",
+          "date_range": "2025-01-01至2025-12-31",
+          "release_times": ["0:00", "6:00", "12:00", "18:00"],
+          "rows": 1460,
+          "rows_per_date": 4,
+          "forecast_values": 35040,
+          "structural_blank_date_cells": 1095,
+          "forecast_missing_values": 0,
+          "negative_values": 0,
+          "zero_values": 17525,
+          "min_kw": 0.0,
+          "max_kw": 9995.8875,
+          "mean_kw": 2279.8011315325343,
+          "date_fill_rule": "每组首行日期向下填充到随后的6:00、12:00、18:00三行；这些1095个日期空白是版式结构，不得作为缺失样本插补。",
+          "forecast_time_rule": "预报k小时解释为发布时刻后k小时的整点预测。映射到10分钟网格时，以发布时刻已经观测到的光伏功率为0小时锚点，在锚点与1—24小时节点间分段线性插值并裁剪为非负；分段常值映射仅作为映射敏感性检查。",
+          "year_end_warning": "2025-12-31各次发布的24小时预测延伸到2026年，但附件2、4没有2026年实际值；年内结果只使用截至2025-12-31 24:00所需的预测段。"
+        }
+      ]
+    },
+    "附件4.xlsx": {
+      "worksheets": [
+        {
+          "name": "Sheet1",
+          "raw_shape_including_header": [366, 145],
+          "fields": "首列日期；其余144列为00:10至0:00+1的实时电价",
+          "unit": "元/kWh",
+          "date_range": "2025-01-01至2025-12-31",
+          "unique_dates": 365,
+          "date_gaps_or_duplicates": 0,
+          "missing_values": 0,
+          "negative_or_zero_values": 0,
+          "min": 0.0076,
+          "max": 1.7936,
+          "mean": 0.7661976046423136,
+          "std": 0.3406700960727655,
+          "daily_mean_price": {"min": 0.5378048611111111, "max": 0.9289923611111112, "mean": 0.7661976046423136},
+          "extreme_relative_to_attachment1": {"below_attachment1_min_count": 4485, "above_attachment1_max_count": 1672},
+          "modeling_warning": "附件4给的是事后完整实现路径，不等于0:00已知的未来价格。因果主策略只能使用决策时刻以前的价格及由其训练的预测；直接将当天未来真实价格交给优化器的结果只能列为完全价格信息下界。"
+        }
+      ]
+    }
+  },
+  "template_audit": {
+    "common": {
+      "formula_count": 0,
+      "comments_count": 0,
+      "defined_names_count": 0,
+      "worksheet_protection": false,
+      "interpretation": "模板是待填写的静态版式，不含任何隐藏计算逻辑；结果的每日合计、费用和跨日SOC必须由求解结果自行计算后写值。"
+    },
+    "result1.xlsx": {
+      "sheets": {
+        "计划购电量": {"shape": [145, 2], "fields": ["时间段", "购电量"], "records": 144, "unit": "kWh"},
+        "充放电量": {"shape": [7, 5], "fields": ["时间段", "充电量", "放电量", "时刻", "储电量"], "aggregation_records": 6, "units": {"充电量": "kWh", "放电量": "kWh", "储电量": "kWh"}}
+      },
+      "last_slot_label": "0:00+1-0:10+1"
+    },
+    "result2.xlsx": {
+      "sheets": {
+        "计划购电量": {"shape": [335, 147], "fields": "日期+144个10分钟计划购电量+全天购电量+全天购电费", "date_records": 334},
+        "充放电量": {"shape": [20, 6], "fields": ["日期", "时间段", "充电量", "放电量", "时刻", "储电量"], "warning": "只列出2025-02-01、2025-02-02、省略号和2025-12-31，是示意骨架；正式文件需展开334日×6个四小时时段，并逐日填0:00、24:00 SOC。"},
+        "紧急购电量": {"shape": [11, 3], "fields": ["日期", "购电时间段", "购电量"], "warning": "是可变长事件表示例；正式文件按每个连续正紧急购电区间输出一行，不受模板三行限制。"}
+      }
+    },
+    "result3.xlsx": {
+      "sheets": {
+        "计划购电量": {"shape": [335, 147], "semantics": "保存0:00首次制定的144时段计划；全天购电量为初始计划量之和，全天购电费为初始计划费。"},
+        "调整购电量": {"shape": [335, 147], "semantics": "每一时段保存其执行前最后一次发布时刻确定的有效购电量，不保存带符号差额；调整费用必须另由逐次版本账本计算。全天购电量取最终有效计划量之和，全天购电费填计划费+逐次调整费+紧急购电费。"},
+        "充放电量": {"shape": [26, 6], "warning": "含2025-02-01、2025-02-02、2025-03-20、省略号和2025-12-31，仍是示意骨架；正式文件需展开全部334日。"},
+        "紧急购电量": {"shape": [11, 3], "warning": "需扩展为所有连续正紧急购电事件。"}
+      }
+    },
+    "result4-2.xlsx": "与result2.xlsx二进制相同，字段和扩展规则完全相同。",
+    "result4-3.xlsx": "与result3.xlsx二进制相同，字段和扩展规则完全相同。",
+    "template_label_inconsistency": "result2/result3/result4的第144个时段写作0:00-0:10+1，缺少首端点的+1；应视为与result1的0:00+1-0:10+1同义，并保持原模板表头不擅自改名。",
+    "emergency_event_aggregation": "把相邻且紧急购电量大于数值容差的10分钟时段合并为一个区间，购电量取区间内各时段kWh之和；无紧急购电的日期不生成事件行。"
+  },
+  "data_quality_conclusion": {
+    "hard_errors": [],
+    "structural_issues_requiring_rules": [
+      "附件1时间列混合Excel时间与字符串",
+      "原始时间点与模板时段存在标签错位歧义",
+      "附件3日期列含1095个结构性空白",
+      "模板充放电和紧急购电页含省略号，必须程序化扩展",
+      "Q2没有未来负荷或光伏预测，Q3没有未来负荷预测，Q4没有未来价格预测",
+      "2025-12-31的24小时预报越过数据年界"
+    ],
+    "fatal_for_computation": false,
+      "approved_preprocessing": [
+        "统一解析时间标签并保持同序号对齐",
+        "将kW乘1/6换算成每10分钟kWh",
+        "附件3日期组内向下填充",
+        "整点光伏预报分段线性插值到10分钟并非负裁剪",
+        "2025-01-01没有更早历史时，以官方附件1典型负荷、典型光伏和固定价格曲线作为因果初始化先验；其后只用已经实现的历史滚动更新",
+        "仅用决策时点以前的数据训练负荷、光伏情景和价格预测",
+        "按跨日顺序递推SOC并扩展结果模板"
+      ]
+  }
+}

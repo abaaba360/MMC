@@ -1,132 +1,217 @@
 {
   "metadata": {
     "competition": "CUMCM_2026",
-    "problem": "选题A",
+    "problem": "C",
     "mode": "standard",
-    "start_time": "2026-08-12T23:59:17",
-    "pipeline_version": "1.0.0",
-    "note": "选题A 数学建模论文智能评估系统与多智能体优化方法"
+    "start_time": "2026-09-10T19:07:24.955451",
+    "pipeline_version": "1.0.0"
   },
   "stages": {
     "S0": {
-      "status": "complete",
+      "status": "completed",
       "score": null,
       "outputs": [
-        "43篇论文PDF文本提取到 state/agent_outputs/qA_papers/"
+        "state/input_manifest.json",
+        "state/agent_outputs/skill_preflight.json"
       ],
-      "completed_at": "2026-08-12T23:59:17"
+      "started_at": "2026-09-10T19:07:24.955753",
+      "completed_at": "2026-09-10T19:20:00+08:00"
     },
     "S1": {
-      "status": "complete",
+      "status": "completed",
       "score": null,
       "outputs": [
-        "选题A已确认"
+        "用户明确选择C题"
       ],
-      "completed_at": "2026-08-12T23:59:17"
+      "started_at": "2026-09-10T19:20:00+08:00",
+      "completed_at": "2026-09-10T19:20:00+08:00"
     },
     "S2": {
-      "status": "complete",
+      "status": "completed",
       "score": null,
       "outputs": [
-        "state/agent_outputs/problem_decomposition.json"
+        "state/agent_outputs/problem_decomposition.json",
+        "state/agent_outputs/requirement_ledger.json",
+        "state/agent_outputs/data_contract.json"
       ],
-      "completed_at": "2026-08-12T23:59:17"
+      "started_at": "2026-09-10T19:20:00+08:00",
+      "completed_at": "2026-09-10T19:20:00+08:00"
     },
     "S3": {
-      "status": "complete",
-      "score": 8.8,
+      "status": "completed",
+      "score": null,
       "outputs": [
-        "state/agent_outputs/model_design.json"
+        "state/agent_outputs/model_growth_map.json",
+        "state/agent_outputs/model_route_decision.json",
+        "state/agent_outputs/teammate_report_comparison.json",
+        "paper/选型过程文档/C题候选建模思路与选型理由.docx",
+        "paper/选型过程文档/C题候选建模思路与选型理由.pdf",
+        "paper/选型过程文档/C题候选方案对比与选型总结.docx",
+        "paper/选型过程文档/C题候选方案对比与选型总结.pdf"
       ],
-      "completed_at": "2026-08-12T23:59:17"
+      "started_at": "2026-09-10T19:20:00+08:00",
+      "completed_at": "2026-09-11T13:49:51.9624706+08:00"
     },
     "S4": {
-      "status": "complete",
-      "score": 8.6,
+      "status": "completed",
+      "score": null,
       "outputs": [
-        "state/agent_outputs/paper_outline.json",
-        "求解/求解计划.md"
+        "state/agent_outputs/model_design.json",
+        "state/agent_outputs/argument_map.json",
+        "state/agent_outputs/interface_contracts.json",
+        "state/agent_outputs/prototype_review.json",
+        "state/agent_outputs/formal_model_spec.md"
       ],
-      "completed_at": "2026-08-12T23:59:17"
+      "started_at": "2026-09-11T13:50:00+08:00",
+      "completed_at": "2026-09-11T14:06:00+08:00"
     },
     "S5": {
-      "status": "complete",
+      "status": "completed",
       "score": null,
       "outputs": [
-        "code/features.py + results/feature_matrix.json (43篇×30特征)",
-        "code/q1_model.py + results/q1_results.json (6一级21二级指标, AHP+熵权组合赋权, Jenks分级, CR=0.01)",
-        "code/q2_model.py + results/q2_results.json (4关键特征X12/X13/X41/X62, Ridge R^2=0.913)",
-        "code/q3_model.py + results/q3_results.json (AI痕迹检测+逻辑断层+优化策略, 3篇得分预测)",
-        "results/figures/ 13张图"
+        "state/agent_outputs/q1_results.json",
+        "state/agent_outputs/q2_results.json",
+        "state/agent_outputs/q3_results.json",
+        "state/agent_outputs/q4_results.json",
+        "state/agent_outputs/q1_verification.json",
+        "state/agent_outputs/q2_verification.json",
+        "state/agent_outputs/q3_verification.json",
+        "state/agent_outputs/q4_verification.json",
+        "results/q4_detail.npz",
+        "results/q4_daily.csv"
       ],
-      "started_at": "2026-08-12T23:00:00",
-      "completed_at": "2026-08-13T01:25:38"
+      "started_at": "2026-09-11T14:06:00+08:00",
+      "completed_at": "2026-09-11T17:38:00+08:00"
     },
     "S6": {
-      "status": "complete",
+      "status": "completed",
       "score": null,
       "outputs": [
-        "state/agent_outputs/sensitivity_report.json",
-        "code/q6_verifier.py"
+        "state/agent_outputs/q3_results.json (update_ablation: 0/0-6/0-6-12/四次更新 四档对照)",
+        "state/agent_outputs/q4_results.json (因果 vs 完全价格信息 vs 全信息oracle)",
+        "paper/论文_C题_第一版.md (§10 模型检验、灵敏度与结果可靠性)"
       ],
-      "completed_at": "2026-08-13T01:42:52"
+      "started_at": "2026-09-11T17:38:00+08:00",
+      "completed_at": "2026-09-11T18:05:00+08:00",
+      "note": "灵敏度与消融结果内嵌于Q3/Q4结果JSON，未另建独立报告文件。"
     },
     "S7": {
-      "status": "complete",
+      "status": "completed",
       "score": null,
       "outputs": [
-        "state/agent_outputs/model_evaluation.md"
+        "paper/论文_C题_第一版.md (§11 模型评价：优点/局限与改进)"
       ],
-      "completed_at": "2026-08-13T01:42:52"
+      "started_at": "2026-09-11T18:05:00+08:00",
+      "completed_at": "2026-09-11T18:13:00+08:00",
+      "note": "模型评价直接写入论文§11，未另建model_evaluation.md。"
     },
     "S8": {
-      "status": "complete",
+      "status": "completed",
       "score": null,
       "outputs": [
-        "paper/final_paper.md/docx/tex/pdf",
-        "paper/paper_sections/ (15章节)",
-        "state/agent_outputs/paper_metadata.json",
-        "gates全过"
+        "paper/论文_C题_第一版.md",
+        "paper/C题论文_第一版.docx",
+        "paper/C题论文_第一版.tex",
+        "paper/C题论文_第一版.pdf",
+        "delivery/C题论文_光伏微网储能购电滚动优化.docx",
+        "results/figures/q4_information_value.png/pdf"
       ],
-      "completed_at": "2026-08-13T01:58:28"
+      "started_at": "2026-09-11T18:07:00+08:00",
+      "completed_at": "2026-09-11T18:17:00+08:00"
     },
     "S9": {
-      "status": "complete",
-      "score": 8.84,
+      "status": "completed",
+      "score": null,
       "outputs": [
-        "state/agent_outputs/final_review.json (5维均分8.84)",
-        "2项refine修复",
-        "delivery/ 论文+支撑材料"
+        "results/submission_results/result1.xlsx, result2.xlsx, result3.xlsx, result4-2.xlsx, result4-3.xlsx",
+        "state/submission_staging/AI工具使用详情.pdf",
+        "state/agent_outputs/paper_metadata.json",
+        "state/agent_outputs/submission_audit.json",
+        "delivery/支撑材料.zip"
       ],
-      "completed_at": "2026-08-13T08:06:07"
+      "started_at": "2026-09-11T18:13:00+08:00",
+      "completed_at": "2026-09-11T18:20:00+08:00",
+      "note": "四层门禁（preflight/logic/evidence/format/integrity）全部通过。"
     }
   },
   "current_stage": "S9",
   "sub_questions": {
-    "Q1": "medium",
-    "Q2": "medium_high",
-    "Q3": "high"
+    "Q1": {
+      "model_choice_status": "confirmed",
+      "primary_model": "确定性MILP",
+      "baseline_model": "LP连续松弛",
+      "key_reason": "互斥约束避免通过同时充放电损耗虚增光伏消纳；Q1整数规模可控。",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q2": {
+      "model_choice_status": "confirmed",
+      "primary_model": "严格日前两阶段随机MILP",
+      "first_stage": "0:00固定计划购电与储能充放电计划",
+      "second_stage": "仅以5倍紧急购电补足缺口；必要弃光仅作物理核算",
+      "enhancement": "不设置储能事后再调度；第二阶段仅紧急购电",
+      "baseline_model": "使用当天实际值的完全信息MILP成本下界",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q3": {
+      "model_choice_status": "confirmed",
+      "primary_model": "确定性MILP-MPC",
+      "risk_enhancement_status": "conditional_only",
+      "parameter_gate": "场景数、场景概率、CVaR置信水平、风险权重和误差抽样必须由数据驱动的滚动样本外校准确定；无法确定则删除对应增强。",
+      "retention_gate": "场景MPC或CVaR-MPC只有在九项强制指标的样本外比较中呈现超过估计不确定性的实质改善时保留，否则删除。",
+      "mandatory_metrics": [
+        "平均总成本",
+        "计划购电费用",
+        "调整费用",
+        "紧急购电费用",
+        "紧急购电量",
+        "95%成本分位数",
+        "最差情景成本",
+        "最低SOC",
+        "求解时间"
+      ],
+      "reduction_settlement": "减购部分按交易时刻电价50%结算，相当于从原计划费用中退回减购量正常费用的50%；历次调整相对上一版有效计划逐次计算；不设置附加罚款替代口径。",
+      "confirmed_at": "2026-09-11"
+    },
+    "Q4": {
+      "model_choice_status": "confirmed",
+      "primary_model": "因果在线价格策略下重算Q2与Q3",
+      "benchmark": "完全价格信息成本下界",
+      "information_rule": "决策只能使用该时点及以前可得的价格和预测信息；完全信息结果仅用于评价，不作为现实可执行策略。",
+      "confirmed_at": "2026-09-11"
+    }
   },
   "assumptions": {
     "locked": true,
-    "count": 14,
-    "note": "见model_design.json assumptions A1-A14"
+    "items": [
+      {
+        "id": "A-EFF-01",
+        "status": "confirmed",
+        "description": "充电效率和放电效率均采用题目给定的90%，充放电变量位于微网母线侧。",
+        "equation": "E(t+1)=E(t)+0.9*C(t)-D(t)/0.9",
+        "scope": [
+          "Q1",
+          "Q2",
+          "Q3",
+          "Q4"
+        ],
+        "confirmed_at": "2026-09-11"
+      }
+    ]
   },
   "symbols": {
     "locked": true,
-    "count": 52,
-    "note": "见model_design.json symbols"
+    "items": []
   },
-  "issues": [],
-  "review_results": {
-    "final_review": {
-      "avg_score": 8.84,
-      "verdict": "通过"
+  "issues": [
+    {
+      "id": "ISSUE-001",
+      "stage": "S9",
+      "severity": "blocker",
+      "description": "AI工具使用详情当前仅声明OpenAI Codex/GPT-5，未包含本次会话使用的Anthropic Claude Code所做的实质性修复与打包工作；队伍决定自行处理，未补录。",
+      "status": "open",
+      "created_at": "2026-09-11T18:20:00+08:00"
     }
-  },
-  "rollback_history": [],
-  "delivery": {
-    "status": "complete",
-    "path": "delivery/"
-  }
+  ],
+  "review_results": {},
+  "rollback_history": []
 }

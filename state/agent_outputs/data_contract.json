@@ -1,0 +1,27 @@
+{
+  "time_grid": {"steps_per_day": 144, "delta_hours": 0.16666666666666666, "alignment_rule": "保留附件原行序；所有同一行的价格、负荷、光伏视为同一决策时段；输出时间标签原样复制模板，避免擅自平移。"},
+  "units": {"price": "元/kWh", "load_and_pv_input": "kW", "purchase_charge_discharge": "kWh/10min", "soc": "kWh"},
+  "conversion": "时段能量 = 功率 × 1/6小时",
+  "tables": {
+    "attachment1": {"shape": [144, 4], "content": "时间、交易电价、负荷、光伏预测"},
+    "attachment2": {"raw_sheet_shape": [366, 145], "load_shape": [365, 144], "pv_actual_shape": [365, 144], "missing_values": 0},
+    "attachment3": {"raw_shape": [1461, 26], "rows": 1460, "structure": "365日×4发布时刻；每行24个小时级预测", "structural_date_blanks": 1095, "forecast_value_missing": 0, "date_fill_rule": "每4行共享同一日期，仅向下填充日期列，不插补预测值"},
+    "attachment4": {"price_shape": [365, 144]}
+  },
+  "forecast_mapping": "发布时刻的实测光伏作为0小时前锚点，未来1—24小时预测与其作分段线性插值到10分钟网格，并裁剪为非负；另以分段常值法作稳健性对照。",
+  "observed_facts": {
+    "attachment1_price_min_max_mean": [0.3713, 1.3952, 0.7661972],
+    "attachment1_net_load_min_max_kw": [-2117.5253, 4956.4995],
+    "annual_mean_daily_load_kwh": 111024.808,
+    "annual_mean_daily_pv_kwh": 55482.857,
+    "real_time_price_min_max_mean": [0.0076, 1.7936, 0.7661976],
+    "forecast_mae_improvement_at_6h": "47.69%",
+    "forecast_mae_improvement_at_12h": "81.70%",
+    "forecast_lead_1_mae_kw": 18.6852,
+    "forecast_lead_1_mape_nonzero": "0.8291%",
+    "forecast_lead_24_mae_kw": 374.7874,
+    "forecast_lead_24_mape_nonzero": "18.4514%",
+    "forecast_lead_24_bias_kw": -104.2176
+  },
+  "evaluation_window": {"warmup": "2025-01-01至2025-01-31，用于跨日SOC热启动及误差/策略校准", "reported_results": "2025-02-01至2025-12-31"}
+}

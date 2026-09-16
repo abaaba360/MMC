@@ -1,0 +1,12 @@
+{
+  "source": "E:\\微信聊天记录\\xwechat_files\\wxid_so1zh5t7c8rl22_8e76\\msg\\file\\2026-09\\C题论文_光伏微网储能购电滚动优化_全文格式与参考文献终修版(1)(1).docx",
+  "source_sha256": "a4b82149f8266f529aa5785bde42b83e5481a966e559a23ad404d996d3395e27",
+  "output": "D:\\数模工作流\\delivery\\C题论文_光伏微网储能购电滚动优化_图表逐项解读版.docx",
+  "source_abstract_preserved": true,
+  "matlab_figures_replaced": 6,
+  "matlab_figures_added": 1,
+  "tables_reordered_with_local_explanations": 12,
+  "result_synthesis_sections_rewritten": 4,
+  "inline_shapes": 8,
+  "tables": 14
+}

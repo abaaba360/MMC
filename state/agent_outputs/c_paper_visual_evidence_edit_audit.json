@@ -1,0 +1,33 @@
+{
+  "source": "delivery\\C题论文_光伏微网储能购电滚动优化_全文格式与参考文献终修版.docx",
+  "output": "delivery\\C题论文_光伏微网储能购电滚动优化_图表论证增强版.docx",
+  "replaced_figures": [
+    {
+      "caption": "图6-1 典型日功率、储能动作与SOC轨迹",
+      "image": "results\\figures_matlab\\q1_dispatch_matlab_awardstyle.png"
+    },
+    {
+      "caption": "图7-1 四个代表日的日前预测、实际净负荷与紧急购电",
+      "image": "results\\figures_matlab\\q2_representative_days_matlab.png"
+    },
+    {
+      "caption": "图7-2 正式期月度费用分解与紧急购电量",
+      "image": "results\\figures_matlab\\q2_monthly_cost_emergency_matlab.png"
+    },
+    {
+      "caption": "图8-1 不同日内更新频率的费用与紧急购电量对比",
+      "image": "results\\figures_matlab\\q3_update_ablation_matlab.png"
+    },
+    {
+      "caption": "图8-2 四个指定日的滚动预测修正效果",
+      "image": "results\\figures_matlab\\q3_forecast_updates_matlab.png"
+    },
+    {
+      "caption": "图9-1 因果策略、完全价格信息基准与全信息下界的费用对比",
+      "image": "results\\figures_matlab\\q4_information_value_matlab.png"
+    }
+  ],
+  "added_figure": "图7-3 正式期跨日SOC连续性及日内运行范围",
+  "table_count_formatted": 13,
+  "matlab_source_only": true
+}

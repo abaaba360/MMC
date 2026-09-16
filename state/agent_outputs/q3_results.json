@@ -1,50 +1,160 @@
 {
   "sub_question": "Q3",
-  "model": "候选池非支配排序(近似Pareto) + TOPSIS + 等权重DE交叉验证",
-  "key_results": {
-    "candidate_pool_size": 9600,
-    "pareto_front_size": 193,
-    "best_design": {
-      "r_star": 0.2138,
-      "h_star": 4.4987,
-      "n_star": 5,
-      "R": 0.73708,
-      "P": 0.0899,
-      "T": 0.77953
-    },
-    "de_cross_validation": {
-      "r": 0.2155,
-      "h": 4.5,
-      "n": 4,
-      "R": 0.74141,
-      "P": 0.08441,
-      "T": 0.77233
-    },
-    "data_best": {
-      "R": {
-        "r": 0.2,
-        "h": 3.0,
-        "n": 10,
-        "value": 0.721922
-      },
-      "P": {
-        "r": 0.2,
-        "h": 4.5,
-        "n": 2,
-        "value": 0.076688
-      },
-      "T": {
-        "r": 0.2,
-        "h": 4.5,
-        "n": 4,
-        "value": 0.77401
-      }
-    },
-    "note": "n为整数约束，候选池中n已取整；Pareto前沿由6000 LHS + 11×80×60网格增强构成"
+  "status": "success",
+  "model": "确定性MILP-MPC（0/6/12/18滚动更新）",
+  "run_timestamp": "2026-09-11T15:39:08.525245+08:00",
+  "scope": {
+    "simulation_start": "2025-01-01",
+    "simulation_end": "2025-12-31",
+    "reported_period": "2025-02-01至2025-12-31"
   },
-  "figures": [
-    "q3_01_pareto_3d.png",
-    "q3_02_pareto_proj.png",
-    "q3_03_best_vs_data.png"
+  "settlement_rule": {
+    "initial_plan": "p*G0",
+    "increase": "+1.5*p*max(Gnew-Gold,0)",
+    "decrease": "-0.5*p*max(Gold-Gnew,0)",
+    "emergency": "+5*p*Ractual",
+    "comparison_base": "immediately_previous_effective_plan"
+  },
+  "key_results": {
+    "total_cost_yuan": 15731687.036632307,
+    "planned_cost_yuan": 12354245.504709408,
+    "adjustment_cost_yuan": 499519.5632191859,
+    "emergency_cost_yuan": 2877921.9687037105,
+    "emergency_energy_kwh": 748796.9822188657,
+    "curtailment_energy_kwh": 1807791.9490014846,
+    "grid_energy_kwh": 20291804.1450797,
+    "minimum_soc_kwh": 1199.9999999999936,
+    "maximum_soc_kwh": 10800.000000000004,
+    "solve_seconds": 133.3341272987891,
+    "max_balance_residual_kwh": 8.199663170671556e-12,
+    "max_soc_residual_kwh": 7.275957614183426e-12
+  },
+  "update_ablation": {
+    "0_6_12_18": {
+      "total_cost_yuan": 15731687.036632307,
+      "planned_cost_yuan": 12354245.504709408,
+      "adjustment_cost_yuan": 499519.5632191859,
+      "emergency_cost_yuan": 2877921.9687037105,
+      "emergency_energy_kwh": 748796.9822188657,
+      "curtailment_energy_kwh": 1807791.9490014846,
+      "grid_energy_kwh": 20291804.1450797,
+      "minimum_soc_kwh": 1199.9999999999936,
+      "maximum_soc_kwh": 10800.000000000004,
+      "solve_seconds": 133.3341272987891,
+      "max_balance_residual_kwh": 8.199663170671556e-12,
+      "max_soc_residual_kwh": 7.275957614183426e-12
+    },
+    "0_only": {
+      "total_cost_yuan": 16391391.763673106,
+      "planned_cost_yuan": 12354245.50470941,
+      "adjustment_cost_yuan": 0.0,
+      "emergency_cost_yuan": 4037146.2589637,
+      "emergency_energy_kwh": 1040382.7999430556,
+      "curtailment_energy_kwh": 2204342.4057466565,
+      "grid_energy_kwh": 20407209.1675516,
+      "minimum_soc_kwh": 1199.9999999999918,
+      "maximum_soc_kwh": 10800.000000000007,
+      "solve_seconds": 76.04172140080482,
+      "max_balance_residual_kwh": 8.199663170671556e-12,
+      "max_soc_residual_kwh": 7.275957614183426e-12
+    },
+    "0_6": {
+      "total_cost_yuan": 15926257.202825034,
+      "planned_cost_yuan": 12354245.504709408,
+      "adjustment_cost_yuan": 322397.9022492313,
+      "emergency_cost_yuan": 3249613.795866393,
+      "emergency_energy_kwh": 841482.1716358734,
+      "curtailment_energy_kwh": 1940793.463106723,
+      "grid_energy_kwh": 20336368.805569503,
+      "minimum_soc_kwh": 1199.9999999999905,
+      "maximum_soc_kwh": 10800.000000000005,
+      "solve_seconds": 119.30566059926059,
+      "max_balance_residual_kwh": 8.199663170671556e-12,
+      "max_soc_residual_kwh": 7.275957614183426e-12
+    },
+    "0_6_12": {
+      "total_cost_yuan": 15753473.502911799,
+      "planned_cost_yuan": 12354245.50470941,
+      "adjustment_cost_yuan": 436298.0058169883,
+      "emergency_cost_yuan": 2962929.992385401,
+      "emergency_energy_kwh": 767041.3999509881,
+      "curtailment_energy_kwh": 1825958.8959246639,
+      "grid_energy_kwh": 20291969.927807488,
+      "minimum_soc_kwh": 1199.9999999999932,
+      "maximum_soc_kwh": 10800.000000000004,
+      "solve_seconds": 147.07018690009136,
+      "max_balance_residual_kwh": 8.199663170671556e-12,
+      "max_soc_residual_kwh": 7.275957614183426e-12
+    }
+  },
+  "specified_days": {
+    "2025-03-20": {
+      "planned_cost_yuan": 41417.799213425424,
+      "adjustment_cost_yuan": 1031.3806451482521,
+      "emergency_cost_yuan": 13226.295735649108,
+      "total_cost_yuan": 55675.475594222786,
+      "emergency_energy_kwh": 3395.273732810854,
+      "minimum_soc_kwh": 1200.0,
+      "load_predictor_params": [
+        0.0,
+        6,
+        0.25
+      ]
+    },
+    "2025-06-21": {
+      "planned_cost_yuan": 19179.41255646516,
+      "adjustment_cost_yuan": 439.22931418488713,
+      "emergency_cost_yuan": 2833.6896785129275,
+      "total_cost_yuan": 22452.331549162973,
+      "emergency_energy_kwh": 823.9470059590792,
+      "minimum_soc_kwh": 1200.0,
+      "load_predictor_params": [
+        0.0,
+        36,
+        0.25
+      ]
+    },
+    "2025-09-23": {
+      "planned_cost_yuan": 42794.21410250752,
+      "adjustment_cost_yuan": -740.8483711278033,
+      "emergency_cost_yuan": 8461.038139716155,
+      "total_cost_yuan": 50514.40387109587,
+      "emergency_energy_kwh": 1913.8939572377176,
+      "minimum_soc_kwh": 1200.0000000000005,
+      "load_predictor_params": [
+        0.0,
+        36,
+        0.25
+      ]
+    },
+    "2025-12-21": {
+      "planned_cost_yuan": 59758.084551910935,
+      "adjustment_cost_yuan": 921.3517637039515,
+      "emergency_cost_yuan": 7696.340876997499,
+      "total_cost_yuan": 68375.77719261238,
+      "emergency_energy_kwh": 2214.5813795160884,
+      "minimum_soc_kwh": 1199.9999999999986,
+      "load_predictor_params": [
+        0.0,
+        36,
+        0.25
+      ]
+    }
+  },
+  "constraint_check": {
+    "all_passed": true,
+    "simultaneous_charge_discharge": 0
+  },
+  "risk_enhancement": {
+    "retained": false,
+    "reason": "场景/CVaR并非题面必需；按预先锁定门槛，未取得九指标滚动样本外显著改善前不进入主模型。"
+  },
+  "evidence_files": [
+    "results/q3_daily.csv",
+    "results/q3_detail.npz"
+  ],
+  "warnings": [
+    "日前至日内负荷预测参数按每个决策日前14个完整日的执行段WAPE自动选择；早期样本不足时使用典型日先验。",
+    "Q3逐日时域不人为重置SOC；上一日末SOC严格传递至下一日。"
   ]
 }

@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "hard_issues": [],
+  "prototype": "Q1_144_interval_energy_balance",
+  "time_step_hours": 0.16666666666666666,
+  "milp": {
+    "objective_yuan": 35126.94858928963,
+    "grid_kwh": 59482.69899835391,
+    "charge_kwh": 20740.66613168725,
+    "discharge_kwh": 16799.939566666668,
+    "curtailment_kwh": 0.0,
+    "soc_start_kwh": 6000.0,
+    "soc_end_kwh": 6000.0,
+    "soc_min_kwh": 1200.0,
+    "soc_max_kwh": 10800.0,
+    "simultaneous_intervals": 0,
+    "max_balance_residual_kwh": 2.2737367544323206e-13,
+    "max_soc_residual_kwh": 8.313350008393172e-13,
+    "solve_seconds": 0.12458980001974851,
+    "success": true,
+    "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)"
+  },
+  "lp_relaxation": {
+    "objective_yuan": 35126.94858928963,
+    "grid_kwh": 59482.69899835391,
+    "charge_kwh": 20740.66613168725,
+    "discharge_kwh": 16799.939566666668,
+    "curtailment_kwh": 0.0,
+    "soc_start_kwh": 6000.0,
+    "soc_end_kwh": 6000.0,
+    "soc_min_kwh": 1200.0,
+    "soc_max_kwh": 10800.0,
+    "simultaneous_intervals": 0,
+    "max_balance_residual_kwh": 2.2737367544323206e-13,
+    "max_soc_residual_kwh": 8.313350008393172e-13,
+    "solve_seconds": 0.02737590007018298,
+    "success": true,
+    "solver_message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)"
+  },
+  "lp_lower_bound_gap_yuan": 0.0,
+  "acceptance": {
+    "milp_feasible": true,
+    "balance_residual_le_1e-6": true,
+    "soc_residual_le_1e-6": true,
+    "soc_within_bounds": true,
+    "terminal_soc_equal": true,
+    "no_simultaneous_charge_discharge": true,
+    "lp_is_lower_bound": true
+  },
+  "passed": true
+}

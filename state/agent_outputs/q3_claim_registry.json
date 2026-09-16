@@ -1,0 +1,50 @@
+{
+  "sub_question": "Q3",
+  "claims": [
+    {
+      "claim_id": "Q3-TOTAL",
+      "requirement_id": "R3",
+      "statement": "四次滚动更新策略的正式期总成本",
+      "result_json_path": "$.key_results.total_cost_yuan",
+      "code_symbol": "simulate_mpc",
+      "unit": "元",
+      "validation_test": "计划、逐次调整与紧急费用恒等式",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72",
+        "附件3.xlsx": "8A61B06C52BD0D639A1CC37C61A7D9F5B75EDCBCA718F64C1BD3498EC9F9D843"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q3-UPDATE",
+      "requirement_id": "R3",
+      "statement": "是否保留各发布时刻由全年消融结果决定",
+      "result_json_path": "$.update_ablation.0_6_12_18.total_cost_yuan",
+      "code_symbol": "ORIGIN_SLOTS",
+      "unit": "元",
+      "validation_test": "0、0/6、0/6/12、0/6/12/18同日配对比较",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72",
+        "附件3.xlsx": "8A61B06C52BD0D639A1CC37C61A7D9F5B75EDCBCA718F64C1BD3498EC9F9D843"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q3-EMERGENCY",
+      "requirement_id": "R3",
+      "statement": "滚动策略正式期紧急购电量",
+      "result_json_path": "$.key_results.emergency_energy_kwh",
+      "code_symbol": "emergency",
+      "unit": "kWh",
+      "validation_test": "实际供需缺口逐时段复算",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72",
+        "附件3.xlsx": "8A61B06C52BD0D639A1CC37C61A7D9F5B75EDCBCA718F64C1BD3498EC9F9D843"
+      },
+      "status": "verified"
+    }
+  ]
+}

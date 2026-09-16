@@ -1,67 +1,199 @@
 {
   "sub_question": "Q2",
-  "model": "GPR(Matern5/2)+WhiteKernel，输入标准化，目标0-1归一化",
-  "key_results": {
-    "gpr_cv": {
-      "R": {
-        "mean_r2": 0.9979084736480452,
-        "mean_rmse": 0.00047324262269102306,
-        "fold_r2": [
-          0.9993,
-          0.9989,
-          0.9953,
-          0.9972,
-          0.9989
-        ]
-      },
-      "P": {
-        "mean_r2": 0.9985379489522057,
-        "mean_rmse": 0.0008057323641369743,
-        "fold_r2": [
-          0.9992,
-          0.9997,
-          0.9982,
-          0.9998,
-          0.9958
-        ]
-      },
-      "T": {
-        "mean_r2": 0.9939253013265661,
-        "mean_rmse": 0.0014112542768924667,
-        "fold_r2": [
-          0.992,
-          0.9966,
-          0.9965,
-          0.9978,
-          0.9867
-        ]
-      }
-    },
-    "poly_cv": {
-      "R": {
-        "mean_r2": 0.7036837469217307,
-        "mean_rmse": 0.005834766362318805
-      },
-      "P": {
-        "mean_r2": 0.9607587040637272,
-        "mean_rmse": 0.004782630366466622
-      },
-      "T": {
-        "mean_r2": 0.7077291852743081,
-        "mean_rmse": 0.009487741756580653
-      }
-    },
-    "improvement_over_poly": {
-      "R": 0.2942,
-      "P": 0.0378,
-      "T": 0.2862
-    },
-    "saved_model": "results\\models\\surrogates.joblib"
+  "status": "success",
+  "model": "严格0时两阶段随机MILP（计划G/C/D/E/z共享，情景仅R/W）",
+  "run_timestamp": "2026-09-11T15:38:40.390459+08:00",
+  "input_data_hash": "sha256:2e95fd446bfafa0d8c59577b5c2e2ea8b3f1def20dde54a3062556f4da9b4c72",
+  "information_boundary": {
+    "forecast_origin": "每天00:00",
+    "history_rule": "日期d的预测、参数和残差样本仅使用j<d的已完成数据",
+    "january_warm_start": "2025-01-01使用附件1典型日先验；其后逐日因果更新SOC与残差库",
+    "first_stage_shared": [
+      "G",
+      "C",
+      "D",
+      "E",
+      "z"
+    ],
+    "scenario_recourse_only": [
+      "R",
+      "W"
+    ]
   },
-  "figures": [
-    "q2_01_gpr_fit.png",
-    "q2_02_residuals.png",
-    "q2_03_model_compare.png",
-    "q2_04_gpr_uncertainty.png"
+  "key_results": {
+    "evaluation_period": "2025-02-01至2025-12-31",
+    "evaluation_days": 334,
+    "planned_purchase_kwh": 22524106.18136128,
+    "planned_charge_kwh": 6982183.5981516335,
+    "planned_discharge_kwh": 5655568.714502823,
+    "emergency_purchase_kwh": 404258.73405227053,
+    "curtailment_kwh": 3662560.536798076,
+    "planned_cost_yuan": 13750414.63719834,
+    "emergency_cost_yuan": 1507608.2507446338,
+    "actual_total_cost_yuan": 15258022.887942977,
+    "emergency_intervals": 9456,
+    "minimum_soc_kwh": 1997.0842191746183,
+    "maximum_soc_kwh": 8550.000000000002
+  },
+  "forecast_metrics": {
+    "WAPE": 0.1094575306815038,
+    "MAE_kwh": 54.74585517006482,
+    "RMSE_kwh": 80.81045734443184,
+    "Bias_kwh": -0.03604695498222244
+  },
+  "parameter_selection": {
+    "monthly_log": [
+      {
+        "effective_month": "2025-02",
+        "training_cutoff": "2025-01-31",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.07508996177583659,
+        "validation_mae": 40.63984252645503,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-03",
+        "training_cutoff": "2025-02-28",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.08086319209051679,
+        "validation_mae": 39.268756911375654,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-04",
+        "training_cutoff": "2025-03-31",
+        "method": "N3",
+        "params": {
+          "lambda": 10.0,
+          "window_days": 56
+        },
+        "validation_wape": 0.09162699669739055,
+        "validation_mae": 43.295597431566115,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-05",
+        "training_cutoff": "2025-04-30",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.10876523102250599,
+        "validation_mae": 50.243544866071424,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-06",
+        "training_cutoff": "2025-05-31",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.1192756935922291,
+        "validation_mae": 54.694984085648144,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-07",
+        "training_cutoff": "2025-06-30",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.1167750703319788,
+        "validation_mae": 56.12102342923281,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-08",
+        "training_cutoff": "2025-07-31",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.09924305774819585,
+        "validation_mae": 53.27124723875661,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-09",
+        "training_cutoff": "2025-08-31",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.10572562303369035,
+        "validation_mae": 58.28532169312169,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-10",
+        "training_cutoff": "2025-09-30",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.09878815873885335,
+        "validation_mae": 49.00552387566137,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-11",
+        "training_cutoff": "2025-10-31",
+        "method": "N1",
+        "params": {
+          "alpha": 0.0
+        },
+        "validation_wape": 0.08935133370356554,
+        "validation_mae": 43.885317675264545,
+        "validation_days": 14
+      },
+      {
+        "effective_month": "2025-12",
+        "training_cutoff": "2025-11-30",
+        "method": "N3",
+        "params": {
+          "lambda": 0.01,
+          "window_days": 56
+        },
+        "validation_wape": 0.06803440213534886,
+        "validation_mae": 33.55998229978212,
+        "validation_days": 14
+      }
+    ],
+    "scenario_count_rule": "整日残差按总误差排序作等概率分位抽样；10/20/30按统计签名0.5%收敛取较小者",
+    "scenario_count_min": 1,
+    "scenario_count_max": 30,
+    "randomness": "无；分位抽样完全确定性复现"
+  },
+  "intermediate_results": {
+    "constraint_check": "all_passed",
+    "max_scenario_balance_residual_kwh": 5.343281372915953e-12,
+    "max_soc_residual_kwh": 2.5224267119483557e-12,
+    "simultaneous_charge_discharge_intervals": 0,
+    "soc_link_max_residual_kwh": 0.0,
+    "all_solver_runs_have_solution": true,
+    "total_runtime_seconds": 1426.851665699971,
+    "mean_daily_solve_seconds": 3.6494124827383416,
+    "max_daily_solve_seconds": 8.637900299974717
+  },
+  "environment": {
+    "python": "3.13.7",
+    "numpy": "2.3.5",
+    "scipy": "1.16.3",
+    "solver": "scipy.optimize.milp (HiGHS)"
+  },
+  "artifacts": {
+    "detail": "results/q2_detail.npz",
+    "code": "code/q2_model.py"
+  },
+  "warnings": [
+    "两日滚动视野的第二日只作为终端延续近似，执行时仅冻结首日计划；视野末端SOC回到视野初值以抑制截断放空。"
   ]
 }

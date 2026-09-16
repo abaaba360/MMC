@@ -1,0 +1,37 @@
+{
+  "root_mechanism": {
+    "state": "储能SOC",
+    "flow_balance": "外购电 + 光伏 + 放电 = 负荷 + 充电 + 弃光",
+    "transition": "E(t+1)=E(t)+eta_c*c(t)-d(t)/eta_d",
+    "reason": "题目给出的能量守恒、储能容量/功率和购电成本全部是线性或分段线性关系，因此先得到线性优化骨架，而不是先选启发式算法。"
+  },
+  "growth_by_question": [
+    {"question": "Q1", "new_structure": "确定性日内时序、首尾SOC约束与单套储能充放电互斥", "natural_model": "确定性MILP为主以防同时充放电造成虚假光伏消纳；LP作为连续松弛成本下界和消融对照"},
+    {"question": "Q2", "new_structure": "日前决策与实际偏差、5倍应急追索、跨日SOC连续；附件覆盖1月但结果从2月开始", "natural_model": "一月热启动、跨日SOC连续的严格日前两阶段随机MILP；0时计划固定，事后只允许紧急购电，不设置储能再调度"},
+    {"question": "Q3", "new_structure": "四次信息更新、已执行决策不可回溯、增购1.5倍与减购50%的非对称逐次结算；预测误差具有时序相关", "natural_model": "确定性MILP-MPC为主体；场景MPC/CVaR只有在参数可识别且滚动样本外九项指标显著改善时才保留"},
+    {"question": "Q4", "new_structure": "电价随日和时段实时波动，决策时未必掌握未来真实价格", "natural_model": "以不使用未来数据的因果在线价格策略为主，同时计算完全价格信息成本下界，量化价格信息价值"}
+  ],
+  "sub_questions": [
+    {"sub_question_id": "Q1", "central_mechanism": "确定性日内削峰填谷和光伏消纳，同时维持日初日末SOC一致", "problem_signals": [
+      {"observation": "价格、负荷和光伏曲线均已给定", "mathematical_implication": "时段参数确定", "model_component": "确定性144时段目标与能量平衡"},
+      {"observation": "单套储能不能同时充放电", "mathematical_implication": "两个连续流量互斥", "model_component": "二元状态与Big-M约束"},
+      {"observation": "日初日末储电量相同", "mathematical_implication": "状态轨迹闭环", "model_component": "E0=E144=6000 kWh"}
+    ]},
+    {"sub_question_id": "Q2", "central_mechanism": "日前固定计划面对未知实际净负荷，缺口只能由5倍紧急购电追索", "problem_signals": [
+      {"observation": "每天0:00制定整日计划", "mathematical_implication": "计划变量先于随机实现", "model_component": "两阶段随机MILP第一阶段"},
+      {"observation": "供电不足时5倍紧急购电", "mathematical_implication": "缺口产生情景相关线性追索成本", "model_component": "第二阶段紧急购电变量"},
+      {"observation": "结果连续覆盖334日", "mathematical_implication": "SOC跨日连续", "model_component": "顺序执行与1月热启动"}
+    ]},
+    {"sub_question_id": "Q3", "central_mechanism": "光伏信息每6小时更新，未执行计划可滚动修订且增减购电非对称结算", "problem_signals": [
+      {"observation": "0/6/12/18时发布新预报", "mathematical_implication": "信息集随时间推进", "model_component": "确定性MILP-MPC滚动窗"},
+      {"observation": "增购1.5倍、减购50%", "mathematical_implication": "相邻版本正负差额分开计价", "model_component": "逐版本调整账本"},
+      {"observation": "要求分析是否需要调整", "mathematical_implication": "复杂度须由样本外增益支撑", "model_component": "不调整、MPC和风险增强配对比较"}
+    ]},
+    {"sub_question_id": "Q4", "central_mechanism": "未来实时价格未知，策略必须因果执行，并以完全信息下界衡量信息价值", "problem_signals": [
+      {"observation": "价格每日实时波动", "mathematical_implication": "未来价格是未知量", "model_component": "仅用历史训练的因果价格预测"},
+      {"observation": "附件4给出全年实现价格", "mathematical_implication": "可事后计算不可实现最优成本", "model_component": "完全价格信息下界"},
+      {"observation": "分别重算Q2与Q3", "mathematical_implication": "替换价格信息模块并保持物理边界", "model_component": "Q4-2和Q4-3同口径对照"}
+    ]}
+  ],
+  "award_paper_lessons": "参考国奖论文及队友分析报告的共同方法论：先从物理/业务机制建立状态方程与约束，再根据模型结构选择解析、数值或优化方法；只吸收可由题意和数据独立核验的结构，不直接套用具体模型。"
+}

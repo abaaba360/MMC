@@ -1,0 +1,20 @@
+*.pdf binary
+*.doc binary
+*.docx binary
+*.xls binary
+*.xlsx binary
+*.ppt binary
+*.pptx binary
+*.zip binary
+*.npz binary
+*.joblib binary
+*.fig binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.otf binary
+*.ttf binary
+
+# Imported award-paper materials are preserved verbatim.
+/最新资料/** whitespace=-trailing-space

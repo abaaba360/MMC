@@ -1,0 +1,53 @@
+{
+  "sub_question": "Q4",
+  "claims": [
+    {
+      "claim_id": "Q4-2-CAUSAL",
+      "requirement_id": "R4",
+      "statement": "因果实时价格下Q4-2正式期总成本",
+      "result_json_path": "$.key_results.q4_2_causal.total_cost_yuan",
+      "code_symbol": "simulate_q42",
+      "unit": "元",
+      "validation_test": "未来价格特征审计与实际价格结算复算",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72",
+        "附件3.xlsx": "8A61B06C52BD0D639A1CC37C61A7D9F5B75EDCBCA718F64C1BD3498EC9F9D843",
+        "附件4.xlsx": "20E9C93AEAB5E8E21AE4DD15587F9E190F7408692504C1319598461CD654FE71"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q4-3-CAUSAL",
+      "requirement_id": "R4",
+      "statement": "因果实时价格下Q4-3正式期总成本",
+      "result_json_path": "$.key_results.q4_3_causal.total_cost_yuan",
+      "code_symbol": "CausalPriceProvider",
+      "unit": "元",
+      "validation_test": "逐次调整账本与实际价格结算复算",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72",
+        "附件3.xlsx": "8A61B06C52BD0D639A1CC37C61A7D9F5B75EDCBCA718F64C1BD3498EC9F9D843",
+        "附件4.xlsx": "20E9C93AEAB5E8E21AE4DD15587F9E190F7408692504C1319598461CD654FE71"
+      },
+      "status": "verified"
+    },
+    {
+      "claim_id": "Q4-ORACLE",
+      "requirement_id": "R4",
+      "statement": "全信息oracle严格成本下界",
+      "result_json_path": "$.key_results.full_information_oracle_lower_bound.total_cost_yuan",
+      "code_symbol": "simulate_full_information_oracle",
+      "unit": "元",
+      "validation_test": "核查oracle放宽信息约束且保持物理可行域",
+      "raw_input_hashes": {
+        "附件1.xlsx": "66B87134F5ECCCD68184D3539BB1293EF039F9E0FDD955A589B9BFA7F227C377",
+        "附件2.xlsx": "2E95FD446BFAFA0D8C59577B5C2E2EA8B3F1DEF20DDE54A3062556F4DA9B4C72",
+        "附件3.xlsx": "8A61B06C52BD0D639A1CC37C61A7D9F5B75EDCBCA718F64C1BD3498EC9F9D843",
+        "附件4.xlsx": "20E9C93AEAB5E8E21AE4DD15587F9E190F7408692504C1319598461CD654FE71"
+      },
+      "status": "verified"
+    }
+  ]
+}

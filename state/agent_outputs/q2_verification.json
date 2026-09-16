@@ -1,0 +1,15 @@
+{
+  "status": "passed",
+  "requirement_coverage": "100%",
+  "interface_status": "passed",
+  "checks": {
+    "365_days_present": true,
+    "official_window_334_days": true,
+    "actual_balance_residual_le_1e-6": true,
+    "soc_rebuild_residual_le_1e-6": true,
+    "soc_linkage_le_1e-6": true,
+    "soc_bounds": true,
+    "charge_discharge_mutex": true,
+    "cost_ledger": true
+  }
+}

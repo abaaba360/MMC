@@ -1,0 +1,13 @@
+{
+  "competition": "CUMCM_2026",
+  "problem": "C",
+  "selected_route": "H+修订版v2",
+  "confirmed_by_team": true,
+  "confirmed_at": "2026-09-11T13:49:51.9624706+08:00",
+  "selections": [
+    {"sub_question_id": "Q1", "selection": "禁止同时充放电的确定性MILP为主，LP仅作连续松弛下界"},
+    {"sub_question_id": "Q2", "selection": "严格日前两阶段随机MILP，0时计划固定，事后仅紧急购电"},
+    {"sub_question_id": "Q3", "selection": "确定性MILP-MPC为主体；风险增强仅在参数可识别且样本外显著改善时保留；题定双效率90%；减购按50%逐次结算"},
+    {"sub_question_id": "Q4", "selection": "因果在线价格策略为主，同时报告完全价格信息成本下界"}
+  ]
+}

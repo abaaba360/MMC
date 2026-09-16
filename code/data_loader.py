@@ -1,41 +1,31 @@
-"""
-数据读取与预处理
-功能：读取附件2（84样本 xlsx），统一列名，返回建模DataFrame
-输入：problems/选题B/附件/附件 2：*.xlsx
-输出：DataFrame[r, h, n, R, P, T]
-运行方式：python code/data_loader.py
-"""
-import glob
-import os
+"""2026年C题附件数据读取与单位转换。"""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+import numpy as np
 import pandas as pd
 
 
-def load_problem_b_data():
-    """读取选题B附件2，返回含设计变量与性能指标的DataFrame"""
-    xlsx = glob.glob(os.path.join("problems", "选题B", "附件", "*.xlsx"))
-    if not xlsx:
-        raise FileNotFoundError("未找到选题B附件xlsx文件")
-    df = pd.read_excel(xlsx[0], header=1)
-    # 统一列名：针肋宽度比->r, 歧管深高比->h, 针肋排数->n, 无量纲热阻->R, 无量纲压降->P, 无量纲温度非均匀性->T
-    rename = {
-        "针肋宽度比": "r",
-        "歧管深高比": "h",
-        "单个歧管单元内沿流向的针肋排数": "n",
-        "无量纲热阻": "R",
-        "无量纲压降": "P",
-        "无量纲温度非均匀性": "T",
+ROOT = Path(__file__).resolve().parents[1]
+DATA_DIR = ROOT / "problems" / "选题C_2026正式" / "附件"
+STEP_HOURS = 1.0 / 6.0
+
+
+def load_q1() -> dict[str, np.ndarray]:
+    frame = pd.read_excel(DATA_DIR / "附件1.xlsx")
+    required = ["时间", "电价", "小区负载", "光伏发电预测功率"]
+    if list(frame.columns) != required:
+        raise ValueError(f"附件1列名异常：{list(frame.columns)}")
+    if frame.shape[0] != 144 or frame.isna().any().any():
+        raise ValueError("附件1应包含144个完整的10分钟时段")
+    return {
+        "time": frame["时间"].astype(str).to_numpy(),
+        "price": frame["电价"].to_numpy(float),
+        "load_kw": frame["小区负载"].to_numpy(float),
+        "pv_kw": frame["光伏发电预测功率"].to_numpy(float),
+        "load_kwh": frame["小区负载"].to_numpy(float) * STEP_HOURS,
+        "pv_kwh": frame["光伏发电预测功率"].to_numpy(float) * STEP_HOURS,
     }
-    df = df.rename(columns=rename)
-    df = df[["r", "h", "n", "R", "P", "T"]].copy()
-    df = df.dropna().reset_index(drop=True)
-    # 类型安全
-    for c in ["r", "h", "n", "R", "P", "T"]:
-        df[c] = pd.to_numeric(df[c], errors="coerce")
-    df = df.dropna().reset_index(drop=True)
-    return df
 
-
-if __name__ == "__main__":
-    df = load_problem_b_data()
-    print(df.shape)
-    print(df.describe().round(4))

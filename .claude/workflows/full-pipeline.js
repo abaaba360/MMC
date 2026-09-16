@@ -6,10 +6,12 @@ export const meta = {
     { title: '选题比较', detail: '分析所有选题、推荐最佳' },
     { title: '赛题分析', detail: '深度分析、拆解子问题' },
     { title: '模型设计', detail: '候选模型、假设体系、符号表' },
-    { title: '求解验证', detail: '代码实现、可视化、灵敏度分析' },
+    { title: '基础锁定', detail: '论证骨架、接口契约、最小原型' },
+    { title: '递归求解', detail: '逐题编码、结果与声明登记' },
+    { title: '灵敏度分析', detail: '扰动、边界与不确定性分析' },
+    { title: '模型评价', detail: '基线、消融、适用范围与局限' },
     { title: '论文撰写', detail: '撰写摘要和各章节' },
-    { title: '质量审核', detail: '5维度评审、证据追溯、门禁检查' },
-    { title: '终审交付', detail: '打包论文和支撑材料' }
+    { title: '终审交付', detail: '质量审核、门禁检查和打包' }
   ]
 }
 
@@ -28,6 +30,8 @@ const LEDGER_FILE = 'state/ai_usage_ledger.json'
 phase('环境准备')
 
 log('🔧 Phase 0: 环境准备 — 验证环境和初始化状态')
+
+log('📚 主Agent必须先完整读取AGENTS.md、最新总控与六个专业Skill、2026最新资料执行规范、2026_AI工具使用详情模板填写规范，生成skill_preflight.json并通过 python scripts/gates.py preflight；不得由Agent自行伪造read_complete。')
 
 // 验证目录结构
 const required_dirs = ['problems', 'state', 'state/agent_outputs', 'code', 'results/figures', 'results/tables', 'paper', 'delivery', 'templates']
@@ -120,11 +124,12 @@ const decomposition = await agent(
 用户已在Phase 1确认选题。请读取该选题的PDF和所有附件数据。
 
 ## 任务
-1. 精读赛题PDF，提取所有子问题（Q1~Qn）
-2. 对每个子问题标注：输入/输出/约束/目标/问题类型/依赖关系
+1. 精读赛题PDF，把每一项显式或隐式要求编号为Qx-Rxx，并保留题干原句或准确定位
+2. 对每个子问题标注：输入/输出/约束/目标/依赖关系/验收标准；“问题类型”只作诊断，不能直接映射算法
 3. 分析所有附件数据（格式/规模/质量问题）
 4. 做假设敏感性预检（列出关键歧义）
-5. 给出建模路线建议
+5. 建立数据契约：字段、单位、范围、缺失、主键、时间/空间口径和跨问接口
+6. 给出建模路线建议，但本阶段不预选算法
 
 ## 产出格式
 \`\`\`json
@@ -140,9 +145,10 @@ const decomposition = await agent(
       "decision_variables": [...],
       "objectives": [...],
       "constraints": [...],
-      "problem_type": "优化类",
+      "problem_type_diagnostic": "优化类",
       "depends_on": [],
-      "required_figures": [...],
+      "requirement_ids": [...],
+      "acceptance_tests": [...],
       "difficulty": "medium"
     }
   ],
@@ -153,7 +159,10 @@ const decomposition = await agent(
 \`\`\`
 
 ## 产出文件
-写入 state/agent_outputs/problem_decomposition.json`,
+写入：
+- state/agent_outputs/problem_decomposition.json
+- state/agent_outputs/requirement_ledger.json
+- state/agent_outputs/data_contract.json`,
   { label: '赛题深度分析', phase: '赛题分析', schema: {
     type: 'object',
     properties: {
@@ -168,11 +177,11 @@ const decomposition = await agent(
 log(`📝 赛题分析完成。识别到 ${decomposition?.sub_questions?.length || '?'} 个子问题。`)
 
 // ============================================================
-// Phase 3 & 4: 模型设计与基础锁定
+// Phase 3: 模型设计
 // ============================================================
 phase('模型设计')
 
-log('🧮 Phase 3&4: 模型设计与基础锁定')
+log('🧮 Phase 3: 让模型从题目结构中生长')
 
 const model_design = await agent(
   `你是模型架构师。请基于赛题分析结果为每个子问题设计数学模型。
@@ -181,12 +190,13 @@ const model_design = await agent(
 读取 state/agent_outputs/problem_decomposition.json
 
 ## 任务
-1. 对每个子问题提出≥2个候选模型（标准方案+增强方案）
-2. 比较候选模型并选出最优（附淘汰理由）
-3. 建立统一假设体系（10-15条，每条说明理由+必要性+违反后果）
-4. 建立统一符号表
-5. 构建模型依赖DAG
-6. 制定论文章节大纲和字数预算
+1. 先按“题目事实→数学对象→机制/不变量→最小假设→方程/约束→求解器→验证器”形成模型生长链
+2. 证据充分时提出2–4个候选；证据不足时不得为凑数量制造候选。候选必须含最简单可解释基线
+3. 对每个候选说明触发它的题目证据、为什么更简单模型不够、可识别性、可证伪条件、复杂度与失败模式
+4. 区分数学模型、估计器、求解算法和验证方法，禁止把算法名拼成模型
+5. 比较候选并选出推荐路线，记录淘汰理由；复杂模块必须规划消融实验
+6. 建立统一且最小的假设体系，每条说明依据、必要性、违反后果和检验方式
+7. 建立统一符号表和模型依赖DAG
 
 ## 评审团标准（自我检查）
 你的方案需要能够通过以下5维度评审（均分≥7.0）：
@@ -197,7 +207,10 @@ const model_design = await agent(
 - 完整性：是否覆盖所有约束条件？
 
 ## 产出
-写入 state/agent_outputs/model_design.json`,
+写入：
+- state/agent_outputs/model_design.json
+- state/agent_outputs/model_growth_map.json
+- state/agent_outputs/model_route_decision.json`,
   { label: '模型方案设计', phase: '模型设计', schema: {
     type: 'object',
     properties: {
@@ -212,12 +225,51 @@ const model_design = await agent(
   }}
 )
 
-log('✅ 模型设计完成。假设体系已建立，符号表已统一。')
+log('✅ 候选路线及其题目依据已形成。')
+log('⚠️ 请团队逐问确认候选路线；确认后写入 state/agent_outputs/user_model_selection.json。未确认不得进入Phase 4。')
+
+// ============================================================
+// Phase 4: 基础锁定——在全面编码前做一次低成本逻辑审查
+// ============================================================
+phase('基础锁定')
+log('🔒 Phase 4: 论证骨架、接口契约、最小原型与影子论文')
+
+const logic_lock = await agent(
+  `你是建模方案审查专家。请在全面编码前锁定逻辑基础。
+
+## 输入
+读取 requirement_ledger.json、data_contract.json、model_growth_map.json、model_route_decision.json、user_model_selection.json；后者必须来自团队真实确认，Agent不得代填。
+
+## 任务
+1. 为每问建立“要求→假设→模型命题→待输出结论→证据→验证”的论证骨架
+2. 定义跨问接口契约（字段、单位、形状、方向、允许范围、失败处理）
+3. 只实现能验证关键可行性的最小原型，不做全面计算和美化绘图
+4. 写影子论文：用短段落预演每个核心结论如何由结果和验证支撑
+5. 审查是否存在孤儿算法、循环论证、不可识别参数、数据不可达或结论超出模型能力
+
+## 产出
+- state/agent_outputs/argument_map.json
+- state/agent_outputs/interface_contracts.json
+- state/agent_outputs/prototype_review.json
+
+prototype_review.status 只有在所有硬问题关闭后才能为 passed。`,
+  { label: '基础锁定审查', phase: '基础锁定', schema: {
+    type: 'object', properties: {
+      status: { type: 'string', enum: ['passed', 'revise', 'blocked'] },
+      hard_issues: { type: 'array' },
+      selected_route_confirmed: { type: 'boolean' }
+    }, required: ['status', 'hard_issues', 'selected_route_confirmed']
+  }}
+)
+if (logic_lock?.status !== 'passed') {
+  throw new Error(`Phase 4逻辑合约未通过，禁止进入全面编码：${JSON.stringify(logic_lock?.hard_issues || [])}`)
+}
+log('✅ 最小原型与论证骨架通过；模型基础已锁定。')
 
 // ============================================================
 // Phase 5: 递归求解（逐子问题）
 // ============================================================
-phase('求解验证')
+phase('递归求解')
 
 log('💻 Phase 5: 逐子问题求解、可视化、验证')
 
@@ -234,19 +286,20 @@ for (const qi of sorted_qi) {
   log(`  🔨 求解 ${qi.id}: ${qi.title}`)
 
   const result = await agent(
-    `你是代码实现专家。请为子问题 ${qi.id} 编写Python代码并求解。
+    `你是代码实现专家。请严格按已通过的接口契约为子问题 ${qi.id} 编写代码并求解。
 
 ## 子问题信息
 ${JSON.stringify(qi, null, 2)}
 
 ## 模型方案
-读取 state/agent_outputs/model_design.json 中 ${qi.id} 对应的模型方案。
+读取 model_route_decision.json、argument_map.json、interface_contracts.json 中 ${qi.id} 的已锁定方案。
 
 ## 任务
 1. 编写 code/q${qi.id.slice(1)}_model.py
 2. 运行代码并验证输出
-3. 生成≥3张论文级图表到 results/figures/
-4. 输出结果到 state/agent_outputs/q${qi.id.slice(1)}_results.json
+3. 仅为实际声明生成必要的论文级图表；每张图必须绑定具体claim_id
+4. 输出 q${qi.id.slice(1)}_results.json 和 q${qi.id.slice(1)}_claim_registry.json
+5. 与最简单基线比较；复杂模块执行预先登记的消融实验
 
 ## 代码要求
 - 可复现（固定随机种子）
@@ -270,19 +323,28 @@ ${JSON.stringify(qi, null, 2)}
     }}
   )
 
-  if (result?.status === 'failed') {
-    log(`❌ ${qi.id} 求解失败，回退到Phase 3修改模型方案...`)
-    // 在实际执行中，这里会触发中循环回退
-  } else {
-    qi_results[qi.id] = result
-    log(`✅ ${qi.id} 求解完成`)
+  if (result?.status !== 'success') {
+    throw new Error(`${qi.id} 求解状态为 ${result?.status || 'unknown'}，禁止下游继续；只回退受影响的模型、接口与声明。`)
   }
+  const qcheck = await agent(
+    `你是结果验证专家。对 ${qi.id} 执行逐题门禁：核对全部requirement_id覆盖、接口契约、数值稳定性、约束、基线/消融和每条claim的结果路径。写入 state/agent_outputs/q${qi.id.slice(1)}_verification.json；只有全部通过时status=passed、requirement_coverage=1、interface_status=passed。`,
+    { label: `${qi.id}逐题门禁`, phase: '递归求解', schema: { type: 'object', properties: {
+      status: { type: 'string', enum: ['passed', 'revise', 'blocked'] },
+      requirement_coverage: { type: 'number' }, interface_status: { type: 'string' }, issues: { type: 'array' }
+    }, required: ['status', 'requirement_coverage', 'interface_status'] }}
+  )
+  if (qcheck?.status !== 'passed' || qcheck?.requirement_coverage !== 1 || qcheck?.interface_status !== 'passed') {
+    throw new Error(`${qi.id}逐题门禁未通过，禁止解锁依赖问题。`)
+  }
+  qi_results[qi.id] = result
+  log(`✅ ${qi.id} 求解和逐题验证完成`)
 }
 
 // ============================================================
 // Phase 6 & 7: 灵敏度分析与模型评价
 // ============================================================
-log('📊 Phase 6&7: 灵敏度分析与模型评价')
+phase('灵敏度分析')
+log('📊 Phase 6: 灵敏度、稳健性和边界测试')
 
 const verification = await agent(
   `你是结果验证专家。请对所有子问题的求解结果进行验证分析。
@@ -292,8 +354,8 @@ const verification = await agent(
 - state/agent_outputs/model_design.json（模型方案）
 
 ## 任务
-1. 参数灵敏度分析（关键参数±20%扰动，≥5个参数）
-2. 鲁棒性测试（噪声注入/缺失数据/边界条件）
+1. 根据模型机制选取真正影响结论的参数和扰动范围，不机械规定参数数目
+2. 按数据与模型适用条件设计噪声、缺失、边界或极端情景测试
 3. 模型对比评测（与Phase 3的候选模型量化对比）
 4. 模型优势分析（证据支撑）
 5. 模型局限性（真实具体的不足，非套话）
@@ -313,6 +375,8 @@ const verification = await agent(
 )
 
 log('✅ 验证分析完成。')
+phase('模型评价')
+log('📐 Phase 7: 基线、消融、适用范围与局限性评价已纳入验证报告。')
 
 // ============================================================
 // Phase 8: 论文撰写
@@ -333,18 +397,17 @@ const paper = await agent(
 - results/figures/ 下所有图表
 
 ## 2026年国赛论文规范（对齐Word标准模板）
-**权威格式文档**：`templates/CUMCM2026_标准Word模板格式规范.md`（源自备战资料Word模板），必须严格遵循。
+规则优先级：当年官方通知/章程 > 官方模板与官方评阅解读 > 本地规范 > 往届论文习惯。
 - A4纸，页边距≥2.5cm
-- **禁止目录**；正文≤30页
-- 摘要单独一页、300-500字、**虎头-猪肚-豹尾三段式**、关键词4-6个
+- **禁止目录**；正文主体+AI工具使用声明+参考文献合计≤30页，附录不计入
+- 第一页为摘要专用页，只含标题、摘要、关键词，无英文翻译，原则上不超过1页；最终渲染页数是硬门禁
 - 公式一律用公式编辑器，严禁截图
-- 附录含附件文件列表+全部源代码（标注语言/作用/AI工具）
-- 参考文献：GB/T 7714 + **AI工具引用格式**（[编号] 工具名称, 版本, 机构, 日期）
-- AI使用声明（2026年新增）
+- AI工具使用声明采用2026官方二选一原文并置于参考文献之前；声明必须与真实台账和七环节汇总一致；AI使用详情PDF收入支撑材料，不作为第三个独立上传件
+- 附录含支撑材料文件列表+全部可运行源代码；代码同时进入支撑材料
 - 不得出现参赛者身份和学校信息
 
 ## 论文结构（对齐Word模板）
-1. 摘要（300-500字，虎头-猪肚-豹尾，含具体数字，1页内）
+1. 摘要专用页（题目、摘要、关键词；含核心方法、关键结果和结论，最终1页内）
 2. 一、问题重述（改写，防查重）
 3. 二、问题分析（每问1.X单独小节 + 总分析流程图）
 4. 三、模型假设（每条含理由）
@@ -352,17 +415,17 @@ const paper = await agent(
 6. 五、模型的建立与求解（每个子问题五段式：5.X.1预处理/5.X.2建立/5.X.3求解/5.X.4检验/5.X.5结果分析）
 7. 六、模型检验（误差分析RMSE/MAPE + 灵敏度分析±10%/±20% + 稳健性检验）
 8. 七、模型优缺点评价（7.1优点/7.2缺点/7.3改进）
-9. 参考文献（GB/T 7714 + AI工具引用）
-10. 附录（附件文件列表 + 源代码 + 中间结果）
-11. AI使用声明
+9. AI工具使用声明（官方文本）
+10. 参考文献
+11. 附录（支撑材料文件列表 + 完整源代码 + 必要中间结果）
 
 ## 格式门禁（必须通过！）
 - [ ] A4纸张、2.5cm边距
 - [ ] 禁止目录
 - [ ] 正文≤30页
-- [ ] 摘要独立页、300-500字、1页内
+- [ ] 摘要专用页经最终渲染确认恰为1页
 - [ ] 模型检验覆盖误差/灵敏度/稳健性
-- [ ] 参考文献含AI工具引用
+- [ ] AI声明位于参考文献之前；AI详情由真实台账生成
 - [ ] 所有图表被正文引用
 - [ ] 所有数值可追溯到代码输出
 - [ ] 无身份信息
@@ -389,7 +452,7 @@ log(`📄 论文撰写完成。${paper?.format_gate_passed ? '✅ 格式门禁�
 // ============================================================
 // Phase 9: 终审交付
 // ============================================================
-phase('质量审核')
+phase('终审交付')
 
 log('🔍 Phase 9: 终审交付')
 
@@ -402,18 +465,15 @@ const final_review = await agent(
 - code/ 和 results/ 下所有文件
 
 ## 5维度评审
-1. 模型质量（50-60%权重）：假设合理性、推导严谨性、方法创新性
-2. 问题解决（30-40%权重）：约束覆盖、结果有效性、分析深度
-3. 论文规范（10-20%权重）：摘要质量、图表质量、格式合规
-4. 验证分析（5-10%权重）：灵敏度、模型对比、鲁棒性
-5. 综合印象：证据链、逻辑流、物理意义
+以官方主要标准审核：假设合理性、建模创造性、结果正确性、表述清晰度。内部量表仅用于查漏，不声称是官方权重。
 
 ## 证据追溯
 对论文中每个定量声明，追溯：论文→q*_results.json→q*_model.py→原始数据
 
 ## 门禁检查
-- 格式门禁：A4/边距/禁止目录/页码/摘要字数与1页/模型检验三件套/附录完整性
-- 学术诚信门禁：AI声明/AI工具引用格式/AI详情/源代码/AI标注/无抄袭
+- 逻辑门禁：模型生长链、为什么不用更简单模型、可识别性、反证与结论边界
+- 格式门禁：A4/边距/禁止目录/正文页数口径/摘要专用页/AI声明顺序/附录完整性/最终渲染
+- 学术诚信门禁：真实AI台账；工具精确版本；七环节矩阵；五类交互方式；2至3个典型交互；六类采纳核验汇总；五项人工主导确认；队伍真实性确认；指定PDF/源代码双份提交/匿名性/引用与版权
 
 ## 通过条件
 - 各维度≥满分的65%
@@ -435,16 +495,31 @@ const final_review = await agent(
   }}
 )
 
-if (final_review?.verdict === 'pass' || final_review?.verdict === 'conditional_pass') {
+if (final_review?.verdict === 'pass') {
   log(`🎉 终审通过！总分: ${final_review.weighted_total}`)
   log('📦 打包交付物中...')
 
-  // 生成AI工具使用详情
-  log('📋 生成AI工具使用详情...')
+  const delivery_check = await agent(
+    `你是最终交付管理员。不得改写论文结论，只完成可复现打包和机器检查。
+
+1. 由队伍核对 state/agent_outputs/ai_usage_summary.json 中的七环节、五类交互方式、六类采纳核验、五项人工主导、真实性确认和2至3个典型交互ID；Agent不得代填确认。
+2. 从真实 state/ai_usage_ledger.json 和已确认的 ai_usage_summary.json 生成 state/submission_staging/AI工具使用详情.pdf；缺字段、脱敏或核验记录时立即阻断，禁止补造。
+3. 生成唯一的支撑材料ZIP/RAR，包含README、统一运行入口、全部代码、非题目原始数据、必要中间结果；使用AI时必须含精确文件名 AI工具使用详情.pdf。
+4. delivery/ 最终只保留一份电子论文（PDF或Word之一）和一份支撑材料压缩包，不含身份信息，二者各≤20MB。
+5. 运行 python scripts/gates.py all；只有退出码0时 status=passed。
+
+返回门禁结果、两个最终文件名和SHA-256。`,
+    { label: '最终打包与机器门禁', phase: '终审交付', schema: { type: 'object', properties: {
+      status: { type: 'string', enum: ['passed', 'blocked'] },
+      paper_file: { type: 'string' }, support_file: { type: 'string' }, hashes: { type: 'object' }, issues: { type: 'array' }
+    }, required: ['status', 'paper_file', 'support_file', 'hashes'] }}
+  )
+  if (delivery_check?.status !== 'passed') {
+    throw new Error(`最终机器门禁未通过：${JSON.stringify(delivery_check?.issues || [])}`)
+  }
   log('✅ 交付包准备完成：')
-  log('   - delivery/论文.pdf')
-  log('   - delivery/AI工具使用详情.pdf')
-  log('   - delivery/支撑材料.zip')
+  log(`   - ${delivery_check.paper_file}`)
+  log(`   - ${delivery_check.support_file}（使用AI时内含AI工具使用详情.pdf）`)
 } else {
   log(`⚠️ 终审未通过，需要退回修改。结论: ${final_review?.verdict}`)
   log('修改建议详见 state/agent_outputs/quality_report.json')

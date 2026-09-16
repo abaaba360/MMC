@@ -1,16 +1,20 @@
 {
-  "title": "基于文本特征挖掘与多准则综合评价的数学建模论文智能评估研究",
-  "total_pages": 28,
-  "abstract_word_count": 461,
-  "figure_count": 16,
-  "table_count": 11,
-  "reference_count": 12,
+  "total_pages": 113,
+  "body_page_count": 29,
+  "abstract_page_count": 1,
+  "abstract_word_count": 911,
+  "figure_count": 8,
+  "table_count": 14,
+  "omml_object_count": 71,
+  "reference_count": 9,
   "format_check_passed": true,
-  "main_text_chars": 21463,
-  "num_equations": 21,
-  "formats": {
-    "markdown": "paper/final_paper.md",
-    "word_docx": "paper/final_paper.docx (A4, 2.5cm边距, 宋体12pt, 三线表, 16图)",
-    "pdf": "paper/final_paper.pdf (XeLaTeX编译, 28页)"
-  }
+  "figure_table_local_narrative_check_passed": true,
+  "a4_verified": true,
+  "margins_verified": true,
+  "toc_absent": true,
+  "abstract_page_only": true,
+  "ai_declaration_before_references": true,
+  "appendix_source_complete": true,
+  "anonymity_verified": true,
+  "render_review_passed": true
 }
