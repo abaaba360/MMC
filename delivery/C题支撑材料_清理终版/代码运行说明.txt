@@ -1,0 +1,29 @@
+2026年全国大学生数学建模竞赛C题代码运行说明
+
+一、目录结构
+code：问题一至问题四主程序及必要公共模块。
+results：论文数值结果、提交结果工作簿及MATLAB图件。
+AI工具使用详情.pdf：AI工具使用与人工核验记录。
+
+二、Python环境
+建议使用Python 3.10及以上版本。在支撑材料根目录执行：
+pip install -r requirements.txt
+
+三、赛题附件
+按程序中的相对路径建立 problems/选题C_2026正式/附件/，将附件1.xlsx至附件5.xlsx放入该目录。支撑材料按竞赛要求不重复提供赛题原始附件。
+
+四、运行命令
+进入code目录后执行：
+python run_all.py
+用于运行四问程序并完成核验与结果导出。
+
+完整年度复算执行：
+python run_all.py --full
+
+仅核验已有结果执行：
+python run_all.py --check
+
+五、MATLAB绘图
+在MATLAB中运行plot_q1_dispatch_matlab_preview.m和plot_c_paper_figures_matlab.m，可根据已导出的数据重新生成论文图件。
+
+完整年度回测耗时与计算机配置有关，问题三和问题四通常耗时较长。
